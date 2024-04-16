@@ -18,9 +18,9 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User theUser) {
+    public ResponseEntity<String> saveUser(@RequestBody User theUser) {
         userService.save(theUser);
-        return "User saved successfully";
+        return ResponseEntity.ok("User saved successfully");
     }
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id) {
