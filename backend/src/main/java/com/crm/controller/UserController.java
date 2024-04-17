@@ -17,6 +17,11 @@ public class UserController {
         this.userService = userService;
     }
 
+//    @GetMapping("/csrf-token")
+//    public CsrfToken getCsrfToken(CsrfToken token) {
+//        return token;
+//    }
+
     @PostMapping("/save")
     public ResponseEntity<String> saveUser(@RequestBody User theUser) {
         userService.save(theUser);

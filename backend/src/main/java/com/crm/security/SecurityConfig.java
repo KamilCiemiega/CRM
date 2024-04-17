@@ -1,34 +1,50 @@
-//package com.crm.security;
+package com.crm.security;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
 //
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//public class SecurityConfig {
-//
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf ->
+                        csrf.disable()
+                );
+    }
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeRequests(configure -> configure
-//                .requestMatchers("/save").permitAll()
+//                .requestMatchers("/users/save").permitAll()
+//                .requestMatchers("users/csrf-token").permitAll()
 //                .anyRequest().authenticated()
 //        );
 //        return http.build();
 //    }
-//}
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-public class SecurityConfig implements WebMvcConfigurer {
+//    @Bean
+//    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+//        http
+//                // ...
+//                .cors(cors -> cors.disable());
+//        return http.build();
+//    }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") // Ogranicza dostęp tylko do Twojej aplikacji frontendowej na porcie 3000
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*");
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Ustawia na domenę Twojej aplikacji frontendowej
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST")); // Ustawia na metody HTTP, których możesz użyć
+//        configuration.setAllowCredentials(true); // Ustawia czy serwer ma zezwalać na przekazywanie ciasteczek w żądaniach
+//        configuration.addAllowedHeader("*"); // Ustawia na nagłówki, które są dozwolone w żądaniach
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//
+//        return source;
+//    }
+
 }
