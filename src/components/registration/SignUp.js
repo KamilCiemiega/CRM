@@ -12,10 +12,28 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
+const httpAddress = 'http://localhost:8082/users'
+
+const fetchCSRFToken = async () => {
+  try {
+      // const response = await axios.get(`${httpAddress}/csrf-token`);
+      // console.log(response.data.csrfToken);
+      // return response.data.csrfToken;
+      const csrfToken = document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1];
+      console.log(csrfToken);
+      return csrfToken;
+  } catch (error) {
+      console.error('Error while trying to get CSRF token: ', error);
+      throw error; 
+  }
+};
+
+
+const SignUp = () => {
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -43,10 +61,27 @@ export default function SignUp() {
           "Password must contain at least one special character"
         ),
     }),
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      try {
+        const username = "admin";
+        const password = "admin";
+        const token = btoa(`${username}:${password}`);
+        // const csrfToken = await fetchCSRFToken();
+        const response = await axios.post(`${httpAddress}/save`, values ,{
+          headers: {
+            'Authorization': `Basic ${token}`,
+            // "X-XSRF-TOKEN": csrfToken,
+          }
+        });
+        console.log(response.data);
+       
+      } catch (error) {
+        console.error(error);
+       
+      }
     },
   });
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -160,4 +195,6 @@ export default function SignUp() {
       </Container>
     </ThemeProvider>
   );
-}
+};
+
+export default SignUp;

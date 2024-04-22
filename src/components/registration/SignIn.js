@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
-export default function SignIn() {
+const SignIn = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -25,10 +25,6 @@ export default function SignIn() {
     });
   };
 
-  // const props = () => {
-  //   console.log("test");
-    
-  // }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -82,7 +78,7 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link to="/forgetpassword" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
@@ -97,4 +93,6 @@ export default function SignIn() {
       </Container>
     </ThemeProvider>
   );
-}
+};
+
+export default SignIn;
