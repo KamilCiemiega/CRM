@@ -1,8 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import emailCreatorSlice from './emailCreator-slice';
+  import { configureStore } from '@reduxjs/toolkit';
+  import emailCreatorSlice from './emailCreator-slice';
+  import editTextSlice from './editText-slice';
 
-const store = configureStore({
-  reducer: { emailCreator: emailCreatorSlice.reducer },
-});
+  const store = configureStore({
+    reducer: { emailCreator: emailCreatorSlice.reducer, editText: editTextSlice.reducer },
+  });
 
-export default store;
+  export default store;

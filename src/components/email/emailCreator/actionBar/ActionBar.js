@@ -16,7 +16,6 @@ const ActionBar = () => {
 
   const handleFormatColorTextClick = () => {
     setIsEditTextBarOpen(!isEditTextBarOpen);
-    console.log(isEditTextBarOpen);
   };
 
   const handleFileInputChange = (event) => {
@@ -45,9 +44,6 @@ const ActionBar = () => {
           onChange={handleFileInputChange}
         />
         <AttachFile sx={{ cursor: "pointer" }} onClick={() => document.getElementById("fileInput").click()} />
-      </Grid>
-      <Grid item>
-        <AddReaction sx={{cursor: "pointer"}}/>
       </Grid>
       <Grid item>
         <AddPhotoAlternate sx={{cursor: "pointer"}}/>

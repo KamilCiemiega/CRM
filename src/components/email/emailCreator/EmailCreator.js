@@ -1,31 +1,37 @@
-import { useState } from "react";
+import { useDispatch } from 'react-redux';
+import { editTextAction } from "../../store/editText-slice";
 import { Dialog, DialogTitle, Typography, TextField, Box, Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
 import EmailCreatorTheme from "../../../themes/EmailCreatorTheme";
 import ActionBar from "./actionBar/ActionBar";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { Editor } from "draft-js";
 import "../../../style/EmailCreator.css";
+import { emailCreatorAction } from '../../store/emailCreator-slice';
 
 const EmailCreator = () => {
   const openDialog = useSelector((state) => state.emailCreator.openDialog);
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
 
+  const dispatch = useDispatch();
+  const editorState = useSelector(state => state.editText.editorState);
 
-  const handleBoldClick = () => {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, 'BOLD'));
+  const handleEditorChange = (newEditorState) => {
+    dispatch(editTextAction.setEditorState(newEditorState));
   };
+
+  const handleCloseDialog = () => {
+    dispatch(emailCreatorAction.setOpenDialog(false))
+  }
+
   return (
     <ThemeProvider theme={EmailCreatorTheme}>
       <Dialog open={openDialog}>
         <DialogTitle>
-          <Typography component="h8" variant="h8">
+          <Typography component="h6" variant="h6">
             New message
           </Typography>
-          <Close />
+          <Close onClick={handleCloseDialog} sx={{cursor: "pointer"}}/>
         </DialogTitle>
         <Box component="form" noValidate style={{ height: "100%" }}>
           <Box
@@ -81,14 +87,11 @@ const EmailCreator = () => {
             </Typography>
             <TextField fullWidth variant="outlined" style={{ width: "95%" }} />
           </Box>
-          <Button onClick={handleBoldClick}>Bold</Button>
           <Editor
             editorState={editorState}
-            onChange={setEditorState}
+            onChange={handleEditorChange}
             className="editorStyle"
-            
           />
-          ;
           <ActionBar />
         </Box>
       </Dialog>

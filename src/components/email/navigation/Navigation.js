@@ -21,7 +21,6 @@ const Navigation = () => {
   const dispatch = useDispatch();
 
   const handleClick = (index) => {
-    console.log(index);
     if (openItems.includes(index)) {
       setOpenItems(openItems.filter((item) => item !== index));
     } else {
@@ -29,17 +28,12 @@ const Navigation = () => {
     }
     setActiveItem(index);
 
-  
-
     if(index === 2){
       dispatch(
         emailCreatorAction.setOpenDialog(true));
     }
   };
 
-  const openDialogHandler = () => {
-
-  }
 
   const NavigationItem = ({
     icon,
