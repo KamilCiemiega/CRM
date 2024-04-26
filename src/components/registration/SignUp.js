@@ -16,22 +16,21 @@ import axios from "axios";
 
 const defaultTheme = createTheme();
 
-const httpAddress = 'http://localhost:8082/users'
+const httpAddress = "http://localhost:8082/users";
 
 const fetchCSRFToken = async () => {
   try {
-      // const response = await axios.get(`${httpAddress}/csrf-token`);
-      // console.log(response.data.csrfToken);
-      // return response.data.csrfToken;
-      const csrfToken = document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1];
-      console.log(csrfToken);
-      return csrfToken;
+    // const response = await axios.get(`${httpAddress}/csrf-token`);
+    // console.log(response.data.csrfToken);
+    // return response.data.csrfToken;
+    const csrfToken = document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1];
+    console.log(csrfToken);
+    return csrfToken;
   } catch (error) {
-      console.error('Error while trying to get CSRF token: ', error);
-      throw error; 
+    console.error("Error while trying to get CSRF token: ", error);
+    throw error;
   }
 };
-
 
 const SignUp = () => {
   const formik = useFormik({
@@ -67,21 +66,18 @@ const SignUp = () => {
         const password = "admin";
         const token = btoa(`${username}:${password}`);
         // const csrfToken = await fetchCSRFToken();
-        const response = await axios.post(`${httpAddress}/save`, values ,{
+        const response = await axios.post(`${httpAddress}/save`, values, {
           headers: {
-            'Authorization': `Basic ${token}`,
+            Authorization: `Basic ${token}`,
             // "X-XSRF-TOKEN": csrfToken,
-          }
+          },
         });
         console.log(response.data);
-       
       } catch (error) {
         console.error(error);
-       
       }
     },
   });
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -178,7 +174,7 @@ const SignUp = () => {
               fullWidth
               type="submit"
               sx={{
-                marginTop: "3%",
+                mt: 3,
               }}
             >
               Sign Up

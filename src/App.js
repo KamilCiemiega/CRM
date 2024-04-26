@@ -6,6 +6,7 @@ import ForgotPassword from './components/registration/ForgotPassword';
 import EmailMainView from './components/email/EmailMainView';
 
 function App() {
+
   return (
     <Router>
     <Routes>
