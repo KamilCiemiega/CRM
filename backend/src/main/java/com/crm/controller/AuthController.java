@@ -44,12 +44,12 @@ public class AuthController {
     @Transactional
     @PostMapping("/save")
     public ResponseEntity<String> saveUser(@RequestBody User theUser) {
-        String encodedPassword = passwordEncoder.encode(theUser.getPassword());
-        theUser.setPassword(encodedPassword);
-
         authService.save(theUser);
         return ResponseEntity.ok("User saved successfully");
     }
+
+
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id) {
         Optional <User> userOptional = authService.findById(id);
