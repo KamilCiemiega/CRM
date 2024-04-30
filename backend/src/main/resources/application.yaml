@@ -1,13 +1,14 @@
-spring.datasource.url: jdbc:mysql://localhost:3306/crm
-spring.datasource.username: springstudent
-spring.datasource.password: springstudent
-server.port: 8082
-
 spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/crm
+    username: springstudent
+    password: springstudent
   security:
     user.name: admin
     user.password: $2a$12$zrAuUOa7Eezs7ucJFFyJ9OCPz.i8xG.2ED0oHcNjGxlmDCHpVGgLS
-spring.main.banner-mode: off
 
 logging:
   org.springframework: DEBUG
+
+server.port: 8082
+spring.main.banner-mode: off

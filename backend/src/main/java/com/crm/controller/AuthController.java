@@ -1,6 +1,7 @@
 package com.crm.controller;
 
 import com.crm.entity.User;
+import com.crm.exception.UserNotFoundException;
 import com.crm.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -25,11 +27,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-//    @GetMapping("/csrf-token")
-//    public CsrfToken getCsrfToken(CsrfToken token) {
-//        return token;
-//    }
-
     @GetMapping("/login")
     public ResponseEntity<?> loginUser(@RequestParam String email, @RequestParam String password) {
         Optional<User> userOptional = authService.findByEmailAndPassword(email, password);
@@ -42,24 +39,38 @@ public class AuthController {
     }
 
     @Transactional
-    @PostMapping("/save")
+    @PostMapping("/register")
     public ResponseEntity<String> saveUser(@RequestBody User theUser) {
+        String plainPassword = theUser.getPassword();
+        String encodedPassword = passwordEncoder.encode(plainPassword);
+
+        theUser.setPassword(encodedPassword);
+
         authService.save(theUser);
+
         return ResponseEntity.ok("User saved successfully");
     }
 
+    @PostMapping("reset-password")
+    public void resetPassword(@RequestBody String email) {
+        User user = authService.findByEmail(email);
 
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        userRepository.save(user);
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable int id) {
-        Optional <User> userOptional = authService.findById(id);
+        // Wyślij e-mail z linkiem do resetowania hasła
+        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+        String emailBody = "Click the following link to reset your password: " + resetLink;
+        sendEmail(email, "Password Reset", emailBody);
+    }
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    private void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        emailSender.send(message);
     }
 
 }

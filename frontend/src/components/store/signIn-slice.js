@@ -2,7 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
 
 const initialState = {
-    googleCredential: {}
+    googleCredential: {},
+    loggedInUser: {
+      name: "",
+      surname: ""
+    }
 };
 
 const signInSlice = createSlice({
@@ -11,6 +15,10 @@ const signInSlice = createSlice({
     reducers: {
             setGoogleCredentials(state, action){
                 state.googleCredential = action.payload
+            },
+            setLoggedInUserData(state,action){
+              state.loggedInUser.name = action.payload.firstName
+              state.loggedInUser.surname = action.payload.lastName
             }
         }
 });

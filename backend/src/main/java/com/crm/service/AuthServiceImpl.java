@@ -2,6 +2,7 @@ package com.crm.service;
 
 import com.crm.dao.UserRepository;
 import com.crm.entity.User;
+import com.crm.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,6 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public Optional<User> findById(int theId) {
-        return userRepository.findById(theId);
-    }
-
-    @Override
     public Optional<User> findByEmailAndPassword(String email, String password) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
@@ -42,4 +38,11 @@ public class AuthServiceImpl implements AuthService{
         }
         return Optional.empty();
     }
+
+    @Override
+    public User findByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        return userOptional.orElseThrow(() -> new UserNotFoundException(email));
+    }
+
 }

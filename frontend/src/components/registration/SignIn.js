@@ -14,29 +14,43 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
-import { updateGoogleCredentials } from "../store/signIn-slice";
+import { signInAction, updateGoogleCredentials } from "../store/signIn-slice";
 import { Alert } from "@mui/material";
+import axios from "axios";
 
 const defaultTheme = createTheme();
 
 const SignIn = () => {
-  const [closeAlert, setCloseAlert] = useState(true);
+  const [googleError, setGoogleError] = useState(false);
+  const [requestError, setRequestError] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCloseAlert(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
+      setGoogleError(false);
+      setRequestError(false);
+    }, 3000);
 
-  const handleSubmit = (event) => {
+    return () => clearTimeout(timer);
+  }, [googleError, requestError]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const email = data.get("email");
+    const password = data.get("password");
+  
+    try {
+      const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`);
+      const firstName = response.data.firstName;
+      const lastName = response.data.lastName;
+      console.log(firstName, lastName);
+      dispatch(signInAction.setLoggedInUserData({firstName, lastName}))
+    } catch (error) {
+      console.log(error);
+      setRequestError(true);
+    }
   };
 
   const handleGoogleLoginSuccess = (credentialResponse) => {
@@ -44,18 +58,23 @@ const SignIn = () => {
   };
 
   const handleGoogleLoginError = () => {
-    setCloseAlert(true);
+    setGoogleError(true);
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        {closeAlert && (
-        <Alert severity="warning" onClose={() => {setCloseAlert(false)}}>
-          Login with google account failed
-        </Alert>
-      )}
+        {googleError && (
+          <Alert severity="error" onClose={() => setGoogleError(false)}>
+            Login with google account failed
+          </Alert>
+        )}
+        {requestError && (
+          <Alert severity="error" onClose={() => setRequestError(false)}>
+            Error occurred while sending request to localdev
+          </Alert>
+        )}
         <Box
           sx={{
             marginTop: 8,

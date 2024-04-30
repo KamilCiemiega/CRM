@@ -77,10 +77,11 @@
             >
             Reset Password
             </Button>
-            <Link to="/" variant="body2" sx={{ mt: 1}}>
+            <Box sx={{ mt: 2}}>
+            <Link to="/" variant="body2">
                     Back to SignIn
-                    </Link>
-
+            </Link>
+            </Box>
         </Box>
         </Container>
     );

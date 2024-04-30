@@ -6,8 +6,7 @@ import java.util.Optional;
 
 public interface AuthService {
     void save(User theUser);
-
-    Optional <User> findById(int theId);
-
     Optional<User> findByEmailAndPassword(String email, String password);
+
+    User findByEmail(String email);
 }

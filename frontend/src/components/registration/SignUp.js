@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,32 +13,29 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Alert } from "@mui/material";
 
 const defaultTheme = createTheme();
 
-const httpAddress = "http://localhost:8082/users";
-
-const fetchCSRFToken = async () => {
-  try {
-    // const response = await axios.get(`${httpAddress}/csrf-token`);
-    // console.log(response.data.csrfToken);
-    // return response.data.csrfToken;
-    const csrfToken = document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1];
-    console.log(csrfToken);
-    return csrfToken;
-  } catch (error) {
-    console.error("Error while trying to get CSRF token: ", error);
-    throw error;
-  }
-};
-
 const SignUp = () => {
+  const [error, setError] = useState({errMessage: "", openAlert: false}); 
+
+  useEffect(() => {
+    let timer;
+    if (error.openAlert) {
+      timer = setTimeout(() => {
+        setError({errMessage: "", openAlert: false});
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [error.openAlert]);
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
       lastName: "",
-      email: "",
       password: "",
+      email: ""
     },
     validationSchema: yup.object({
       firstName: yup.string().required("FirstName is required"),
@@ -62,19 +59,13 @@ const SignUp = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const username = "admin";
-        const password = "admin";
-        const token = btoa(`${username}:${password}`);
-        // const csrfToken = await fetchCSRFToken();
-        const response = await axios.post(`${httpAddress}/save`, values, {
-          headers: {
-            Authorization: `Basic ${token}`,
-            // "X-XSRF-TOKEN": csrfToken,
-          },
-        });
-        console.log(response.data);
+        const response = await axios.post("http://localdev:8082/api/auth/register", values);
+        
+        if(response.ok){
+          
+        }
       } catch (error) {
-        console.error(error);
+        setError({errMessage: error.message, openAlert: true});
       }
     },
   });
@@ -83,6 +74,11 @@ const SignUp = () => {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        {error.openAlert && (
+          <Alert severity="warning" onClose={() => {setError({errMessage: "", openAlert: false})}}>
+            {error.errMessage}
+          </Alert>
+        )}
         <Box
           sx={{
             marginTop: 8,
@@ -180,7 +176,7 @@ const SignUp = () => {
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">
-              <Grid item>
+              <Grid item sx={{mt: 2}}>
                 <Link to="/" variant="body2">
                   Already have an account? Sign in
                 </Link>
