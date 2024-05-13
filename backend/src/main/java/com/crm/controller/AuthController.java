@@ -1,7 +1,6 @@
 package com.crm.controller;
 
 import com.crm.entity.User;
-import com.crm.exception.UserNotFoundException;
 import com.crm.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -50,27 +48,27 @@ public class AuthController {
 
         return ResponseEntity.ok("User saved successfully");
     }
-
-    @PostMapping("reset-password")
-    public void resetPassword(@RequestBody String email) {
-        User user = authService.findByEmail(email);
-
-        String resetToken = UUID.randomUUID().toString();
-        user.setResetToken(resetToken);
-        userRepository.save(user);
-
-        // Wyślij e-mail z linkiem do resetowania hasła
-        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
-        String emailBody = "Click the following link to reset your password: " + resetLink;
-        sendEmail(email, "Password Reset", emailBody);
-    }
-
-    private void sendEmail(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        emailSender.send(message);
-    }
+//checking
+//    @PostMapping("reset-password")
+//    public void resetPassword(@RequestBody String email) {
+//        User user = authService.findByEmail(email);
+//
+//        String resetToken = UUID.randomUUID().toString();
+//        user.setResetToken(resetToken);
+//        userRepository.save(user);
+//
+//        // Wyślij e-mail z linkiem do resetowania hasła
+//        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+//        String emailBody = "Click the following link to reset your password: " + resetLink;
+//        sendEmail(email, "Password Reset", emailBody);
+//    }
+//
+//    private void sendEmail(String to, String subject, String text) {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo(to);
+//        message.setSubject(subject);
+//        message.setText(text);
+//        emailSender.send(message);
+//    }
 
 }
