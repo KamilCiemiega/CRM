@@ -1,18 +1,21 @@
 package com.crm.controller;
 
 import com.crm.entity.User;
-import com.crm.service.AuthService;
+import com.crm.password.PasswordRequestUtil;
+import com.crm.service.authService.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
+import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -35,40 +38,40 @@ public class AuthController {
             return new ResponseEntity<>("Invalid username or password", HttpStatus.NOT_FOUND);
         }
     }
-
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<String> saveUser(@RequestBody User theUser) {
-        String plainPassword = theUser.getPassword();
-        String encodedPassword = passwordEncoder.encode(plainPassword);
+    public ResponseEntity<?> saveUser(@RequestBody User theUser) {
+        try {
+            String plainPassword = theUser.getPassword();
+            String encodedPassword = passwordEncoder.encode(plainPassword);
+            theUser.setPassword(encodedPassword);
 
-        theUser.setPassword(encodedPassword);
+            authService.save(theUser);
 
-        authService.save(theUser);
-
-        return ResponseEntity.ok("User saved successfully");
+            return ResponseEntity.ok("User saved successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while saving user: " + e.getMessage());
+        }
     }
-//checking
-//    @PostMapping("reset-password")
-//    public void resetPassword(@RequestBody String email) {
-//        User user = authService.findByEmail(email);
-//
-//        String resetToken = UUID.randomUUID().toString();
-//        user.setResetToken(resetToken);
-//        userRepository.save(user);
-//
-//        // Wyślij e-mail z linkiem do resetowania hasła
-//        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
-//        String emailBody = "Click the following link to reset your password: " + resetLink;
-//        sendEmail(email, "Password Reset", emailBody);
-//    }
-//
-//    private void sendEmail(String to, String subject, String text) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(text);
-//        emailSender.send(message);
-//    }
+    @PostMapping("/password-reset")
+    public String resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
+                                       final HttpServletRequest servletRequest) {
+        Optional<User> user = authService.findByEmail(passwordRequestUtil.getEmail());
+        String passwordResetUrl = "";
+        if (user.isPresent()) {
+            String passwordResetToken = UUID.randomUUID().toString();
+            authService.createPasswordResetTokenForUser(user.get(), passwordResetToken);
+            passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(servletRequest), passwordResetToken);
+        }
+        return passwordResetUrl;
 
+    }
+
+    private String passwordResetEmailLink(User user, String applicationUrl, String passwordResetToken) {
+    }
+
+    public String applicationUrl(HttpServletRequest request) {
+        return "http://"+request.getServerName()+":"
+                +request.getServerPort()+request.getContextPath();
+    }
 }
