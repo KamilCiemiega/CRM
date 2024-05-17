@@ -59,14 +59,12 @@ public class PasswordResetToken {
     private User user;
 
     public PasswordResetToken(String token, User user) {
-        super();
         this.token = token;
         this.user = user;
         this.expirationTime = this.getTokenExpirationTime();
     }
 
     public PasswordResetToken(String token) {
-        super();
         this.token = token;
         this.expirationTime = this.getTokenExpirationTime();
     }

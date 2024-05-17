@@ -41,14 +41,14 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 5 
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy6/jdk.proxy6.$Proxy132.findByEmail(Unknown Source)
 	at com.crm.service.AuthServiceImpl.findByEmailAndPassword(AuthServiceImpl.java:32)
-	at com.crm.controller.AuthController.loginUser(AuthController.java:30)
+	at com.crm.controller.UserController.loginUser(AuthController.java:30)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:713)
-	at com.crm.controller.AuthController$$SpringCGLIB$$0.loginUser(<generated>)
+	at com.crm.controller.UserController$$SpringCGLIB$$0.loginUser(<generated>)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -166,14 +166,14 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 5 
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy6/jdk.proxy6.$Proxy132.findByEmail(Unknown Source)
 	at com.crm.service.AuthServiceImpl.findByEmailAndPassword(AuthServiceImpl.java:32)
-	at com.crm.controller.AuthController.loginUser(AuthController.java:30)
+	at com.crm.controller.UserController.loginUser(AuthController.java:30)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:713)
-	at com.crm.controller.AuthController$$SpringCGLIB$$0.loginUser(<generated>)
+	at com.crm.controller.UserController$$SpringCGLIB$$0.loginUser(<generated>)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -291,14 +291,14 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 5 
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy10/jdk.proxy10.$Proxy147.findByEmail(Unknown Source)
 	at com.crm.service.AuthServiceImpl.findByEmailAndPassword(AuthServiceImpl.java:33)
-	at com.crm.controller.AuthController.loginUser(AuthController.java:30)
+	at com.crm.controller.UserController.loginUser(AuthController.java:30)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:713)
-	at com.crm.controller.AuthController$$SpringCGLIB$$0.loginUser(<generated>)
+	at com.crm.controller.UserController$$SpringCGLIB$$0.loginUser(<generated>)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -416,14 +416,14 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 7 
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy13/jdk.proxy13.$Proxy161.findByEmail(Unknown Source)
 	at com.crm.service.AuthServiceImpl.findByEmailAndPassword(AuthServiceImpl.java:33)
-	at com.crm.controller.AuthController.loginUser(AuthController.java:30)
+	at com.crm.controller.UserController.loginUser(AuthController.java:30)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:713)
-	at com.crm.controller.AuthController$$SpringCGLIB$$0.loginUser(<generated>)
+	at com.crm.controller.UserController$$SpringCGLIB$$0.loginUser(<generated>)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -533,14 +533,14 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 8 
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy13/jdk.proxy13.$Proxy161.findByEmail(Unknown Source)
 	at com.crm.service.AuthServiceImpl.findByEmailAndPassword(AuthServiceImpl.java:33)
-	at com.crm.controller.AuthController.loginUser(AuthController.java:30)
+	at com.crm.controller.UserController.loginUser(AuthController.java:30)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:713)
-	at com.crm.controller.AuthController$$SpringCGLIB$$0.loginUser(<generated>)
+	at com.crm.controller.UserController$$SpringCGLIB$$0.loginUser(<generated>)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -650,14 +650,14 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 8 
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy13/jdk.proxy13.$Proxy161.findByEmail(Unknown Source)
 	at com.crm.service.AuthServiceImpl.findByEmailAndPassword(AuthServiceImpl.java:33)
-	at com.crm.controller.AuthController.loginUser(AuthController.java:30)
+	at com.crm.controller.UserController.loginUser(AuthController.java:30)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:713)
-	at com.crm.controller.AuthController$$SpringCGLIB$$0.loginUser(<generated>)
+	at com.crm.controller.UserController$$SpringCGLIB$$0.loginUser(<generated>)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -739,3 +739,48 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 8 
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:833)
+2024-05-16 08:32:06.660 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.crm.password.PasswordResetVerificationEmail required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2024-05-16 09:38:43.404 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.crm.password.PasswordResetVerificationEmail required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
+2024-05-16 17:57:47.275 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.crm.password.PasswordResetVerificationEmail required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+
