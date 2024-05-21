@@ -2,13 +2,10 @@ package com.crm.controller;
 
 import com.crm.entity.User;
 import com.crm.password.PasswordRequestUtil;
-import com.crm.password.PasswordResetVerificationEmail;
-import com.crm.service.UserService;
 import com.crm.service.PasswordResetTokenService;
+import com.crm.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +25,12 @@ public class UserController {
 
     private final PasswordResetTokenService passwordResetTokenService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private final PasswordResetVerificationEmail eventListener;
 
     @Autowired
-    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, BCryptPasswordEncoder passwordEncoder, PasswordResetVerificationEmail eventListener) {
+    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordResetTokenService = passwordResetTokenService;
         this.passwordEncoder = passwordEncoder;
-        this.eventListener = eventListener;
     }
 
     @GetMapping("/login")
@@ -51,13 +45,13 @@ public class UserController {
     }
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<?> saveUser(@RequestBody User theUser) {
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
         try {
-            String plainPassword = theUser.getPassword();
+            String plainPassword = user.getPassword();
             String encodedPassword = passwordEncoder.encode(plainPassword);
-            theUser.setPassword(encodedPassword);
+            user.setPassword(encodedPassword);
 
-            userService.save(theUser);
+            userService.save(user);
 
             return ResponseEntity.ok("User saved successfully");
         } catch (Exception e) {
@@ -65,7 +59,7 @@ public class UserController {
         }
     }
     @PostMapping("/password-reset-request")
-    public String resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
                                        final HttpServletRequest servletRequest)
             throws MessagingException, UnsupportedEncodingException{
         Optional<User> user = userService.findByEmail(passwordRequestUtil.getEmail());
@@ -74,16 +68,16 @@ public class UserController {
             String passwordResetToken = UUID.randomUUID().toString();
             userService.createPasswordResetTokenForUser(user.get(), passwordResetToken);
             passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(servletRequest), passwordResetToken);
+
+            return ResponseEntity.ok("Your token " + passwordResetUrl);
         }
-        return passwordResetUrl;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with that email not found");
 
     }
 
     private String passwordResetEmailLink(User user, String applicationUrl, String passwordResetToken)
             throws MessagingException, UnsupportedEncodingException {
         String url = applicationUrl+"/api/auth/reset-password?token="+ passwordResetToken;
-        eventListener.sendPasswordResetVerificationEmail(url);
-        log.info("Click the link to reset your password :  {}", url);
 
         return url;
     }

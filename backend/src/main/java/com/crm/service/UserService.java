@@ -5,9 +5,9 @@ import com.crm.entity.User;
 import java.util.Optional;
 
 public interface UserService {
-    void save(User theUser);
+    void save(User user);
 
-    void changePassword(User theUser, String newPassword);
+    void changePassword(User user, String newPassword);
     Optional<User> findByEmailAndPassword(String email, String password);
 
     Optional<User> findByEmail(String email);

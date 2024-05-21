@@ -1,12 +1,10 @@
 package com.crm.service.serviceImpl;
 
 import com.crm.dao.PasswordResetTokenRepository;
-import com.crm.dao.UserRepository;
 import com.crm.entity.PasswordResetToken;
 import com.crm.entity.User;
 import com.crm.service.PasswordResetTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -16,13 +14,9 @@ import java.util.Optional;
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
     @Autowired
-    public PasswordResetTokenServiceImpl(PasswordResetTokenRepository passwordResetTokenRepository, BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public PasswordResetTokenServiceImpl(PasswordResetTokenRepository passwordResetTokenRepository) {
         this.passwordResetTokenRepository = passwordResetTokenRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
     }
 
     @Override

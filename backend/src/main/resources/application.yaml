@@ -6,7 +6,6 @@ spring:
   security:
     user.name: admin
     user.password: $2a$12$zrAuUOa7Eezs7ucJFFyJ9OCPz.i8xG.2ED0oHcNjGxlmDCHpVGgLS
-
 logging:
   org.springframework: DEBUG
 
