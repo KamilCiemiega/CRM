@@ -2,7 +2,6 @@ package com.crm.entity;
 
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,10 +10,11 @@ import java.util.Date;
 public class PasswordResetToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger token_id;
+    private Long token_id;
     @Column(name="token" )
     private String token;
     @Column(name="expiration_time")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date expirationTime;
     private static final int EXPIRATION_TIME = 10;
 
@@ -22,11 +22,11 @@ public class PasswordResetToken {
 
     }
 
-    public BigInteger getToken_id() {
+    public Long getToken_id() {
         return token_id;
     }
 
-    public void setToken_id(BigInteger token_id) {
+    public void setToken_id(Long token_id) {
         this.token_id = token_id;
     }
 
@@ -61,11 +61,6 @@ public class PasswordResetToken {
     public PasswordResetToken(String token, User user) {
         this.token = token;
         this.user = user;
-        this.expirationTime = this.getTokenExpirationTime();
-    }
-
-    public PasswordResetToken(String token) {
-        this.token = token;
         this.expirationTime = this.getTokenExpirationTime();
     }
 

@@ -1,11 +1,14 @@
 package com.crm.controller;
 
+import com.crm.entity.Role;
 import com.crm.entity.User;
 import com.crm.password.PasswordRequestUtil;
 import com.crm.service.PasswordResetTokenService;
+import com.crm.service.RoleService;
 import com.crm.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,42 +23,64 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
-
     private final UserService userService;
-
     private final PasswordResetTokenService passwordResetTokenService;
+    private final RoleService roleService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, BCryptPasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, RoleService roleService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordResetTokenService = passwordResetTokenService;
+        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<?> loginUser(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
         Optional<User> userOptional = userService.findByEmailAndPassword(email, password);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            System.out.println("Session ID: " + session.getId());
+            System.out.println("User ID in Session: " + ((User) session.getAttribute("user")).getEmail());
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Invalid username or password", HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("/logout")
+    public ResponseEntity<String> logoutUser(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        System.out.println(session);
+        if (session != null) {
+            session.invalidate();
+            System.out.println(session);
+            return new ResponseEntity<>("Successfully logged out", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No active session", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<?> saveUser(@RequestBody User user) {
+    public ResponseEntity<String> saveUser(@RequestBody User user) {
         try {
             String plainPassword = user.getPassword();
             String encodedPassword = passwordEncoder.encode(plainPassword);
             user.setPassword(encodedPassword);
 
+            Role role = roleService.findById(user)
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            user.setRole(role);
+
             userService.save(user);
 
             return ResponseEntity.ok("User saved successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while saving user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while saving user: " + e.getMessage());
         }
     }
     @PostMapping("/password-reset-request")

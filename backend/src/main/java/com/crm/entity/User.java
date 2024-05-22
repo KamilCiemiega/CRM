@@ -9,7 +9,7 @@ public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Long id;
 
     @Column(name="first_name")
     private String firstName;
@@ -23,17 +23,21 @@ public class User {
     @Column(name="email")
     private String email;
 
+    @ManyToOne
+    @JoinColumn(name="role_id")
+    private Role role;
+
 
     public User() {
 
     }
 
-    public User(String firstName, String lastName, String password, String email) {
+    public User(String firstName, String lastName, String password, String email, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.email = email;
-
+        this.role = role;
     }
 
     public String getFirstName() {
@@ -66,5 +70,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
