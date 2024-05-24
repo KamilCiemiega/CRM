@@ -2,6 +2,8 @@ package com.crm.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 public class User {
@@ -9,7 +11,7 @@ public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private int id;
 
     @Column(name="first_name")
     private String firstName;
@@ -26,6 +28,15 @@ public class User {
     @ManyToOne
     @JoinColumn(name="role_id")
     private Role role;
+
+    @ManyToMany(mappedBy = "users")
+    private List<Client> clients;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
+    private List<Messages> messages;
+
+    @OneToMany(mappedBy = "user")
+    private List<Folder> folders;
 
 
     public User() {
@@ -78,5 +89,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<Client> getClients() {
+        return clients;
+    }
+
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
     }
 }

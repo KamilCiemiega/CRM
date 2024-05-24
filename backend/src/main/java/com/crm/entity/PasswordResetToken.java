@@ -10,7 +10,7 @@ import java.util.Date;
 public class PasswordResetToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long token_id;
+    private int token_id;
     @Column(name="token" )
     private String token;
     @Column(name="expiration_time")
@@ -22,11 +22,11 @@ public class PasswordResetToken {
 
     }
 
-    public Long getToken_id() {
+    public int getToken_id() {
         return token_id;
     }
 
-    public void setToken_id(Long token_id) {
+    public void setToken_id(int token_id) {
         this.token_id = token_id;
     }
 
