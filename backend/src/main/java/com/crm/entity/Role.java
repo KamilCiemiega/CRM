@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class Role {
     private String name;
 
     @OneToMany(mappedBy = "role")
+    @JsonManagedReference
     private Set<User> users = new HashSet<>();
 
     public Role() {

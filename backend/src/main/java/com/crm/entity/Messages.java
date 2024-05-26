@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -32,9 +33,10 @@ public class Messages {
 
     @ManyToOne
     @JoinColumn(name="user_id")
+    @JsonBackReference
     private User user;
 
-    @ManyToMany(mappedBy = "messageFolders")
+    @ManyToMany(mappedBy = "messages")
     private List<Folder> folders;
 
     public Messages() {

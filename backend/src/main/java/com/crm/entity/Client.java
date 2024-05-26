@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class Client {
             joinColumns = @JoinColumn(name = "client_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonBackReference
     private List<User> users;
 
     public Client() {

@@ -2,6 +2,7 @@ package com.crm.service;
 
 import com.crm.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -13,6 +14,8 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     void createPasswordResetTokenForUser(User user, String passwordResetToken);
+
+    List <User> findAllUsers();
 
     Optional<User> findUserByPasswordToken(String passwordResetToken);
 

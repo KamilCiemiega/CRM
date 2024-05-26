@@ -1,6 +1,7 @@
 package com.crm.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class Folder {
 
     @ManyToOne
     @JoinColumn(name="user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -26,7 +28,7 @@ public class Folder {
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
-    private List<MessageFolder> messageFolders;
+    private List<Messages> messages;
 
     public Folder() {}
 

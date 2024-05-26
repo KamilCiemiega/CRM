@@ -10,7 +10,7 @@ public class MessageFolder {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
     private int id;
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name="message_id")
     private Messages message;
 

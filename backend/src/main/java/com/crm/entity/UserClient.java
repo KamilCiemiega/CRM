@@ -3,7 +3,7 @@ package com.crm.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "UserClient")
+@Table(name = "userclient")
 public class UserClient {
 
     @Id
@@ -20,7 +20,9 @@ public class UserClient {
     private Client client;
 
 
-    public UserClient() {}
+    public UserClient() {
+
+    }
 
     public UserClient(User user, Client client) {
         this.user = user;

@@ -2,12 +2,13 @@ package com.crm.service.serviceImpl;
 
 import com.crm.dao.UserRepository;
 import com.crm.entity.User;
-import com.crm.service.UserService;
 import com.crm.service.PasswordResetTokenService;
+import com.crm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,6 +59,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createPasswordResetTokenForUser(User user, String passwordResetToken) {
         passwordResetTokenService.createPasswordResetTokenForUser(user, passwordResetToken);
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override

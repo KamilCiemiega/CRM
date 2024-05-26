@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -127,5 +128,17 @@ public class UserController {
     public String applicationUrl(HttpServletRequest request) {
         return "http://"+request.getServerName()+":"
                 +request.getServerPort()+request.getContextPath();
+    }
+
+
+    @GetMapping("/get-users")
+    public ResponseEntity<?> findUser(){
+        List<User> listOfUser = userService.findAllUsers();
+
+        if(!listOfUser.isEmpty()){
+            return new ResponseEntity<>(listOfUser, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("There is no users in the database", HttpStatus.NOT_FOUND);
+        }
     }
 }
