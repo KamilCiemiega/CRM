@@ -132,7 +132,7 @@ public class UserController {
 
 
     @GetMapping("/get-users")
-    public ResponseEntity<?> findUser(){
+    public ResponseEntity<?> findAllUsers(){
         List<User> listOfUser = userService.findAllUsers();
 
         if(!listOfUser.isEmpty()){
