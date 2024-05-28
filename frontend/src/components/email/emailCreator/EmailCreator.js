@@ -1,7 +1,7 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import { editTextAction } from "../../store/editText-slice";
-import { Dialog, DialogTitle, Typography, TextField, Box, Button } from "@mui/material";
-import { useSelector } from "react-redux";
+import { Dialog, DialogTitle, Typography, TextField, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
 import EmailCreatorTheme from "../../../themes/EmailCreatorTheme";
@@ -9,12 +9,20 @@ import ActionBar from "./actionBar/ActionBar";
 import { Editor } from "draft-js";
 import "../../../style/EmailCreator.css";
 import { emailCreatorAction } from '../../store/emailCreator-slice';
+import FindUserOrClientEmail from './FindUserOrClientEmail';
+import { findUserOrClientEmailAction } from '../../store/findUserOrClientEmail-slice';
 
 const EmailCreator = () => {
   const openDialog = useSelector((state) => state.emailCreator.openDialog);
 
   const dispatch = useDispatch();
   const editorState = useSelector(state => state.editText.editorState);
+  const openToSearchBox = useSelector(state => state.findUserOrClientEmail.openToSearchBox);
+  const openCcSearchBox = useSelector(state => state.findUserOrClientEmail.openCcSearchBox);
+  const toInputValue = useSelector(state => state.findUserOrClientEmail.toInputValue);
+  const ccInputValue = useSelector(state => state.findUserOrClientEmail.ccInputValue);
+
+
 
   const handleEditorChange = (newEditorState) => {
     dispatch(editTextAction.setEditorState(newEditorState));
@@ -23,6 +31,15 @@ const EmailCreator = () => {
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false))
   }
+
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    if (field === "to") {
+        dispatch(findUserOrClientEmailAction.setToInputValue(value));
+    } else if (field === "cc") {
+        dispatch(findUserOrClientEmailAction.setCcInputValue(value));
+    }
+};
 
   return (
     <ThemeProvider theme={EmailCreatorTheme}>
@@ -52,7 +69,10 @@ const EmailCreator = () => {
               variant="outlined"
               placeholder="Enter email address"
               style={{ width: "95%" }}
+              onChange={e => handleInputChange(e, "to")}
+              value={toInputValue}
             />
+            {openToSearchBox && <FindUserOrClientEmail/>}
           </Box>
           <Box
             component="div"
@@ -71,7 +91,10 @@ const EmailCreator = () => {
               variant="outlined"
               placeholder="Enter email address"
               style={{ width: "95%" }}
+              onChange={e => handleInputChange(e, "cc")}
+              value={ccInputValue}
             />
+            {openCcSearchBox && <FindUserOrClientEmail/>}
           </Box>
           <Box
             component="div"

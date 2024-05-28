@@ -10,7 +10,7 @@ function App() {
   return (
     <Router>
     <Routes>
-      <Route exact path="/" element={<SignIn />} />
+      <Route index element={<SignIn />} />
       <Route exact path="/signup" element={<SignUp />} />
       <Route exact path="/forgetpassword" element={<ForgotPassword />} />
       <Route exact path="/emailView" element={<EmailMainView />} />

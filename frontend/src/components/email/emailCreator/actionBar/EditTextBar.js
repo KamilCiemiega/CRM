@@ -4,14 +4,11 @@ import "../../../../style/EditTexBar.css";
 import {
   Undo,
   Redo,
-  FormatSize,
   FormatBold,
   FormatItalic,
   FormatUnderlined,
-  FormatColorText,
   FormatListBulleted,
   FormatListNumbered,
-  Check,
 } from "@mui/icons-material";
 import { editTextAction } from "../../../store/editText-slice";
 

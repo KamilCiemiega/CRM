@@ -1,24 +1,17 @@
 import { useState, useEffect } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Alert } from "@mui/material";
+import { Alert, Button, Avatar, CssBaseline,TextField,Grid,Box,Typography,Container } from "@mui/material";
 
 const defaultTheme = createTheme();
 
 const SignUp = () => {
   const [error, setError] = useState({errMessage: "", openAlert: false}); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     let timer;
@@ -35,7 +28,8 @@ const SignUp = () => {
       firstName: "",
       lastName: "",
       password: "",
-      email: ""
+      email: "",
+      role: 2
     },
     validationSchema: yup.object({
       firstName: yup.string().required("FirstName is required"),
@@ -61,9 +55,10 @@ const SignUp = () => {
       try {
         const response = await axios.post("http://localdev:8082/api/auth/register", values);
         
-        if(response.ok){
-          
+        if(response.status === 200){
+            navigate('/');
         }
+        
       } catch (error) {
         setError({errMessage: error.message, openAlert: true});
       }

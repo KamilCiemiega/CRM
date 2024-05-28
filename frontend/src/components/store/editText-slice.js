@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { EditorState, RichUtils } from "draft-js";
+import { EditorState, RichUtils, convertToRaw } from "draft-js";
 
 const initialState = {
     editorState: EditorState.createEmpty()
@@ -13,27 +13,32 @@ const editTextSlice = createSlice({
             state.editorState = action.payload;
         },
         setBoldText(state){
-            state.editorState = RichUtils.toggleInlineStyle(state.editorState, 'BOLD');
+            const newEditorState = RichUtils.toggleInlineStyle(state.editorState, 'BOLD');
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         },
-        setItlicText(state){
-            state.editorState = RichUtils.toggleInlineStyle(state.editorState, 'ITALIC');
+        setItalicText(state){
+            const newEditorState = RichUtils.toggleInlineStyle(state.editorState, 'ITALIC');
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         },
         setUnderlineText(state){
-            state.editorState = RichUtils.toggleInlineStyle(state.editorState, 'UNDERLINE');
+            const newEditorState = RichUtils.toggleInlineStyle(state.editorState, 'UNDERLINE');
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         },
         setUndo(state) {
             const newEditorState = EditorState.undo(state.editorState);
-            state.editorState = newEditorState;
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         },
         setRedo(state) {
             const newEditorState = EditorState.redo(state.editorState);
-            state.editorState = newEditorState;
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         },
         setBulletList(state) {
-            state.editorState = RichUtils.toggleBlockType(state.editorState, 'unordered-list-item');
+            const newEditorState = RichUtils.toggleBlockType(state.editorState, 'unordered-list-item');
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         },
         setNumberedList(state) {
-            state.editorState = RichUtils.toggleBlockType(state.editorState, 'ordered-list-item');
+            const newEditorState = RichUtils.toggleBlockType(state.editorState, 'ordered-list-item');
+            state.editorState = convertToRaw(newEditorState.getCurrentContent());
         }
     }
 });

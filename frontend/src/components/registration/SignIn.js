@@ -11,7 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { signInAction, updateGoogleCredentials } from "../store/signIn-slice";
@@ -23,6 +23,7 @@ const defaultTheme = createTheme();
 const SignIn = () => {
   const [googleError, setGoogleError] = useState(false);
   const [requestError, setRequestError] = useState(false);
+  const navigate = useNavigate(); 
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -45,8 +46,13 @@ const SignIn = () => {
       const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`);
       const firstName = response.data.firstName;
       const lastName = response.data.lastName;
-      console.log(firstName, lastName);
+      
       dispatch(signInAction.setLoggedInUserData({firstName, lastName}))
+
+      if(response.status === 200){
+        navigate('/emailView');
+      }
+
     } catch (error) {
       console.log(error);
       setRequestError(true);

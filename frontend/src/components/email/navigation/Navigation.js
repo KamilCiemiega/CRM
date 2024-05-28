@@ -12,13 +12,15 @@ import {ExpandMore, ExpandLess, Logout } from "@mui/icons-material";
 import navigationData from "./NavigationSchema";
 import { useDispatch } from "react-redux";
 import { emailCreatorAction } from "../../store/emailCreator-slice";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 const Navigation = () => {
   const [openItems, setOpenItems] = useState([]);
   const [activeItem, setActiveItem] = useState(1);
-  
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClick = (index) => {
     if (openItems.includes(index)) {
@@ -33,6 +35,19 @@ const Navigation = () => {
         emailCreatorAction.setOpenDialog(true));
     }
   };
+
+  const handleLogoutUser = async () => {
+    try{
+      const response = await axios.get("http://localdev:8082/api/auth/logout", {
+        withCredentials: true
+      });
+      if(response.status === 200){
+        navigate('/');
+    }
+    } catch (error){
+      console.log(error.message);
+    }
+  }
 
 
   const NavigationItem = ({
@@ -116,7 +131,7 @@ const Navigation = () => {
         ))}
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", ml: "2%" }}>
-        <Logout sx={{cursor: "pointer"}}/>
+        <Logout sx={{cursor: "pointer"}} onClick={() => handleLogoutUser()}/>
         <Typography component="h8" variant="h8" sx={{ marginLeft: "8px" }}>
           Kamil Ciemięga
         </Typography>

@@ -3,7 +3,6 @@ import { Button, Grid } from "@mui/material";
 import {
   FormatColorText,
   AttachFile,
-  AddReaction,
   AddPhotoAlternate,
 } from "@mui/icons-material";
 import EditTextBar from "./EditTextBar";
