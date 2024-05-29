@@ -35,7 +35,7 @@ const EditTextBar = () => {
         break;
       case "FormatItalic":
         setActiveIcon("FormatItalic");
-        dispatch(editTextAction.setItlicText());
+        dispatch(editTextAction.setItalicText());
         break;
       case "FormatUnderlined":
         setActiveIcon("FormatUnderlined");

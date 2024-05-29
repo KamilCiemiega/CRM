@@ -17,6 +17,8 @@ import { useDispatch } from "react-redux";
 import { signInAction, updateGoogleCredentials } from "../store/signIn-slice";
 import { Alert } from "@mui/material";
 import axios from "axios";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const defaultTheme = createTheme();
 
@@ -36,12 +38,21 @@ const SignIn = () => {
   }, [googleError, requestError]);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    
+  };
 
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-  
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: yup.object({
+      email: yup.string().required("This field can't be empty"),
+      password: yup.string().required("This field can't be empty"),
+    }),
+    onSubmit: async (values) => {
+      const { email, password } = values;
+    
     try {
       const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`);
       const firstName = response.data.firstName;
@@ -54,10 +65,10 @@ const SignIn = () => {
       }
 
     } catch (error) {
-      console.log(error);
       setRequestError(true);
     }
-  };
+    },
+  });
 
   const handleGoogleLoginSuccess = (credentialResponse) => {
     dispatch(updateGoogleCredentials(credentialResponse));
@@ -78,7 +89,7 @@ const SignIn = () => {
         )}
         {requestError && (
           <Alert severity="error" onClose={() => setRequestError(false)}>
-            Error occurred while sending request to localdev
+            Invalid username or password
           </Alert>
         )}
         <Box
@@ -97,7 +108,7 @@ const SignIn = () => {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             noValidate
             sx={{ mt: 1 }}
           >
@@ -108,8 +119,12 @@ const SignIn = () => {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
               autoFocus
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
             />
             <TextField
               margin="normal"
@@ -119,7 +134,11 @@ const SignIn = () => {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

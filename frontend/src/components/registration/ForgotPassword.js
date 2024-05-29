@@ -16,8 +16,9 @@ import {
 import axios from "axios";
 
 const ForgotPassword = () => {
-  const [successMessage, setSuccessMessage] = useState({
+  const [resetPasswordMessage, setResetPasswordMessage] = useState({
     openAlert: false,
+    errorMessage: "",
     successMessage: "",
     redirect: false,
   });
@@ -25,16 +26,17 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     let timer;
-    if (successMessage.openAlert) {
+    if (resetPasswordMessage.openAlert) {
       timer = setTimeout(() => {
-        setSuccessMessage({
+        setResetPasswordMessage({
           openAlert: false,
+          errorMessage: "",
           successMessage: "",
           redirect: true,
         });
       }, 3000);
     }
-    if(successMessage.redirect){
+    if(resetPasswordMessage.redirect){
         navigate('/');
     }
     return () => clearTimeout(timer);
@@ -54,13 +56,16 @@ const ForgotPassword = () => {
           values
         );
         if (response.status === 200) {
-          setSuccessMessage({
+          resetPasswordMessage({
             openAlert: true,
+            errorMessage: "",
             successMessage: "We send you link to reset password on your email",
             redirect: false,
           });
         }
-      } catch (error) {}
+      } catch (error) {
+          console.log(error.response.data);
+      }
     },
   });
 
@@ -78,7 +83,7 @@ const ForgotPassword = () => {
             });
           }}
         >
-          {successMessage.successMessage}
+          {resetPasswordMessage.successMessage}
         </Alert>
       )}
       <Box

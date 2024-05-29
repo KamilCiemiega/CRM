@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
-import { editTextAction } from "../../store/editText-slice";
+import { editTextAction, editorText } from "../../store/editText-slice";
 import { Dialog, DialogTitle, Typography, TextField, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
@@ -11,6 +11,7 @@ import "../../../style/EmailCreator.css";
 import { emailCreatorAction } from '../../store/emailCreator-slice';
 import FindUserOrClientEmail from './FindUserOrClientEmail';
 import { findUserOrClientEmailAction } from '../../store/findUserOrClientEmail-slice';
+import { selectIsBold, selectEditorTextAndStyles } from '../../store/editText-slice';
 
 const EmailCreator = () => {
   const openDialog = useSelector((state) => state.emailCreator.openDialog);
@@ -21,11 +22,12 @@ const EmailCreator = () => {
   const openCcSearchBox = useSelector(state => state.findUserOrClientEmail.openCcSearchBox);
   const toInputValue = useSelector(state => state.findUserOrClientEmail.toInputValue);
   const ccInputValue = useSelector(state => state.findUserOrClientEmail.ccInputValue);
-
-
+  const textWithStyles = useSelector(selectEditorTextAndStyles);
+  
 
   const handleEditorChange = (newEditorState) => {
     dispatch(editTextAction.setEditorState(newEditorState));
+    console.log(textWithStyles);
   };
 
   const handleCloseDialog = () => {
@@ -45,9 +47,7 @@ const EmailCreator = () => {
     <ThemeProvider theme={EmailCreatorTheme}>
       <Dialog open={openDialog}>
         <DialogTitle>
-          <Typography component="h6" variant="h6">
             New message
-          </Typography>
           <Close onClick={handleCloseDialog} sx={{cursor: "pointer"}}/>
         </DialogTitle>
         <Box component="form" noValidate style={{ height: "100%" }}>
@@ -72,7 +72,7 @@ const EmailCreator = () => {
               onChange={e => handleInputChange(e, "to")}
               value={toInputValue}
             />
-            {openToSearchBox && <FindUserOrClientEmail/>}
+            {openToSearchBox &&  <FindUserOrClientEmail/>}
           </Box>
           <Box
             component="div"
@@ -92,9 +92,10 @@ const EmailCreator = () => {
               placeholder="Enter email address"
               style={{ width: "95%" }}
               onChange={e => handleInputChange(e, "cc")}
+              onClick={() => console.log("test")}
               value={ccInputValue}
             />
-            {openCcSearchBox && <FindUserOrClientEmail/>}
+            {openCcSearchBox &&  <FindUserOrClientEmail/>}
           </Box>
           <Box
             component="div"

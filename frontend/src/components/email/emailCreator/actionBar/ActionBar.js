@@ -18,10 +18,10 @@ const ActionBar = () => {
   };
 
   const handleFileInputChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+    setSelectedFile(URL.createObjectURL(event.target.files[0]));
   };
 
-  const handleUploadFile = () => {
+  const handleUploadFile = (event) => {
     console.log("Wgrano plik:", selectedFile);
   };
 
@@ -39,14 +39,12 @@ const ActionBar = () => {
           type="file"
           id="fileInput"
           style={{ display: "none" }}
-          accept=".pdf,.doc,.docx"
+          accept=".pdf,.doc,.docx,.jpg,.png"
           onChange={handleFileInputChange}
         />
         <AttachFile sx={{ cursor: "pointer" }} onClick={() => document.getElementById("fileInput").click()} />
       </Grid>
-      <Grid item>
-        <AddPhotoAlternate sx={{cursor: "pointer"}}/>
-      </Grid>
+      <img src={selectedFile} alt="Wybrany obraz" />
       {isEditTextBarOpen && <EditTextBar />}
     </Grid>
   );

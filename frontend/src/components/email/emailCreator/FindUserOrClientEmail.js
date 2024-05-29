@@ -56,8 +56,16 @@ const FindUserOrClientEmail = () => {
 
       setFilteredUsers(filteredUsers);
       setFilteredClients(filteredClients);
-
-      console.log(filteredClients, filteredUsers);
+      
+      if (filteredUsers.length === 0 && filteredClients.length === 0) {
+        if (openToSearchBox) {
+          dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
+        }
+        if (openCcSearchBox) {
+          dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
+        }
+      }
+      
     } else {
       setFilteredUsers([]);
       setFilteredClients([]);
@@ -69,14 +77,18 @@ const FindUserOrClientEmail = () => {
   }, []);
 
   useEffect(() => {
-    if (toInputValueState) {
-      filterData(toInputValueState);
+    if (users.length > 0 && clients.length > 0) {
+      if (toInputValueState) {
+        filterData(toInputValueState);
+      }
     }
   }, [toInputValueState, users, clients]);
-
+  
   useEffect(() => {
-    if (ccInputValueState) {
-      filterData(ccInputValueState);
+    if (users.length > 0 && clients.length > 0) {
+      if (ccInputValueState) {
+        filterData(ccInputValueState);
+      }
     }
   }, [ccInputValueState, users, clients]);
 

@@ -28,12 +28,11 @@ const findUserOrClientEmailSlice = createSlice({
             state.openCcSearchBox = state.ccInputValue.length > 0;
         },
         setOpenToSearchBox(state,action){
-            state.openToSearchBox = action.payload
+            state.openToSearchBox = action.payload;
         },
         setOpenCcSearchBox(state,action){
-            state.openCcSearchBox = action.payload
+            state.openCcSearchBox = action.payload;
         }
-
     }
 });
 

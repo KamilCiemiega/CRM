@@ -132,7 +132,7 @@ const Navigation = () => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", ml: "2%" }}>
         <Logout sx={{cursor: "pointer"}} onClick={() => handleLogoutUser()}/>
-        <Typography component="h8" variant="h8" sx={{ marginLeft: "8px" }}>
+        <Typography variant="subtitle1" sx={{ marginLeft: "8px" }}>
           Kamil Ciemięga
         </Typography>
       </Box>
