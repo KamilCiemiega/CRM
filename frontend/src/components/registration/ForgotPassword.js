@@ -28,26 +28,32 @@ const ForgotPassword = () => {
     let timer;
     if (resetPasswordMessage.openAlert) {
       timer = setTimeout(() => {
-        setResetPasswordMessage({
+        setResetPasswordMessage((prevState) => ({
+          ...prevState,
           openAlert: false,
           errorMessage: "",
           successMessage: "",
-          redirect: true,
-        });
+        }));
+        if (resetPasswordMessage.successMessage) {
+          setResetPasswordMessage((prevState) => ({
+            ...prevState,
+            redirect: true,
+          }));
+        }
       }, 3000);
     }
-    if(resetPasswordMessage.redirect){
-        navigate('/');
+    if (resetPasswordMessage.redirect) {
+      navigate('/');
     }
     return () => clearTimeout(timer);
-  }, [successMessage.openAlert]);
+  }, [resetPasswordMessage, navigate]);
 
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: yup.object({
-      email: yup.string().required("This field can't be empty"),
+      email: yup.string().required("This field can't be empty").email("Invalid email format"),
     }),
     onSubmit: async (values) => {
       try {
@@ -56,7 +62,7 @@ const ForgotPassword = () => {
           values
         );
         if (response.status === 200) {
-          resetPasswordMessage({
+          setResetPasswordMessage({
             openAlert: true,
             errorMessage: "",
             successMessage: "We send you link to reset password on your email",
@@ -64,7 +70,14 @@ const ForgotPassword = () => {
           });
         }
       } catch (error) {
-          console.log(error.response.data);
+        console.log(error.response.data);
+          setResetPasswordMessage(prevState => ({
+              ...prevState,
+              openAlert:true,
+              errorMessage: error.response.data,
+              successMessage: ""
+          }))
+
       }
     },
   });
@@ -72,18 +85,18 @@ const ForgotPassword = () => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      {successMessage.openAlert && (
+      {resetPasswordMessage.openAlert && (
         <Alert
-          severity="success"
+        severity={resetPasswordMessage.successMessage ? 'success' : 'error'}
           onClose={() => {
-            setSuccessMessage({
+            setResetPasswordMessage({
               openAlert: false,
-              successMessage: "",
-              redirect: true,
+              errorMessage: "",
+              successMessage: ""
             });
           }}
         >
-          {resetPasswordMessage.successMessage}
+          {resetPasswordMessage.successMessage || resetPasswordMessage.errorMessage}
         </Alert>
       )}
       <Box

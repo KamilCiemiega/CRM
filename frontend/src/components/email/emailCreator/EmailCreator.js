@@ -1,17 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
-import { editTextAction, editorText } from "../../store/editText-slice";
+import { editTextAction } from "../../store/editText-slice";
 import { Dialog, DialogTitle, Typography, TextField, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
 import EmailCreatorTheme from "../../../themes/EmailCreatorTheme";
 import ActionBar from "./actionBar/ActionBar";
-import { Editor } from "draft-js";
-import "../../../style/EmailCreator.css";
 import { emailCreatorAction } from '../../store/emailCreator-slice';
 import FindUserOrClientEmail from './FindUserOrClientEmail';
 import { findUserOrClientEmailAction } from '../../store/findUserOrClientEmail-slice';
-import { selectIsBold, selectEditorTextAndStyles } from '../../store/editText-slice';
+import { selectEditorTextAndStyles } from '../../store/editText-slice';
+import TextEditor from './TextEditor';
 
 const EmailCreator = () => {
   const openDialog = useSelector((state) => state.emailCreator.openDialog);
@@ -111,11 +110,7 @@ const EmailCreator = () => {
             </Typography>
             <TextField fullWidth variant="outlined" style={{ width: "95%" }} />
           </Box>
-          <Editor
-            editorState={editorState}
-            onChange={handleEditorChange}
-            className="editorStyle"
-          />
+          <TextEditor />
           <ActionBar />
         </Box>
       </Dialog>

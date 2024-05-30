@@ -2,10 +2,8 @@ import { useState } from "react";
 import { Button, Grid } from "@mui/material";
 import {
   FormatColorText,
-  AttachFile,
-  AddPhotoAlternate,
+  AttachFile
 } from "@mui/icons-material";
-import EditTextBar from "./EditTextBar";
 
 
 const ActionBar = () => {
@@ -45,7 +43,7 @@ const ActionBar = () => {
         <AttachFile sx={{ cursor: "pointer" }} onClick={() => document.getElementById("fileInput").click()} />
       </Grid>
       <img src={selectedFile} alt="Wybrany obraz" />
-      {isEditTextBarOpen && <EditTextBar />}
+      {/* {isEditTextBarOpen && <EditTextBar />} */}
     </Grid>
   );
 };
