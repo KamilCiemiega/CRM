@@ -9,24 +9,20 @@ import ActionBar from "./actionBar/ActionBar";
 import { emailCreatorAction } from '../../store/emailCreator-slice';
 import FindUserOrClientEmail from './FindUserOrClientEmail';
 import { findUserOrClientEmailAction } from '../../store/findUserOrClientEmail-slice';
-import { selectEditorTextAndStyles } from '../../store/editText-slice';
 import TextEditor from './TextEditor';
 
 const EmailCreator = () => {
   const openDialog = useSelector((state) => state.emailCreator.openDialog);
 
   const dispatch = useDispatch();
-  const editorState = useSelector(state => state.editText.editorState);
   const openToSearchBox = useSelector(state => state.findUserOrClientEmail.openToSearchBox);
   const openCcSearchBox = useSelector(state => state.findUserOrClientEmail.openCcSearchBox);
   const toInputValue = useSelector(state => state.findUserOrClientEmail.toInputValue);
   const ccInputValue = useSelector(state => state.findUserOrClientEmail.ccInputValue);
-  const textWithStyles = useSelector(selectEditorTextAndStyles);
   
 
   const handleEditorChange = (newEditorState) => {
     dispatch(editTextAction.setEditorState(newEditorState));
-    console.log(textWithStyles);
   };
 
   const handleCloseDialog = () => {

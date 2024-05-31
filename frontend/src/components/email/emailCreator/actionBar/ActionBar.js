@@ -1,22 +1,26 @@
 import { useState } from "react";
 import { Button, Grid } from "@mui/material";
+import { useDispatch } from "react-redux";
 import {
   FormatColorText,
   AttachFile
 } from "@mui/icons-material";
-
+import EditTextBar from "./EditTextBar";
 
 const ActionBar = () => {
 
   const [isEditTextBarOpen, setIsEditTextBarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const dispatch = useDispatch();
 
   const handleFormatColorTextClick = () => {
     setIsEditTextBarOpen(!isEditTextBarOpen);
   };
 
   const handleFileInputChange = (event) => {
-    setSelectedFile(URL.createObjectURL(event.target.files[0]));
+    if (selectedFile) {
+      dispatch(editTextAction.setAction({ type: "IMAGE", url: selectedFile }));
+    }
   };
 
   const handleUploadFile = (event) => {
@@ -42,8 +46,7 @@ const ActionBar = () => {
         />
         <AttachFile sx={{ cursor: "pointer" }} onClick={() => document.getElementById("fileInput").click()} />
       </Grid>
-      <img src={selectedFile} alt="Wybrany obraz" />
-      {/* {isEditTextBarOpen && <EditTextBar />} */}
+      {isEditTextBarOpen && <EditTextBar />}
     </Grid>
   );
 };
