@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { Editor, EditorState, RichUtils, AtomicBlockUtils } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import "../../../style/TextEditor.css";
@@ -54,6 +54,7 @@ const TextEditor = () => {
       console.log(styledText);
     }
   };
+
 
   return (
     <Box sx={{ height: "65%" }}>

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    action: null,
+    action: null
   };
 
 const editTextSlice = createSlice({
@@ -13,7 +13,7 @@ const editTextSlice = createSlice({
     },
     clearAction(state) {
       state.action = null;
-    },
+    }
   },
 });
 

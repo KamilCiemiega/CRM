@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   Undo,
   Redo,
@@ -14,25 +14,33 @@ import StyledBox from '../../../../style/EditTextBarStyle'
 
 const EditTextBar = () => {
   const dispatch = useDispatch();
+  const [clickedIcon, setClickedIcon] = useState('');
 
   const iconStyle = {
     marginRight: "4px",
     cursor: "pointer",
   };
 
+  const clickedIconStyle = {
+    background: '#bbbbbb',
+    marginRight: "4px",
+    cursor: "pointer",
+  }
+
   const handleClick = (actionType) => {
     dispatch(editTextAction.setAction(actionType));
+    setClickedIcon(actionType);
   };
 
   return (
     <StyledBox>
-      <Undo onClick={() => handleClick("UNDO")} style={iconStyle} />
-      <Redo onClick={() => handleClick("REDO")} style={iconStyle} />
-      <FormatBold onClick={() => handleClick("BOLD")} style={iconStyle} />
-      <FormatItalic onClick={() => handleClick("ITALIC")} style={iconStyle} />
-      <FormatUnderlined onClick={() => handleClick("UNDERLINE")} style={iconStyle} />
-      <FormatListBulleted onClick={() => handleClick("unordered-list-item")} style={iconStyle} />
-      <FormatListNumbered onClick={() => handleClick("ordered-list-item")} style={iconStyle} />
+      <Undo onClick={() => handleClick("UNDO")} style={clickedIcon === 'UNDO' ? clickedIconStyle : iconStyle} />
+      <Redo onClick={() => handleClick("REDO")} style={clickedIcon === 'REDO' ? clickedIconStyle : iconStyle} />
+      <FormatBold onClick={() => handleClick("BOLD")} style={clickedIcon === 'BOLD' ? clickedIconStyle : iconStyle} />
+      <FormatItalic onClick={() => handleClick("ITALIC")} style={clickedIcon === 'ITALIC' ? clickedIconStyle : iconStyle} />
+      <FormatUnderlined onClick={() => handleClick("UNDERLINE")} style={clickedIcon === 'UNDERLINE' ? clickedIconStyle : iconStyle} />
+      <FormatListBulleted onClick={() => handleClick("unordered-list-item")} style={clickedIcon === 'unordered-list-item' ? clickedIconStyle : iconStyle} />
+      <FormatListNumbered onClick={() => handleClick("ordered-list-item")} style={clickedIcon === 'ordered-list-item' ? clickedIconStyle : iconStyle} />
     </StyledBox>
   );
 };

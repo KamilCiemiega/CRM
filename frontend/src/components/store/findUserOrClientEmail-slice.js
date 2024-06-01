@@ -5,7 +5,8 @@ const initialState = {
     toInputValue: '',
     openToSearchBox: false,
     ccInputValue: '',
-    openCcSearchBox: false
+    openCcSearchBox: false,
+    fieldErrorState: {to: false, cc: false}
 }
 
 const findUserOrClientEmailSlice = createSlice({
@@ -32,6 +33,9 @@ const findUserOrClientEmailSlice = createSlice({
         },
         setOpenCcSearchBox(state,action){
             state.openCcSearchBox = action.payload;
+        },
+        setFieldErrorState(state, action) {
+            state.fieldErrorState = action.payload;
         }
     }
 });

@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { Button, Grid } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   FormatColorText,
   AttachFile
 } from "@mui/icons-material";
 import EditTextBar from "./EditTextBar";
+import { findUserOrClientEmailAction } from "../../../store/findUserOrClientEmail-slice";
 
 const ActionBar = () => {
 
   const [isEditTextBarOpen, setIsEditTextBarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const toInputValue = useSelector(state => state.findUserOrClientEmail.toInputValue);
+  const ccInputValue = useSelector(state => state.findUserOrClientEmail.ccInputValue);
+
   const dispatch = useDispatch();
 
   const handleFormatColorTextClick = () => {
@@ -18,14 +22,25 @@ const ActionBar = () => {
   };
 
   const handleFileInputChange = (event) => {
-    if (selectedFile) {
-      dispatch(editTextAction.setAction({ type: "IMAGE", url: selectedFile }));
+    const file = event.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setSelectedFile(url);
+      console.log("File selected with URL:", url);
     }
   };
 
   const handleUploadFile = (event) => {
+    if (!toInputValue && !ccInputValue) {
+        dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: true, cc: true }));
+    } else if (!toInputValue) {
+        dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: true, cc: false }));
+    } else {
+        dispatch(findUserOrClientEmailAction.setFieldErrorState({ cc: true, to: false }));
+    }
+
     console.log("Wgrano plik:", selectedFile);
-  };
+};
 
   return (
 

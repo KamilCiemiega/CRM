@@ -1,49 +1,63 @@
-import { useDispatch, useSelector } from 'react-redux';
-import React from 'react';
-import { editTextAction } from "../../store/editText-slice";
+import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogTitle, Typography, TextField, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
 import EmailCreatorTheme from "../../../themes/EmailCreatorTheme";
 import ActionBar from "./actionBar/ActionBar";
-import { emailCreatorAction } from '../../store/emailCreator-slice';
-import FindUserOrClientEmail from './FindUserOrClientEmail';
-import { findUserOrClientEmailAction } from '../../store/findUserOrClientEmail-slice';
-import TextEditor from './TextEditor';
+import { emailCreatorAction } from "../../store/emailCreator-slice";
+import FindUserOrClientEmail from "./FindUserOrClientEmail";
+import { findUserOrClientEmailAction } from "../../store/findUserOrClientEmail-slice";
+import TextEditor from "./TextEditor";
 
 const EmailCreator = () => {
   const openDialog = useSelector((state) => state.emailCreator.openDialog);
 
   const dispatch = useDispatch();
-  const openToSearchBox = useSelector(state => state.findUserOrClientEmail.openToSearchBox);
-  const openCcSearchBox = useSelector(state => state.findUserOrClientEmail.openCcSearchBox);
-  const toInputValue = useSelector(state => state.findUserOrClientEmail.toInputValue);
-  const ccInputValue = useSelector(state => state.findUserOrClientEmail.ccInputValue);
-  
-
-  const handleEditorChange = (newEditorState) => {
-    dispatch(editTextAction.setEditorState(newEditorState));
-  };
+  const openToSearchBox = useSelector(
+    (state) => state.findUserOrClientEmail.openToSearchBox
+  );
+  const openCcSearchBox = useSelector(
+    (state) => state.findUserOrClientEmail.openCcSearchBox
+  );
+  const toInputValue = useSelector(
+    (state) => state.findUserOrClientEmail.toInputValue
+  );
+  const ccInputValue = useSelector(
+    (state) => state.findUserOrClientEmail.ccInputValue
+  );
+  const [error, setError] = useState(false);
 
   const handleCloseDialog = () => {
-    dispatch(emailCreatorAction.setOpenDialog(false))
-  }
+    dispatch(emailCreatorAction.setOpenDialog(false));
+  };
+  const fieldErrorState = useSelector(state => state.findUserOrClientEmail.fieldErrorState);
 
   const handleInputChange = (e, field) => {
     const value = e.target.value;
     if (field === "to") {
-        dispatch(findUserOrClientEmailAction.setToInputValue(value));
+      dispatch(findUserOrClientEmailAction.setToInputValue(value));
     } else if (field === "cc") {
-        dispatch(findUserOrClientEmailAction.setCcInputValue(value));
+      dispatch(findUserOrClientEmailAction.setCcInputValue(value));
     }
-};
+  };
+
+  useEffect(() => {
+    if(fieldErrorState.to && fieldErrorState.cc){
+      setError(true);
+    }else {
+      setError(false);
+    }
+
+  }, [fieldErrorState])
+  
 
   return (
     <ThemeProvider theme={EmailCreatorTheme}>
       <Dialog open={openDialog}>
         <DialogTitle>
-            New message
-          <Close onClick={handleCloseDialog} sx={{cursor: "pointer"}}/>
+          New message
+          <Close onClick={handleCloseDialog} sx={{ cursor: "pointer" }} />
         </DialogTitle>
         <Box component="form" noValidate style={{ height: "100%" }}>
           <Box
@@ -63,11 +77,13 @@ const EmailCreator = () => {
               fullWidth
               variant="outlined"
               placeholder="Enter email address"
+              error={error}
+              helperText={error && "One of the field must be fill"}
               style={{ width: "95%" }}
-              onChange={e => handleInputChange(e, "to")}
+              onChange={(e) => handleInputChange(e, "to")}
               value={toInputValue}
             />
-            {openToSearchBox &&  <FindUserOrClientEmail/>}
+            {openToSearchBox && <FindUserOrClientEmail />}
           </Box>
           <Box
             component="div"
@@ -85,12 +101,14 @@ const EmailCreator = () => {
               fullWidth
               variant="outlined"
               placeholder="Enter email address"
+              error={error}
+              helperText={error && "One of the field must be fill"}
               style={{ width: "95%" }}
-              onChange={e => handleInputChange(e, "cc")}
+              onChange={(e) => handleInputChange(e, "cc")}
               onClick={() => console.log("test")}
               value={ccInputValue}
             />
-            {openCcSearchBox &&  <FindUserOrClientEmail/>}
+            {openCcSearchBox && <FindUserOrClientEmail />}
           </Box>
           <Box
             component="div"
