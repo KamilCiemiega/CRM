@@ -19,39 +19,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors-> cors.disable())
+                .cors(cors -> cors.disable())
                 .csrf((csrf) -> csrf.disable());
         return http.build();
     }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:3000/emailView"));
-//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//        configuration.setAllowCredentials(true);
-//        configuration.setAllowedHeaders(Arrays.asList("*"));
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }
-
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf((csrf) -> csrf.disable())
-//                .cors(cors -> cors.disable())
-//                .authorizeHttpRequests(
-//                        auth -> auth.requestMatchers("/login", "/register, /logout").permitAll()
-//                                .anyRequest().authenticated()
-//                )
-//                .formLogin(formLogin -> formLogin.disable())
-//                .httpBasic(httpBasic -> httpBasic.disable())
-//                .sessionManagement(session -> session.maximumSessions(1));
-//        return http.build();
-//    }
-
 

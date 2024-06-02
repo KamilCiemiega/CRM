@@ -14,7 +14,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
-import { signInAction, updateGoogleCredentials } from "../store/signIn-slice";
+import { signInAction } from "../store/signIn-slice";
 import { Alert } from "@mui/material";
 import axios from "axios";
 import { useFormik } from "formik";
@@ -23,23 +23,18 @@ import * as yup from "yup";
 const defaultTheme = createTheme();
 
 const SignIn = () => {
-  const [googleError, setGoogleError] = useState(false);
   const [requestError, setRequestError] = useState(false);
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setGoogleError(false);
       setRequestError(false);
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [googleError, requestError]);
+  }, [requestError]);
 
-  const handleSubmit = async (event) => {
-    
-  };
 
   const formik = useFormik({
     initialValues: {
@@ -70,23 +65,11 @@ const SignIn = () => {
     },
   });
 
-  const handleGoogleLoginSuccess = (credentialResponse) => {
-    dispatch(updateGoogleCredentials(credentialResponse));
-  };
-
-  const handleGoogleLoginError = () => {
-    setGoogleError(true);
-  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        {googleError && (
-          <Alert severity="error" onClose={() => setGoogleError(false)}>
-            Login with google account failed
-          </Alert>
-        )}
         {requestError && (
           <Alert severity="error" onClose={() => setRequestError(false)}>
             Invalid username or password
@@ -164,23 +147,6 @@ const SignIn = () => {
                 </Link>
               </Grid>
             </Grid>
-          </Box>
-          <Box
-            component="div"
-            sx={{
-              mt: 5,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography component="span" variant="body2" sx={{ mb: 3 }}>
-              --------------- Or continue with google -----------------
-            </Typography>
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={handleGoogleLoginError}
-            ></GoogleLogin>
           </Box>
         </Box>
       </Container>

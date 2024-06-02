@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import {ExpandMore, ExpandLess, Logout } from "@mui/icons-material";
 import navigationData from "./NavigationSchema";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { emailCreatorAction } from "../../store/emailCreator-slice";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,7 @@ const Navigation = () => {
   const [activeItem, setActiveItem] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loggedInUserCredentials = useSelector(state => state.signIn.loggedInUser);
 
   const handleClick = (index) => {
     if (openItems.includes(index)) {
@@ -41,6 +42,7 @@ const Navigation = () => {
       const response = await axios.get("http://localdev:8082/api/auth/logout", {
         withCredentials: true
       });
+      console.log(response);
       if(response.status === 200){
         navigate('/');
     }
@@ -48,8 +50,17 @@ const Navigation = () => {
       console.log(error.message);
     }
   }
+  async function logout() {
+    const response = await fetch("http://localdev:8082/api/auth/logout", {
+      method: "GET",
+      credentials: "include",
+    });
 
+    if (response.status === 200) {
+      navigate("/");
+    }
 
+  }
   const NavigationItem = ({
     icon,
     primary,
@@ -131,9 +142,9 @@ const Navigation = () => {
         ))}
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", ml: "2%" }}>
-        <Logout sx={{cursor: "pointer"}} onClick={() => handleLogoutUser()}/>
+        <Logout sx={{cursor: "pointer"}} onClick={() => logout()}/>
         <Typography variant="subtitle1" sx={{ marginLeft: "8px" }}>
-          Kamil Ciemięga
+          {loggedInUserCredentials.name} {loggedInUserCredentials.surname}
         </Typography>
       </Box>
     </List>

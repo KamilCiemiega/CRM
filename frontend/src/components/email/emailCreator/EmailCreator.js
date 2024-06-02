@@ -31,26 +31,38 @@ const EmailCreator = () => {
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false));
   };
-  const fieldErrorState = useSelector(state => state.findUserOrClientEmail.fieldErrorState);
+  const handleSendSubtitleValue = (e) => {
+    const value = e.target.value
+    if(value){
+      dispatch(findUserOrClientEmailAction.setSubtitleValue(value));
+    }
+  };
+  const fieldErrorState = useSelector(
+    (state) => state.findUserOrClientEmail.fieldErrorState
+  );
 
   const handleInputChange = (e, field) => {
     const value = e.target.value;
     if (field === "to") {
       dispatch(findUserOrClientEmailAction.setToInputValue(value));
+      if (value) {
+        dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: false }));
+      }
     } else if (field === "cc") {
       dispatch(findUserOrClientEmailAction.setCcInputValue(value));
+      if (value) {
+        dispatch(findUserOrClientEmailAction.setFieldErrorState({ cc: false }));
+      }
     }
   };
 
   useEffect(() => {
-    if(fieldErrorState.to && fieldErrorState.cc){
+    if (fieldErrorState.to && fieldErrorState.cc) {
       setError(true);
-    }else {
+    } else {
       setError(false);
     }
-
-  }, [fieldErrorState])
-  
+  }, [fieldErrorState]);
 
   return (
     <ThemeProvider theme={EmailCreatorTheme}>
@@ -122,7 +134,12 @@ const EmailCreator = () => {
             <Typography variant="subtitle1" style={{ marginRight: "1%" }}>
               Sb:
             </Typography>
-            <TextField fullWidth variant="outlined" style={{ width: "95%" }} />
+            <TextField
+              fullWidth
+              variant="outlined"
+              style={{ width: "95%" }}
+              onChange={(e) => handleSendSubtitleValue(e)}
+            />
           </Box>
           <TextEditor />
           <ActionBar />
