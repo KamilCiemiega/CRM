@@ -11,9 +11,9 @@ function App() {
     <Router>
     <Routes>
       <Route index element={<SignIn />} />
-      <Route exact path="/signup" element={<SignUp />} />
-      <Route exact path="/forgetpassword" element={<ForgotPassword />} />
-      <Route exact path="/emailView" element={<EmailMainView />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgetpassword" element={<ForgotPassword />} />
+      <Route path="/emailView" element={<EmailMainView />} />
     </Routes>
   </Router>
   );

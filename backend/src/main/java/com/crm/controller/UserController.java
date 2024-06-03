@@ -54,12 +54,13 @@ public class UserController {
     @GetMapping("/logout")
     public ResponseEntity<String> logoutUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        System.out.println(session);
         if (session != null) {
+            System.out.println("Session before invalidate: " + session.getId());
             session.invalidate();
-            System.out.println(session);
+            System.out.println("Session invalidated.");
             return new ResponseEntity<>("Successfully logged out", HttpStatus.OK);
         } else {
+            System.out.println("No active session found.");
             return new ResponseEntity<>("No active session", HttpStatus.BAD_REQUEST);
         }
     }

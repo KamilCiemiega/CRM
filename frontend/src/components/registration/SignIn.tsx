@@ -12,18 +12,22 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { signInAction } from "../store/signIn-slice";
 import { Alert } from "@mui/material";
 import axios from "axios";
-import { useFormik } from "formik";
+import { useFormik, FormikHelpers } from "formik";
 import * as yup from "yup";
 
 const defaultTheme = createTheme();
 
-const SignIn = () => {
-  const [requestError, setRequestError] = useState(false);
+interface SignInFormValues {
+  email: string;
+  password: string;
+}
+
+const SignIn: React.FC = () => {
+  const [requestError, setRequestError] = useState<boolean>(false);
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
 
@@ -36,7 +40,7 @@ const SignIn = () => {
   }, [requestError]);
 
 
-  const formik = useFormik({
+  const formik = useFormik<SignInFormValues>({
     initialValues: {
       email: "",
       password: "",
@@ -45,7 +49,7 @@ const SignIn = () => {
       email: yup.string().required("This field can't be empty"),
       password: yup.string().required("This field can't be empty"),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values: SignInFormValues, { setSubmitting }: FormikHelpers<SignInFormValues>) => {
       const { email, password } = values;
     
     try {
@@ -61,6 +65,8 @@ const SignIn = () => {
 
     } catch (error) {
       setRequestError(true);
+    } finally {
+      setSubmitting(false);
     }
     },
   });
@@ -137,12 +143,12 @@ const SignIn = () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link to="/forgetpassword" variant="body2">
+                <Link to="/forgetpassword">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link to="/signup" variant="body2">
+                <Link to="/signup" >
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

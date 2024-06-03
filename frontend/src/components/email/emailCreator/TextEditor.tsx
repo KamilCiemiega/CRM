@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Editor, EditorState, RichUtils, AtomicBlockUtils } from "draft-js";
+import { useState, useEffect } from "react";
+import { Editor, EditorState, RichUtils } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import "../../../style/TextEditor.css";
 import { editTextAction } from "../../store/editText-slice";
 import { selectEditorTextAndStyles } from "./actionBar/SelectEditorTextAndStyles";
+import { RootState } from "../../store";
 
 const TextEditor = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const action = useSelector((state) => state.editText.action);
+  const action = useSelector((state:RootState) => state.editText.action);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const TextEditor = () => {
     }
   }, [action, editorState, dispatch]);
 
-  const handleEditorChange = (newEditorState) => {
+  const handleEditorChange = (newEditorState: EditorState) => {
     setEditorState(newEditorState);
     if (newEditorState) {
       const styledText = selectEditorTextAndStyles(newEditorState);

@@ -25,9 +25,9 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let timer;
+    let timer: number;
     if (resetPasswordMessage.openAlert) {
-      timer = setTimeout(() => {
+      timer = window.setTimeout(() => {
         setResetPasswordMessage((prevState) => ({
           ...prevState,
           openAlert: false,
@@ -69,15 +69,29 @@ const ForgotPassword = () => {
             redirect: false,
           });
         }
-      } catch (error) {
-        console.log(error.response.data);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
           setResetPasswordMessage(prevState => ({
-              ...prevState,
-              openAlert:true,
-              errorMessage: error.response.data,
-              successMessage: ""
-          }))
-
+            ...prevState,
+            openAlert: true,
+            errorMessage: error.response?.data || "An error occurred",
+            successMessage: ""
+          }));
+        } else if (error instanceof Error) {
+          setResetPasswordMessage(prevState => ({
+            ...prevState,
+            openAlert: true,
+            errorMessage: error.message,
+            successMessage: ""
+          }));
+        } else {
+          setResetPasswordMessage(prevState => ({
+            ...prevState,
+            openAlert: true,
+            errorMessage: "An unknown error occurred",
+            successMessage: ""
+          }));
+        }
       }
     },
   });
@@ -89,11 +103,12 @@ const ForgotPassword = () => {
         <Alert
         severity={resetPasswordMessage.successMessage ? 'success' : 'error'}
           onClose={() => {
-            setResetPasswordMessage({
+            setResetPasswordMessage(prevState => ({
+              ...prevState,
               openAlert: false,
               errorMessage: "",
               successMessage: ""
-            });
+            }));
           }}
         >
           {resetPasswordMessage.successMessage || resetPasswordMessage.errorMessage}
@@ -149,7 +164,7 @@ const ForgotPassword = () => {
           Reset Password
         </Button>
         <Box sx={{ mt: 2 }}>
-          <Link to="/" variant="body2">
+          <Link to="/" >
             Back to SignIn
           </Link>
         </Box>

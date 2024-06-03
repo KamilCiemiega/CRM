@@ -1,4 +1,4 @@
-import { useState, cloneElement } from "react";
+import { useState, cloneElement, ReactElement } from "react";
 import {
   ListItemIcon,
   ListItemText,
@@ -14,16 +14,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { emailCreatorAction } from "../../store/emailCreator-slice";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { RootState } from "../../store";
 
 const Navigation = () => {
-  const [openItems, setOpenItems] = useState([]);
+  const [openItems, setOpenItems] = useState<number[]>([]);
   const [activeItem, setActiveItem] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const loggedInUserCredentials = useSelector(state => state.signIn.loggedInUser);
+  const loggedInUserCredentials = useSelector((state: RootState) => state.signIn.loggedInUser);
 
-  const handleClick = (index) => {
+  const handleClick = (index: number) => {
     if (openItems.includes(index)) {
       setOpenItems(openItems.filter((item) => item !== index));
     } else {
@@ -46,22 +46,38 @@ const Navigation = () => {
       if(response.status === 200){
         navigate('/');
     }
-    } catch (error){
-      console.log(error.message);
+    } catch (error: unknown){
+
+        if (axios.isAxiosError(error)) {
+          console.log(error.message);
+        } else if (error instanceof Error) {
+          console.log(error.message);
+        }
     }
   }
-  async function logout() {
-    const response = await fetch("http://localdev:8082/api/auth/logout", {
-      method: "GET",
-      credentials: "include",
-    });
+  // async function logout() {
+  //   const response = await fetch("http://localdev:8082/api/auth/logout", {
+  //     method: "GET",
+  //     credentials: "include",
+  //   });
 
-    if (response.status === 200) {
-      navigate("/");
-    }
+  //   if (response.status === 200) {
+  //     navigate("/");
+  //   }
 
+  // }
+
+  interface NavigationItemProps {
+    icon: ReactElement;
+    primary: string;
+    index: number;
+    openItems: number[];
+    activeItem: number;
+    handleClick: (index: number) => void;
+    collapseItems: { index: number; icon: ReactElement; primary: string }[];
   }
-  const NavigationItem = ({
+
+  const NavigationItem: React.FC<NavigationItemProps> = ({
     icon,
     primary,
     index,
@@ -142,7 +158,7 @@ const Navigation = () => {
         ))}
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", ml: "2%" }}>
-        <Logout sx={{cursor: "pointer"}} onClick={() => logout()}/>
+        <Logout sx={{cursor: "pointer"}} onClick={() => handleLogoutUser()}/>
         <Typography variant="subtitle1" sx={{ marginLeft: "8px" }}>
           {loggedInUserCredentials.name} {loggedInUserCredentials.surname}
         </Typography>

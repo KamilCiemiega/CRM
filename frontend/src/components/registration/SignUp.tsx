@@ -14,9 +14,9 @@ const SignUp = () => {
   const navigate = useNavigate(); 
 
   useEffect(() => {
-    let timer;
+    let timer: number;
     if (error.openAlert) {
-      timer = setTimeout(() => {
+      timer = window.setTimeout(() => {
         setError({errMessage: "", openAlert: false});
       }, 3000);
     }
@@ -59,9 +59,17 @@ const SignUp = () => {
             navigate('/');
         }
         
-      } catch (error) {
-        setError({errMessage: error.message, openAlert: true});
-      }
+      } catch (error: unknown) {
+        let errorMessage = "An unknown error occurred";
+        if (axios.isAxiosError(error)) {
+        
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          
+          errorMessage = error.message;
+        }
+        setError({ errMessage: errorMessage, openAlert: true });
+      } 
     },
   });
 
@@ -172,7 +180,7 @@ const SignUp = () => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item sx={{mt: 2}}>
-                <Link to="/" variant="body2">
+                <Link to="/" >
                   Already have an account? Sign in
                 </Link>
               </Grid>

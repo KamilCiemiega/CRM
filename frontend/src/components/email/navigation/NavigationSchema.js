@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import {
     Inbox,
     Drafts,
@@ -13,6 +14,20 @@ import {
     Clear,
     DeleteForever
   } from "@mui/icons-material";
+
+  // interface NavigationItem {
+  //   icon: ReactElement;
+  //   primary: string;
+  //   index: number;
+  //   collapseItems: CollapseItem[];
+  // }
+  
+  // interface CollapseItem {
+  //   icon: ReactElement;
+  //   primary: string;
+  //   index: number;
+  // }
+
 
 const navigationData = [
     { 
