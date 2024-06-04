@@ -1,14 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
-    action: null
+
+type ActionType = {
+  action: string | null
+}
+
+const initialState: ActionType = {
+    action: null 
   };
 
 const editTextSlice = createSlice({
   name: "editText",
   initialState,
   reducers: {
-    setAction(state, action) {
+    setAction(state, action: PayloadAction<string>) {
       state.action = action.payload;
     },
     clearAction(state) {

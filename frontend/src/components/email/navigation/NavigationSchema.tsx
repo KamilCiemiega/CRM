@@ -15,21 +15,21 @@ import {
     DeleteForever
   } from "@mui/icons-material";
 
-  // interface NavigationItem {
-  //   icon: ReactElement;
-  //   primary: string;
-  //   index: number;
-  //   collapseItems: CollapseItem[];
-  // }
+  interface NavigationItem {
+    icon: ReactElement;
+    primary: string;
+    index: number;
+    collapseItems: CollapseItem[];
+  }
   
-  // interface CollapseItem {
-  //   icon: ReactElement;
-  //   primary: string;
-  //   index: number;
-  // }
+  interface CollapseItem {
+    icon: ReactElement;
+    primary: string;
+    index: number;
+  }
 
 
-const navigationData = [
+const navigationData: NavigationItem[] = [
     { 
       icon: <Inbox />, 
       primary: "Inbox", 

@@ -2,29 +2,40 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography, Badge } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import StyledTypography from "../../../style/FindUserOrClientEmailStyle";
 import { findUserOrClientEmailAction } from "../../store/findUserOrClientEmail-slice";
+import { RootState } from "../../store";
+
+type UserAndClient = {
+  firstName: string;
+  lastName: string;
+  password: string;
+  email: string;
+  clients: string[];
+  messages: string[];
+  folders: string [];
+}
+
 
 const FindUserOrClientEmail = () => {
-  const [users, setUsers] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
+  const [users, setUsers] = useState<UserAndClient[]>([]);
+  const [clients, setClients] = useState<UserAndClient[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserAndClient[]>([]);
+  const [filteredClients, setFilteredClients] = useState<UserAndClient[]>([]);
   const dispatch = useDispatch();
   const toInputValueState = useSelector(
-    state => state.findUserOrClientEmail.toInputValue
+    (state: RootState) => state.findUserOrClientEmail.toInputValue
   );
   const ccInputValueState = useSelector(
-    state => state.findUserOrClientEmail.ccInputValue
+    (state: RootState) => state.findUserOrClientEmail.ccInputValue
   );
   const openCcSearchBox = useSelector(
-    state => state.findUserOrClientEmail.openCcSearchBox
+    (state: RootState) => state.findUserOrClientEmail.openCcSearchBox
   );
   const openToSearchBox = useSelector(
-    state => state.findUserOrClientEmail.openToSearchBox
+    (state: RootState) => state.findUserOrClientEmail.openToSearchBox
   );
-
 
   const handleEmail = async () => {
     try {
@@ -37,12 +48,17 @@ const FindUserOrClientEmail = () => {
 
       setUsers(usersResponse.data);
       setClients(clientsResponse.data);
-    } catch (error) {
-      console.log(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }else if(axios.isAxiosError(error)){
+        console.log(error.message);
+      }
+      
     }
   };
 
-  const filterData = (inputValue) => {
+  const filterData = (inputValue: string) => {
     if (inputValue.length > 0) {
       const lowerCaseInput = inputValue.toLowerCase();
 
@@ -92,7 +108,7 @@ const FindUserOrClientEmail = () => {
     }
   }, [ccInputValueState, users, clients]);
 
-  const onClickHandler = (email) => {
+  const onClickHandler = (email: string) => {
     if(openToSearchBox){
       dispatch(findUserOrClientEmailAction.setToInputValue(email));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
@@ -117,7 +133,6 @@ const FindUserOrClientEmail = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
-        padding: "8px",
         zIndex: 1,
         padding: "1px",
       }}
@@ -132,9 +147,9 @@ const FindUserOrClientEmail = () => {
               Users:
             </Typography>
           </Box>
-          {filteredUsers.map((user) => (
+          {filteredUsers.map((user, i) => (
             <StyledTypography
-              key={user.id}
+              key={i}
               onClick={() => onClickHandler(user.email)}
             >
               {user.email}
@@ -150,10 +165,10 @@ const FindUserOrClientEmail = () => {
               Clients:
             </Typography>
           </Box>
-          {filteredClients.map((client) => (
+          {filteredClients.map((client, i) => (
             <StyledTypography
               onClick={() => onClickHandler(client.email)}
-              key={client.id}
+              key={i}
             >
               {client.email}
             </StyledTypography>

@@ -54,8 +54,8 @@ const SignIn: React.FC = () => {
     
     try {
       const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`);
-      const firstName = response.data.firstName;
-      const lastName = response.data.lastName;
+      const firstName: string = response.data.firstName;
+      const lastName: string = response.data.lastName;
       
       dispatch(signInAction.setLoggedInUserData({firstName, lastName}))
 

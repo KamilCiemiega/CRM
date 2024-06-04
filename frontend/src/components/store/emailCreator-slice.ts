@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 const initialState = {
@@ -9,7 +9,7 @@ const emailCreatorSlice = createSlice({
     name: "emailCreator",
     initialState,
     reducers: {
-        setOpenDialog(state, action){
+        setOpenDialog(state, action: PayloadAction<boolean>){
             state.openDialog = action.payload
         }
     }

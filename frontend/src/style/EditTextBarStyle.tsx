@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Box) ({
     height: '60px',
     background: 'white',
     position: 'absolute',
@@ -13,7 +13,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
     justifyContent: 'flex-start',
     padding: '8px',
     zIndex: '1'
-}));
+}) as typeof Box;
 
 
 export default StyledBox ;

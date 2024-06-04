@@ -1,4 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface UserData {
+  firstName: string;
+  lastName: string;
+}
 
 const initialState = {
     loggedInUser: {
@@ -11,7 +16,7 @@ const signInSlice = createSlice({
     name: "signIn",
     initialState,
     reducers: {
-            setLoggedInUserData(state,action){
+            setLoggedInUserData(state,action: PayloadAction<UserData>){
               state.loggedInUser.name = action.payload.firstName
               state.loggedInUser.surname = action.payload.lastName
             }

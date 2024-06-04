@@ -58,7 +58,7 @@ const TextEditor = () => {
 
 
   return (
-    <Box sx={{ height: "65%" }}>
+    <Box sx={{ height: "59%" }}>
       <Editor 
         editorState={editorState} 
         onChange={handleEditorChange}

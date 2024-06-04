@@ -9,39 +9,40 @@ import { emailCreatorAction } from "../../store/emailCreator-slice";
 import FindUserOrClientEmail from "./FindUserOrClientEmail";
 import { findUserOrClientEmailAction } from "../../store/findUserOrClientEmail-slice";
 import TextEditor from "./TextEditor";
+import { AppDispatch, RootState } from "../../store";
 
 const EmailCreator = () => {
-  const openDialog = useSelector((state) => state.emailCreator.openDialog);
+  const openDialog = useSelector((state: RootState) => state.emailCreator.openDialog);
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const openToSearchBox = useSelector(
-    (state) => state.findUserOrClientEmail.openToSearchBox
+    (state:RootState) => state.findUserOrClientEmail.openToSearchBox
   );
   const openCcSearchBox = useSelector(
-    (state) => state.findUserOrClientEmail.openCcSearchBox
+    (state:RootState) => state.findUserOrClientEmail.openCcSearchBox
   );
   const toInputValue = useSelector(
-    (state) => state.findUserOrClientEmail.toInputValue
+    (state:RootState) => state.findUserOrClientEmail.toInputValue
   );
   const ccInputValue = useSelector(
-    (state) => state.findUserOrClientEmail.ccInputValue
+    (state:RootState) => state.findUserOrClientEmail.ccInputValue
   );
   const [error, setError] = useState(false);
 
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false));
   };
-  const handleSendSubtitleValue = (e) => {
+  const handleSendSubtitleValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value
     if(value){
       dispatch(findUserOrClientEmailAction.setSubtitleValue(value));
     }
   };
   const fieldErrorState = useSelector(
-    (state) => state.findUserOrClientEmail.fieldErrorState
+    (state:RootState) => state.findUserOrClientEmail.fieldErrorState
   );
 
-  const handleInputChange = (e, field) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     const value = e.target.value;
     if (field === "to") {
       dispatch(findUserOrClientEmailAction.setToInputValue(value));
@@ -117,7 +118,6 @@ const EmailCreator = () => {
               helperText={error && "One of the field must be fill"}
               style={{ width: "95%" }}
               onChange={(e) => handleInputChange(e, "cc")}
-              onClick={() => console.log("test")}
               value={ccInputValue}
             />
             {openCcSearchBox && <FindUserOrClientEmail />}
