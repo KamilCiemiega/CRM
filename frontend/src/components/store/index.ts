@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import emailCreatorSlice from "./emailCreator-slice";
-import editTextReducer from "./editText-slice";
-import signInSlice from "./signIn-slice";
-import findUserOrClientEmailSlice from "./findUserOrClientEmail-slice";
+import emailCreatorSlice from "./slices/emailSlices/emailCreator-slice";
+import editTextReducer from "./slices/emailSlices/editText-slice";
+import signInSlice from "./slices/authSlices/signIn-slice";
+import findUserOrClientEmailSlice from "./slices/emailSlices/findUserOrClientEmail-slice";
 
 const store = configureStore({
   reducer: {

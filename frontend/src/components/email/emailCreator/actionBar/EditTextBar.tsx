@@ -9,7 +9,7 @@ import {
   FormatListNumbered,
 } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
-import { editTextAction } from "../../../store/editText-slice";
+import { editTextAction } from "../../../store/slices/emailSlices/editText-slice";
 import StyledBox from '../../../../style/EditTextBarStyle'
 
 const EditTextBar = () => {
@@ -27,7 +27,7 @@ const EditTextBar = () => {
     cursor: "pointer",
   }
 
-  const handleClick = (actionType) => {
+  const handleClick = (actionType: string) => {
     dispatch(editTextAction.setAction(actionType));
     setClickedIcon(actionType);
   };

@@ -5,9 +5,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
 import EmailCreatorTheme from "../../../themes/EmailCreatorTheme";
 import ActionBar from "./actionBar/ActionBar";
-import { emailCreatorAction } from "../../store/emailCreator-slice";
+import { emailCreatorAction } from "../../store/slices/emailSlices/emailCreator-slice";
 import FindUserOrClientEmail from "./FindUserOrClientEmail";
-import { findUserOrClientEmailAction } from "../../store/findUserOrClientEmail-slice";
+import { findUserOrClientEmailAction } from "../../store/slices/emailSlices/findUserOrClientEmail-slice";
 import TextEditor from "./TextEditor";
 import { AppDispatch, RootState } from "../../store";
 

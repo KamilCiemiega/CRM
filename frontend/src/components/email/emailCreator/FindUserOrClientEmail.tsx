@@ -4,8 +4,9 @@ import PersonIcon from "@mui/icons-material/Person";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import StyledTypography from "../../../style/FindUserOrClientEmailStyle";
-import { findUserOrClientEmailAction } from "../../store/findUserOrClientEmail-slice";
+import { findUserOrClientEmailAction } from "../../store/slices/emailSlices/findUserOrClientEmail-slice";
 import { RootState } from "../../store";
+import { fetchUserAndClientData } from "../../store/thunks/fetchUserAndClientData";
 
 type UserAndClient = {
   firstName: string;
@@ -37,26 +38,6 @@ const FindUserOrClientEmail = () => {
     (state: RootState) => state.findUserOrClientEmail.openToSearchBox
   );
 
-  const handleEmail = async () => {
-    try {
-      const usersResponse = await axios.get(
-        "http://localdev:8082/api/auth/get-users"
-      );
-      const clientsResponse = await axios.get(
-        "http://localdev:8082/api/client/get-clients"
-      );
-
-      setUsers(usersResponse.data);
-      setClients(clientsResponse.data);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }else if(axios.isAxiosError(error)){
-        console.log(error.message);
-      }
-      
-    }
-  };
 
   const filterData = (inputValue: string) => {
     if (inputValue.length > 0) {
@@ -89,8 +70,8 @@ const FindUserOrClientEmail = () => {
   };
 
   useEffect(() => {
-    handleEmail();
-  }, []);
+     dispatch(fetchUserAndClientData());
+  }, [dispatch]);
 
   useEffect(() => {
     if (users.length > 0 && clients.length > 0) {

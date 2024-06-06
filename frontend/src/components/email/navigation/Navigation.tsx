@@ -11,7 +11,7 @@ import {
 import {ExpandMore, ExpandLess, Logout } from "@mui/icons-material";
 import navigationData from "./NavigationSchema";
 import { useDispatch, useSelector } from "react-redux";
-import { emailCreatorAction } from "../../store/emailCreator-slice";
+import { emailCreatorAction } from "../../store/slices/emailSlices/emailCreator-slice";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../store";

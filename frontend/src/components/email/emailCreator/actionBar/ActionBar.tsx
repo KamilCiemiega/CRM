@@ -1,20 +1,21 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Button, Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { FormatColorText, AttachFile } from "@mui/icons-material";
 import EditTextBar from "./EditTextBar";
-import { findUserOrClientEmailAction } from "../../../store/findUserOrClientEmail-slice";
+import { findUserOrClientEmailAction } from "../../../store/slices/emailSlices/findUserOrClientEmail-slice";
 import {Badge} from "@mui/material";
+import { RootState } from "../../../store";
 
 const ActionBar = () => {
   const [isEditTextBarOpen, setIsEditTextBarOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadFileCounter, setUploadFileCounter] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<string>('');
+  const [uploadFileCounter, setUploadFileCounter] = useState<number>(0);
   const toInputValue = useSelector(
-    (state) => state.findUserOrClientEmail.toInputValue
+    (state: RootState) => state.findUserOrClientEmail.toInputValue
   );
   const ccInputValue = useSelector(
-    (state) => state.findUserOrClientEmail.ccInputValue
+    (state: RootState) => state.findUserOrClientEmail.ccInputValue
   );
 
   const dispatch = useDispatch();
@@ -22,8 +23,8 @@ const ActionBar = () => {
     setIsEditTextBarOpen(!isEditTextBarOpen);
   };
 
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
       setSelectedFile(url);
@@ -44,7 +45,7 @@ const ActionBar = () => {
     }
   };
 
-  const handleSendData = (e) => {
+  const handleSendData = () => {
     handleFieldValidation();
 
 
@@ -80,7 +81,7 @@ const ActionBar = () => {
         <Badge badgeContent={uploadFileCounter} color="success">
         <AttachFile
           sx={{ cursor: "pointer" }}
-          onClick={() => document.getElementById("fileInput").click()}
+          onClick={() => document.getElementById("fileInput")!.click()}
         />
         </Badge>
       </Grid>

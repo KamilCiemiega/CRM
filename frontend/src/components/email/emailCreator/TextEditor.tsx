@@ -3,7 +3,7 @@ import { Editor, EditorState, RichUtils } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import "../../../style/TextEditor.css";
-import { editTextAction } from "../../store/editText-slice";
+import { editTextAction } from "../../store/slices/emailSlices/editText-slice";
 import { selectEditorTextAndStyles } from "./actionBar/SelectEditorTextAndStyles";
 import { RootState } from "../../store";
 

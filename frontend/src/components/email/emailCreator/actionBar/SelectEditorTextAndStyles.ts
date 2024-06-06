@@ -1,10 +1,15 @@
-import { convertToRaw } from "draft-js";
+import { convertToRaw, EditorState } from "draft-js";
 
 
-export const selectEditorTextAndStyles = (editorState) => {
+type StyledText = {
+    text: string;
+    styles: string[];
+};
+
+export const selectEditorTextAndStyles = (editorState: EditorState) => {
     const content = editorState.getCurrentContent();
     const rawContent = convertToRaw(content);
-    let styledText = [];
+    let styledText: StyledText[] = [];
 
     rawContent.blocks.forEach(block => {
         let blockText = block.text;

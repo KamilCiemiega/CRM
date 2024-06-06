@@ -5,13 +5,36 @@ interface FieldErrorState {
     cc: boolean;
   }
 
-const initialState = {
+  interface UserAndClient {
+    firstName: string;
+    lastName: string;
+    password: string;
+    email: string;
+    clients: string[];
+    messages: string[];
+    folders: string [];
+  }
+
+  interface State {
+    toInputValue: string;
+    openToSearchBox: boolean;
+    ccInputValue: string;
+    openCcSearchBox: boolean;
+    fieldErrorState: FieldErrorState;
+    subtitleValue: string;
+    users: UserAndClient[];
+    clients: UserAndClient[];
+  }
+
+const initialState: State = {
     toInputValue: '',
     openToSearchBox: false,
     ccInputValue: '',
     openCcSearchBox: false,
     fieldErrorState: {to: false, cc: false},
-    subtitleValue: ''
+    subtitleValue: '',
+    users: [],
+    clients: []
 }
 
 const findUserOrClientEmailSlice = createSlice({
@@ -44,6 +67,12 @@ const findUserOrClientEmailSlice = createSlice({
         },
         setSubtitleValue(state, action: PayloadAction<string>){
             state.subtitleValue = action.payload;
+        },
+        setUsers(state, action: PayloadAction<UserAndClient[]>) {
+            state.users = action.payload;
+        },
+        setClients(state, action: PayloadAction<UserAndClient[]>) {
+            state.clients = action.payload;
         }
     }
 });

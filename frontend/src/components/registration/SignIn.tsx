@@ -13,7 +13,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { signInAction } from "../store/signIn-slice";
+import { signInAction } from "../store/slices/authSlices/signIn-slice";
 import { Alert } from "@mui/material";
 import axios from "axios";
 import { useFormik, FormikHelpers } from "formik";
