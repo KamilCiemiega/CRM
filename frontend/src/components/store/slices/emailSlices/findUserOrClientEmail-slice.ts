@@ -1,19 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserAndClient } from "../../../../interfaces/UserAndClient";
 
 interface FieldErrorState {
     to: boolean;
     cc: boolean;
-  }
-
-  interface UserAndClient {
-    firstName: string;
-    lastName: string;
-    password: string;
-    email: string;
-    clients: string[];
-    messages: string[];
-    folders: string [];
-  }
+}
 
   interface State {
     toInputValue: string;

@@ -1,30 +1,27 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography, Badge } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import StyledTypography from "../../../style/FindUserOrClientEmailStyle";
-import { findUserOrClientEmailAction } from "../../store/slices/emailSlices/findUserOrClientEmail-slice";
-import { RootState } from "../../store";
-import { fetchUserAndClientData } from "../../store/thunks/fetchUserAndClientData";
-
-type UserAndClient = {
-  firstName: string;
-  lastName: string;
-  password: string;
-  email: string;
-  clients: string[];
-  messages: string[];
-  folders: string [];
-}
+import StyledTypography from "../../../../style/FindUserOrClientEmailStyle";
+import { findUserOrClientEmailAction } from "../../../store/slices/emailSlices/findUserOrClientEmail-slice";
+import { RootState } from "../../../store";
+import { fetchUserAndClientData } from "../../../store/thunks/fetchUserAndClientData";
+import { AppDispatch } from "../../../store";
+import RenderBox from "../../../../style/RenderBox";
+import { filterData } from "./filterData";
+import { UserAndClient } from "../../../../interfaces/UserAndClient";
 
 
 const FindUserOrClientEmail = () => {
-  const [users, setUsers] = useState<UserAndClient[]>([]);
-  const [clients, setClients] = useState<UserAndClient[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserAndClient[]>([]);
   const [filteredClients, setFilteredClients] = useState<UserAndClient[]>([]);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const users = useSelector(
+    (state: RootState) => state.findUserOrClientEmail.users
+  );
+  const clients = useSelector(
+    (state: RootState) => state.findUserOrClientEmail.clients
+  );
   const toInputValueState = useSelector(
     (state: RootState) => state.findUserOrClientEmail.toInputValue
   );
@@ -39,34 +36,18 @@ const FindUserOrClientEmail = () => {
   );
 
 
-  const filterData = (inputValue: string) => {
-    if (inputValue.length > 0) {
-      const lowerCaseInput = inputValue.toLowerCase();
+  const handleFilterData = (inputValue: string) => {
+    const { filteredUsers, filteredClients } = filterData(
+      inputValue,
+      users,
+      clients,
+      openToSearchBox,
+      openCcSearchBox,
+      dispatch
+    );
 
-      const filteredUsers = users.filter((user) =>
-        user.email.toLowerCase().includes(lowerCaseInput)
-      );
-
-      const filteredClients = clients.filter((client) =>
-        client.email.toLowerCase().includes(lowerCaseInput)
-      );
-
-      setFilteredUsers(filteredUsers);
-      setFilteredClients(filteredClients);
-      
-      if (filteredUsers.length === 0 && filteredClients.length === 0) {
-        if (openToSearchBox) {
-          dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-        }
-        if (openCcSearchBox) {
-          dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
-        }
-      }
-      
-    } else {
-      setFilteredUsers([]);
-      setFilteredClients([]);
-    }
+    setFilteredUsers(filteredUsers);
+    setFilteredClients(filteredClients);
   };
 
   useEffect(() => {
@@ -76,7 +57,7 @@ const FindUserOrClientEmail = () => {
   useEffect(() => {
     if (users.length > 0 && clients.length > 0) {
       if (toInputValueState) {
-        filterData(toInputValueState);
+        handleFilterData(toInputValueState);
       }
     }
   }, [toInputValueState, users, clients]);
@@ -84,13 +65,14 @@ const FindUserOrClientEmail = () => {
   useEffect(() => {
     if (users.length > 0 && clients.length > 0) {
       if (ccInputValueState) {
-        filterData(ccInputValueState);
+        handleFilterData(ccInputValueState);
       }
     }
   }, [ccInputValueState, users, clients]);
 
   const onClickHandler = (email: string) => {
     if(openToSearchBox){
+
       dispatch(findUserOrClientEmailAction.setToInputValue(email));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
     }else {
@@ -99,25 +81,9 @@ const FindUserOrClientEmail = () => {
     }
   };
 
-  return (
-    <Box
-      component="section"
-      sx={{
-        height: "auto",
-        background: "#1976d2",
-        width: "93%",
-        position: "absolute",
-        top: openCcSearchBox === true ? "214px" : "145px",
-        left: "52px",
-        cursor: "pointer",
-        boxShadow: "4px 16px 24px -5px rgba(66, 68, 90, 1)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        zIndex: 1,
-        padding: "1px",
-      }}
-    >
+  return RenderBox({
+    openCcSearchBox,
+    children: (
       <Box sx={{ width: "100%", padding: "2%" }}>
         <Box sx={{ width: "100%" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -131,7 +97,7 @@ const FindUserOrClientEmail = () => {
           {filteredUsers.map((user, i) => (
             <StyledTypography
               key={i}
-              onClick={() => onClickHandler(user.email)}
+              onClick={() => onClickHandler(`${user.email},`)}
             >
               {user.email}
             </StyledTypography>
@@ -156,8 +122,8 @@ const FindUserOrClientEmail = () => {
           ))}
         </Box>
       </Box>
-    </Box>
-  );
+    ),
+  });
 };
 
 export default FindUserOrClientEmail;

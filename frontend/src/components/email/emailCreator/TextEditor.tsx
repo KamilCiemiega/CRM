@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import "../../../style/TextEditor.css";
 import { editTextAction } from "../../store/slices/emailSlices/editText-slice";
-import { selectEditorTextAndStyles } from "./actionBar/SelectEditorTextAndStyles";
+import { selectEditorTextAndStyles } from "./actionBar/selectEditorTextAndStyles";
 import { RootState } from "../../store";
 
 const TextEditor = () => {
