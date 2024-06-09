@@ -1,23 +1,23 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "role")
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private int id;
 
     @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "role")
-    @JsonManagedReference
     private Set<User> users = new HashSet<>();
 
     public Role() {

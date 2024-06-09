@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name="messages")
-public class Messages {
+@Table(name="message")
+public class Message {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -22,10 +22,11 @@ public class Messages {
     private String body;
 
     @Column(name="sent_date")
-    private Timestamp sent_date;
+    private Timestamp sentDate;
 
-    @Column(name="status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusType status;
 
     @ManyToOne
     @JoinColumn(name="client_id")
@@ -39,17 +40,23 @@ public class Messages {
     @ManyToMany(mappedBy = "messages")
     private List<Folder> folders;
 
-    public Messages() {
+    @OneToMany(mappedBy = "message")
+    private List<MessageRecipients> messageRecipients;
+
+    @OneToOne(mappedBy = "message")
+    private Attachment attachment;
+
+    public Message() {
 
     }
 
-    public Messages(User user, Client client, String subject, String body, Timestamp sent_date, String status) {
+    public Message(User user, Client client, String subject, String body, Timestamp sentDate, StatusType status) {
         this.user = user;
         this.client = client;
         this.subject = subject;
         this.body = body;
-        this.sent_date = sent_date;
-        this.status = status;
+        this.sentDate = sentDate;
+        this.status  = status;
     }
 
     public int getId() {
@@ -92,19 +99,24 @@ public class Messages {
         this.body = body;
     }
 
-    public Timestamp getSent_date() {
-        return sent_date;
+    public Timestamp getSentDate() {
+        return sentDate;
     }
 
-    public void setSent_date(Timestamp sent_date) {
-        this.sent_date = sent_date;
+    public void setSent_date(Timestamp sentDate) {
+        this.sentDate = sentDate;
     }
 
-    public String getStatus() {
+    public StatusType getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusType status) {
         this.status = status;
     }
+
+    public enum StatusType {
+        NEW, REPLY, FORWARD, DELETE, SENT, DRAFT, FOLLOW_UP, TRASH
+    }
+
 }

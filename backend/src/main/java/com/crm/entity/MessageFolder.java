@@ -3,7 +3,7 @@ package com.crm.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="messagefolders")
+@Table(name="messagefolder")
 public class MessageFolder {
 
     @Id
@@ -12,7 +12,7 @@ public class MessageFolder {
     private int id;
     @ManyToOne
     @JoinColumn(name="message_id")
-    private Messages message;
+    private Message message;
 
     @ManyToOne
     @JoinColumn(name="folder_id")
@@ -21,7 +21,7 @@ public class MessageFolder {
 
     }
 
-    public MessageFolder(Messages message, Folder folder) {
+    public MessageFolder(Message message, Folder folder) {
         this.message = message;
         this.folder = folder;
     }
@@ -34,11 +34,11 @@ public class MessageFolder {
         this.id = id;
     }
 
-    public Messages getMessage() {
+    public Message getMessage() {
         return message;
     }
 
-    public void setMessage(Messages message) {
+    public void setMessage(Message message) {
         this.message = message;
     }
 

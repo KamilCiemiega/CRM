@@ -1,13 +1,12 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name="user")
 public class User {
 
     @Id
@@ -29,20 +28,22 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id")
-    @JsonBackReference
     private Role role;
 
     @ManyToMany(mappedBy = "users")
-    @JsonManagedReference
+    @JsonIgnoreProperties("users")
     private List<Client> clients;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
-    @JsonManagedReference
-    private List<Messages> messages;
+    @JsonIgnoreProperties("user")
+    private List<Message> messages;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    @JsonIgnoreProperties("user")
     private List<Folder> folders;
+
+    @OneToMany(mappedBy = "user")
+    private List<MessageRecipients> messageRecipients;
 
 
     public User() {
@@ -105,11 +106,11 @@ public class User {
         this.clients = clients;
     }
 
-    public List<Messages> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<Messages> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 

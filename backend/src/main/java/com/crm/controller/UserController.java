@@ -90,6 +90,7 @@ public class UserController {
                                        final HttpServletRequest servletRequest)
             throws MessagingException, UnsupportedEncodingException{
         Optional<User> user = userService.findByEmail(passwordRequestUtil.getEmail());
+        System.out.println(user);
         String passwordResetUrl = "";
         if (user.isPresent()) {
             String passwordResetToken = UUID.randomUUID().toString();

@@ -29,7 +29,7 @@ public class Client {
     private String address;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "client")
-    private List<Messages> messages;
+    private List<Message> messages;
 
     @ManyToMany
     @JoinTable(
@@ -39,6 +39,9 @@ public class Client {
     )
     @JsonBackReference
     private List<User> users;
+
+    @OneToMany(mappedBy = "client")
+    private List<MessageRecipients> messageRecipients;
 
     public Client() {
 

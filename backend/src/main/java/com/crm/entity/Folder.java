@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="folders")
+@Table(name="folder")
 public class Folder {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class Folder {
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
-    private List<Messages> messages;
+    private List<Message> messages;
 
     public Folder() {}
 
