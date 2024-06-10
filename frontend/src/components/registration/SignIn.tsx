@@ -53,7 +53,9 @@ const SignIn: React.FC = () => {
       const { email, password } = values;
     
     try {
-      const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`);
+      const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`,{
+        withCredentials: true
+      });
       const firstName: string = response.data.firstName;
       const lastName: string = response.data.lastName;
       
