@@ -55,17 +55,6 @@ const Navigation = () => {
         }
     }
   }
-  // async function logout() {
-  //   const response = await fetch("http://localdev:8082/api/auth/logout", {
-  //     method: "GET",
-  //     credentials: "include",
-  //   });
-
-  //   if (response.status === 200) {
-  //     navigate("/");
-  //   }
-
-  // }
 
   interface NavigationItemProps {
     icon: ReactElement;

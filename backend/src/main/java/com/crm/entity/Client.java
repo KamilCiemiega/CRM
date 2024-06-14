@@ -1,6 +1,7 @@
 package com.crm.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class Client {
     private String address;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "client")
+    @JsonIgnoreProperties("client")
     private List<Message> messages;
 
     @ManyToMany
@@ -41,6 +43,7 @@ public class Client {
     private List<User> users;
 
     @OneToMany(mappedBy = "client")
+    @JsonIgnoreProperties("client")
     private List<MessageRecipients> messageRecipients;
 
     public Client() {

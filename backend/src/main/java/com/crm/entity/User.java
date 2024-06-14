@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -28,6 +29,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id")
+    @JsonBackReference
     private Role role;
 
     @ManyToMany(mappedBy = "users")
@@ -43,6 +45,7 @@ public class User {
     private List<Folder> folders;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private List<MessageRecipients> messageRecipients;
 
 

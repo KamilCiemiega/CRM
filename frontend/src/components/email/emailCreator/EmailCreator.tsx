@@ -64,23 +64,23 @@ const EmailCreator = () => {
     
   // }
 
-  const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
-    let value = e.target.value;
+  // const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
+  //   let value = e.target.value;
 
-    // Usuń białe znaki z początku i końca wartości pola
-    value = value.trim();
+  //   // Usuń białe znaki z początku i końca wartości pola
+  //   value = value.trim();
 
-    if (value !== "") {
-        // Dodaj przecinek na końcu wartości pola
-        value += ",";
-    }
+  //   if (value !== "") {
+  //       // Dodaj przecinek na końcu wartości pola
+  //       value += ",";
+  //   }
 
-    if (field === "to") {
-        dispatch(findUserOrClientEmailAction.setToInputValue(value));
-    } else if (field === "cc") {
-        dispatch(findUserOrClientEmailAction.setCcInputValue(value));
-    }
-};
+  //   if (field === "to") {
+  //       dispatch(findUserOrClientEmailAction.setToInputValue(value));
+  //   } else if (field === "cc") {
+  //       dispatch(findUserOrClientEmailAction.setCcInputValue(value));
+  //   }
+  // };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     const value = e.target.value;
@@ -96,7 +96,7 @@ const EmailCreator = () => {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ cc: false }));
       }
     }
-};
+ };
 
   useEffect(() => {
     if (fieldErrorState.to && fieldErrorState.cc) {
@@ -136,7 +136,7 @@ const EmailCreator = () => {
               style={{ width: "95%" }}
               onChange={e => handleInputChange(e, "to")}
               value={toInputValue}
-              onBlur={e => handleOnBlurChange(e, "to")}
+              // onBlur={e => handleOnBlurChange(e, "to")}
             />
             {openToSearchBox && <FindUserOrClientEmail />}
           </Box>
@@ -160,7 +160,7 @@ const EmailCreator = () => {
               helperText={error && "One of the field must be fill"}
               style={{ width: "95%" }}
               onChange={e => handleInputChange(e, "cc")}
-              onBlur={e => handleOnBlurChange(e, "cc")}
+              // onBlur={e => handleOnBlurChange(e, "cc")}
               value={ccInputValue}
             />
             {openCcSearchBox && <FindUserOrClientEmail />}
