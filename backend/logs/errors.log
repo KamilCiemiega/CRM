@@ -379,3 +379,17 @@ Caused by: java.lang.ClassNotFoundException: com.crm.entity.Client
 	at java.base/java.lang.Class.forName(Class.java:467)
 	at java.base/sun.reflect.generics.factory.CoreReflectionFactory.makeNamedType(CoreReflectionFactory.java:114)
 	... 41 common frames omitted
+2024-06-17 08:07:24.308 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8082 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8082 or configure this application to listen on another port.
+

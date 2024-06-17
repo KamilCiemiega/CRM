@@ -7,6 +7,8 @@ interface FieldErrorState {
 }
 
   interface State {
+    toInputString: string,
+    toInputAllValue: string[],
     toInputValue: string;
     openToSearchBox: boolean;
     ccInputValue: string;
@@ -15,9 +17,11 @@ interface FieldErrorState {
     subtitleValue: string;
     users: UserAndClient[];
     clients: UserAndClient[];
-  }
+}
 
 const initialState: State = {
+    toInputString: '',
+    toInputAllValue: [],
     toInputValue: '',
     openToSearchBox: false,
     ccInputValue: '',
@@ -32,8 +36,15 @@ const findUserOrClientEmailSlice = createSlice({
     name: 'findUserOrClientEmail',
     initialState,
     reducers: {
-        setToInputValue(state,action: PayloadAction<string>){
+        setOnBlurValue(state, action: PayloadAction<string>){
+            state.toInputString = action.payload
+        },
+        setToAllInputValue(state, action: PayloadAction<string>){
+            state.toInputAllValue = [...state.toInputAllValue, action.payload]
+        },
+        setToInputValue(state,action: PayloadAction<string>){   
             state.toInputValue = action.payload
+
             if(state.toInputValue.length > 0){
                 state.openToSearchBox = true;
                 state.openCcSearchBox = false;

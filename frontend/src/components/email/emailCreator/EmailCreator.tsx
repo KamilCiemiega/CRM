@@ -42,27 +42,27 @@ const EmailCreator = () => {
     (state:RootState) => state.findUserOrClientEmail.fieldErrorState
   );
 
-  // const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
-  //   let ToOnFocus = true;
-  //   let CcOnFocus = true;
-  //   console.log(ToOnFocus + 'toA');
-  //   console.log(CcOnFocus + 'ccA');
+  const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
+    let ToOnFocus = true;
+    let CcOnFocus = true;
+    console.log(e.target.value);
+    // console.log(CcOnFocus + 'ccA');
 
-  //   if(field === 'to'){
-  //     ToOnFocus = e.cancelable;
-  //     if(!CcOnFocus){
-  //       ToOnFocus = true;
-  //     }
-  //     console.log(ToOnFocus + 'to');
-  //   }else if(field ==='cc'){
-  //     CcOnFocus = e.cancelable;
-  //     if(!ToOnFocus){
-  //       CcOnFocus = true;
-  //     }
-  //     console.log(CcOnFocus + 'cc');
-  //   }
+    // if(field === 'to'){
+    //   ToOnFocus = e.cancelable;
+    //   if(!CcOnFocus){
+    //     ToOnFocus = true;
+    //   }
+    //   console.log(ToOnFocus + 'to');
+    // }else if(field ==='cc'){
+    //   CcOnFocus = e.cancelable;
+    //   if(!ToOnFocus){
+    //     CcOnFocus = true;
+    //   }
+    //   console.log(CcOnFocus + 'cc');
+    // }
     
-  // }
+  }
 
   // const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
   //   let value = e.target.value;
@@ -86,6 +86,9 @@ const EmailCreator = () => {
     const value = e.target.value;
 
     if (field === "to") {
+      if(value.endsWith(',')){
+        dispatch(findUserOrClientEmailAction.setToAllInputValue(value));
+      }
       dispatch(findUserOrClientEmailAction.setToInputValue(value));
       if (value) {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: false }));
@@ -136,7 +139,7 @@ const EmailCreator = () => {
               style={{ width: "95%" }}
               onChange={e => handleInputChange(e, "to")}
               value={toInputValue}
-              // onBlur={e => handleOnBlurChange(e, "to")}
+              onBlur={e => handleOnBlurChange(e, "to")}
             />
             {openToSearchBox && <FindUserOrClientEmail />}
           </Box>

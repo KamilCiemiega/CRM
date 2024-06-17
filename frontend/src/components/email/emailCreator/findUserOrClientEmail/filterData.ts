@@ -13,14 +13,30 @@ export const filterData = (
   ) => {
     if (inputValue.length > 0) {
       const lowerCaseInput = inputValue.toLowerCase();
+      let filteredUsers: UserAndClient[] = [];
+      let filteredClients: UserAndClient[] = [];
+      const lastCommaIndex = lowerCaseInput.lastIndexOf(',');
+
+      if (lastCommaIndex !== -1) {
+          const valueAfterLastComma = inputValue.slice(lastCommaIndex + 1).trim();
   
-      const filteredUsers = users.filter((user) =>
-        user.email.toLowerCase().includes(lowerCaseInput)
-      );
+          if (valueAfterLastComma) {
+            filteredUsers = users.filter((user) =>
+              user.email.toLowerCase().includes(lowerCaseInput)
+            );
+            filteredClients = clients.filter((client) =>
+              client.email.toLowerCase().includes(lowerCaseInput)
+            );
+
+            return {filteredUsers , filteredClients}
+          }
+      }
+
+      
   
-      const filteredClients = clients.filter((client) =>
-        client.email.toLowerCase().includes(lowerCaseInput)
-      );
+      // const filteredClients = clients.filter((client) =>
+      //   client.email.toLowerCase().includes(lowerCaseInput)
+      // );
   
       if (filteredUsers.length === 0 && filteredClients.length === 0) {
         if (openToSearchBox) {
@@ -35,3 +51,7 @@ export const filterData = (
       return { filteredUsers: [], filteredClients: [] };
     }
 };
+
+const filterHelper = () => {
+  
+}

@@ -62,17 +62,17 @@ const FindUserOrClientEmail = () => {
     }
   }, [toInputValueState, users, clients]);
   
-  useEffect(() => {
-    if (users.length > 0 && clients.length > 0) {
-      if (ccInputValueState) {
-        handleFilterData(ccInputValueState);
-      }
-    }
-  }, [ccInputValueState, users, clients]);
+  // useEffect(() => {
+  //   if (users.length > 0 && clients.length > 0) {
+  //     if (ccInputValueState) {
+  //       handleFilterData(ccInputValueState);
+  //     }
+  //   }
+  // }, [ccInputValueState, users, clients]);
 
   const onClickHandler = (email: string) => {
     if(openToSearchBox){
-
+      dispatch(findUserOrClientEmailAction.setToAllInputValue(email))
       dispatch(findUserOrClientEmailAction.setToInputValue(email));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
     }else {
