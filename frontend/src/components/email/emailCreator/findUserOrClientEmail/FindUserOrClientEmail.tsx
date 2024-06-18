@@ -17,27 +17,16 @@ const FindUserOrClientEmail = () => {
   const [filteredClients, setFilteredClients] = useState<UserAndClient[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const users = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.users
-  );
-  const clients = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.clients
-  );
-  const toInputValueState = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.toInputValue
-  );
-  const ccInputValueState = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.ccInputValue
-  );
-  const openCcSearchBox = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.openCcSearchBox
-  );
-  const openToSearchBox = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.openToSearchBox
-  );
-
+    (state: RootState) => state.findUserOrClientEmail.users);
+  const clients = useSelector((state: RootState) => state.findUserOrClientEmail.clients);
+  const toInputValueState = useSelector((state: RootState) => state.findUserOrClientEmail.toInputValue);
+  const ccInputValueState = useSelector((state: RootState) => state.findUserOrClientEmail.ccInputValue);
+  const openCcSearchBox = useSelector((state: RootState) => state.findUserOrClientEmail.openCcSearchBox);
+  const openToSearchBox = useSelector((state: RootState) => state.findUserOrClientEmail.openToSearchBox);
+  
 
   const handleFilterData = (inputValue: string) => {
-    const { filteredUsers, filteredClients } = filterData(
+    const { filteredUsers, filteredClients,  matchingValue} = filterData(
       inputValue,
       users,
       clients,
@@ -48,6 +37,9 @@ const FindUserOrClientEmail = () => {
 
     setFilteredUsers(filteredUsers);
     setFilteredClients(filteredClients);
+    if(matchingValue && matchingValue.length > 0){
+      dispatch(findUserOrClientEmailAction.setValueToTrim(matchingValue));
+    }
   };
 
   useEffect(() => {
@@ -62,18 +54,17 @@ const FindUserOrClientEmail = () => {
     }
   }, [toInputValueState, users, clients]);
   
-  // useEffect(() => {
-  //   if (users.length > 0 && clients.length > 0) {
-  //     if (ccInputValueState) {
-  //       handleFilterData(ccInputValueState);
-  //     }
-  //   }
-  // }, [ccInputValueState, users, clients]);
+  useEffect(() => {
+    if (users.length > 0 && clients.length > 0) {
+      if (ccInputValueState) {
+        handleFilterData(ccInputValueState);
+      }
+    }
+  }, [ccInputValueState, users, clients]);
 
   const onClickHandler = (email: string) => {
     if(openToSearchBox){
-      dispatch(findUserOrClientEmailAction.setToAllInputValue(email))
-      dispatch(findUserOrClientEmailAction.setToInputValue(email));
+      dispatch(findUserOrClientEmailAction.setToInputValue({value: email, valutType:"filtredValue"}));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
     }else {
       dispatch(findUserOrClientEmailAction.setCcInputValue(email));

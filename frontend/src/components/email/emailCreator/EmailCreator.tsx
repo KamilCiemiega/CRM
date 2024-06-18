@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogTitle, Typography, TextField, Box } from "@mui/material";
+import { Dialog, DialogTitle, Typography, TextField, Box, Alert } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { Close } from "@mui/icons-material";
 import EmailCreatorTheme from "../../../themes/EmailCreatorTheme";
@@ -12,26 +12,20 @@ import TextEditor from "./TextEditor";
 import { AppDispatch, RootState } from "../../store";
 
 const EmailCreator = () => {
-  const openDialog = useSelector((state: RootState) => state.emailCreator.openDialog);
-
-  const dispatch: AppDispatch = useDispatch();
-  const openToSearchBox = useSelector(
-    (state:RootState) => state.findUserOrClientEmail.openToSearchBox
-  );
-  const openCcSearchBox = useSelector(
-    (state:RootState) => state.findUserOrClientEmail.openCcSearchBox
-  );
-  const toInputValue = useSelector(
-    (state:RootState) => state.findUserOrClientEmail.toInputValue
-  );
-  const ccInputValue = useSelector(
-    (state:RootState) => state.findUserOrClientEmail.ccInputValue
-  );
   const [error, setError] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
 
+  const openDialog = useSelector((state: RootState) => state.emailCreator.openDialog);
+  const openToSearchBox = useSelector((state:RootState) => state.findUserOrClientEmail.openToSearchBox);
+  const openCcSearchBox = useSelector((state:RootState) => state.findUserOrClientEmail.openCcSearchBox);
+  const toInputValue = useSelector((state:RootState) => state.findUserOrClientEmail.toInputValue);
+  const ccInputValue = useSelector((state:RootState) => state.findUserOrClientEmail.ccInputValue);
+  const theSameUserInInput = useSelector((state:RootState) => state.findUserOrClientEmail.theSameUserInInput)
+  
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false));
   };
+  
   const handleSendSubtitleValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value
     if(value){
@@ -42,54 +36,15 @@ const EmailCreator = () => {
     (state:RootState) => state.findUserOrClientEmail.fieldErrorState
   );
 
-  const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
-    let ToOnFocus = true;
-    let CcOnFocus = true;
-    console.log(e.target.value);
-    // console.log(CcOnFocus + 'ccA');
-
-    // if(field === 'to'){
-    //   ToOnFocus = e.cancelable;
-    //   if(!CcOnFocus){
-    //     ToOnFocus = true;
-    //   }
-    //   console.log(ToOnFocus + 'to');
-    // }else if(field ==='cc'){
-    //   CcOnFocus = e.cancelable;
-    //   if(!ToOnFocus){
-    //     CcOnFocus = true;
-    //   }
-    //   console.log(CcOnFocus + 'cc');
-    // }
-    
-  }
-
-  // const handleOnBlurChange = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
-  //   let value = e.target.value;
-
-  //   // Usuń białe znaki z początku i końca wartości pola
-  //   value = value.trim();
-
-  //   if (value !== "") {
-  //       // Dodaj przecinek na końcu wartości pola
-  //       value += ",";
-  //   }
-
-  //   if (field === "to") {
-  //       dispatch(findUserOrClientEmailAction.setToInputValue(value));
-  //   } else if (field === "cc") {
-  //       dispatch(findUserOrClientEmailAction.setCcInputValue(value));
-  //   }
-  // };
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     const value = e.target.value;
 
+    console.log(value)
+
     if (field === "to") {
-      if(value.endsWith(',')){
-        dispatch(findUserOrClientEmailAction.setToAllInputValue(value));
-      }
-      dispatch(findUserOrClientEmailAction.setToInputValue(value));
+      dispatch(findUserOrClientEmailAction.setToInputValue({value: value, valutType: ''}));
       if (value) {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: false }));
       }
@@ -109,9 +64,24 @@ const EmailCreator = () => {
     }
   }, [fieldErrorState]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(findUserOrClientEmailAction.setTheSameUserAlert(false));
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [theSameUserInInput]);
+
+
   return (
     <ThemeProvider theme={EmailCreatorTheme}>
+      
       <Dialog open={openDialog}>
+        {theSameUserInInput && (
+          <Alert severity="warning">
+          This user is already added
+        </Alert>
+        )}
         <DialogTitle>
           New message
           <Close onClick={handleCloseDialog} sx={{ cursor: "pointer" }} />
@@ -139,7 +109,6 @@ const EmailCreator = () => {
               style={{ width: "95%" }}
               onChange={e => handleInputChange(e, "to")}
               value={toInputValue}
-              onBlur={e => handleOnBlurChange(e, "to")}
             />
             {openToSearchBox && <FindUserOrClientEmail />}
           </Box>
@@ -163,7 +132,6 @@ const EmailCreator = () => {
               helperText={error && "One of the field must be fill"}
               style={{ width: "95%" }}
               onChange={e => handleInputChange(e, "cc")}
-              // onBlur={e => handleOnBlurChange(e, "cc")}
               value={ccInputValue}
             />
             {openCcSearchBox && <FindUserOrClientEmail />}
