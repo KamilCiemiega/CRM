@@ -71,7 +71,7 @@ const findUserOrClientEmailSlice = createSlice({
         }
     },
     setCcInputValue(state, action: PayloadAction<string>) {
-        state.ccInputValue += `,${action.payload}`;
+        state.ccInputValue = action.payload;
         state.openCcSearchBox = state.ccInputValue.length > 0;
       },
     setValueToTrim(state, action: PayloadAction<string>) {
