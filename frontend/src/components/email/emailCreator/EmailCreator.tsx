@@ -41,8 +41,6 @@ const EmailCreator = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     const value = e.target.value;
 
-    console.log(value)
-
     if (field === "to") {
       dispatch(findUserOrClientEmailAction.setToInputValue({value: value, valutType: ''}));
       if (value) {

@@ -16,8 +16,7 @@ const FindUserOrClientEmail = () => {
   const [filteredUsers, setFilteredUsers] = useState<UserAndClient[]>([]);
   const [filteredClients, setFilteredClients] = useState<UserAndClient[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  const users = useSelector(
-    (state: RootState) => state.findUserOrClientEmail.users);
+  const users = useSelector((state: RootState) => state.findUserOrClientEmail.users);
   const clients = useSelector((state: RootState) => state.findUserOrClientEmail.clients);
   const toInputValueState = useSelector((state: RootState) => state.findUserOrClientEmail.toInputValue);
   const ccInputValueState = useSelector((state: RootState) => state.findUserOrClientEmail.ccInputValue);
@@ -105,7 +104,7 @@ const FindUserOrClientEmail = () => {
           </Box>
           {filteredClients.map((client, i) => (
             <StyledTypography
-              onClick={() => onClickHandler(client.email)}
+              onClick={() => onClickHandler(`${client.email},`)}
               key={i}
             >
               {client.email}

@@ -42,43 +42,46 @@ const findUserOrClientEmailSlice = createSlice({
     ) {
       const payload = action.payload;
       let toInputValue = state.toInputValue;
-        
-        if (payload.valutType === "filtredValue") {
-            if (!toInputValue.includes(payload.value)) {
-              const lastCommaIndex = toInputValue.lastIndexOf(",");
-              const beforeLastComma = toInputValue.substring(0, lastCommaIndex + 1);
-              const afterLastComma = toInputValue.substring(lastCommaIndex + 1);
-    
-              const updatedAfterLastComma = afterLastComma.replace(state.trimValue, '');
-              toInputValue = beforeLastComma + updatedAfterLastComma;
-    
-              toInputValue += payload.value;
-            } else {
-                state.theSameUserInInput = true;
-            }
+
+      if (payload.valutType === "filtredValue") {
+        if (!toInputValue.includes(payload.value)) {
+          const lastCommaIndex = toInputValue.lastIndexOf(",");
+          const beforeLastComma = toInputValue.substring(0, lastCommaIndex + 1);
+          const afterLastComma = toInputValue.substring(lastCommaIndex + 1);
+
+          const updatedAfterLastComma = afterLastComma.replace(
+            state.trimValue,
+            ""
+          );
+          toInputValue = beforeLastComma + updatedAfterLastComma;
+          state.openToSearchBox = true;
+
+          toInputValue += payload.value;
         } else {
-            toInputValue = payload.value;
+          state.theSameUserInInput = true;
         }
+      } else {
+        toInputValue = payload.value;
+      }
 
-        state.toInputValue = toInputValue;
+      state.toInputValue = toInputValue;
 
-        if(toInputValue.length > 0){
-            state.openToSearchBox = true;
-            state.openCcSearchBox = false;
-            state.ccInputValue = "";
-        }else {
+      if (toInputValue.length > 0) {
+        state.openToSearchBox = true;
+        // state.openCcSearchBox = false;
+      } else {
         state.openToSearchBox = false;
-        }
+      }
     },
     setCcInputValue(state, action: PayloadAction<string>) {
-        state.ccInputValue = action.payload;
-        state.openCcSearchBox = state.ccInputValue.length > 0;
-      },
+      state.ccInputValue = action.payload;
+      state.openCcSearchBox = state.ccInputValue.length > 0;
+    },
     setValueToTrim(state, action: PayloadAction<string>) {
       state.trimValue = action.payload;
     },
-    setTheSameUserAlert(state , action: PayloadAction<boolean>){
-        state.theSameUserInInput = action.payload
+    setTheSameUserAlert(state, action: PayloadAction<boolean>) {
+      state.theSameUserInInput = action.payload;
     },
     setOpenToSearchBox(state, action: PayloadAction<boolean>) {
       state.openToSearchBox = action.payload;

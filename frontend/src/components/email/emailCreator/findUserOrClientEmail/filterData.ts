@@ -7,6 +7,7 @@ const filterHelper = (input: string, users: UserAndClient[], clients: UserAndCli
   const lowerCaseInput = input.toLowerCase().trim();
   const filteredUsers = users.filter(user => user.email.toLowerCase().includes(lowerCaseInput));
   const filteredClients = clients.filter(client => client.email.toLowerCase().includes(lowerCaseInput));
+  
   return { filteredUsers, filteredClients, lowerCaseInput };
 };
 
@@ -34,15 +35,7 @@ export const filterData = (
         filteredUsers = result.filteredUsers;
         filteredClients = result.filteredClients;
         matchingValue = result.lowerCaseInput;
-        console.log(matchingValue);
-
-        if (filteredUsers.length === 0 && filteredClients.length === 0) {
-          if (openToSearchBox) {
-            dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-          } else if (openCcSearchBox) {
-            dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
-          }
-        }
+      
 
         return { filteredUsers, filteredClients, matchingValue };
       }
@@ -53,13 +46,18 @@ export const filterData = (
     filteredClients = result.filteredClients;
     matchingValue = result.lowerCaseInput;
 
+    console.log("testaaa" + filteredUsers.length);
+
     if (filteredUsers.length === 0 && filteredClients.length === 0) {
+
       if (openToSearchBox) {
         dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-      } else if (openCcSearchBox) {
+      }
+       else if (openCcSearchBox) {
         dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
       }
     }
+  
 
     return { filteredUsers, filteredClients, matchingValue };
   } else {
