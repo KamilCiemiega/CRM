@@ -1,6 +1,6 @@
-import { AppDispatch } from "../../../store";
-import { findUserOrClientEmailAction } from "../../../store/slices/emailSlices/findUserOrClientEmail-slice";
-import { UserAndClient } from "../../../../interfaces/UserAndClient";
+import { AppDispatch } from "../../../../store";
+import { findUserOrClientEmailAction } from "../../../../store/slices/emailSlices/findUserOrClientEmail-slice";
+import { UserAndClient } from "../../../../../interfaces/UserAndClient";
 
 
 const filterHelper = (input: string, users: UserAndClient[], clients: UserAndClient[]) => {
@@ -35,7 +35,17 @@ export const filterData = (
         filteredUsers = result.filteredUsers;
         filteredClients = result.filteredClients;
         matchingValue = result.lowerCaseInput;
-      
+        if (filteredUsers.length === 0 && filteredClients.length === 0) {
+          console.log("empty")
+    
+          if (openToSearchBox) {
+            dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
+          }
+           else if (openCcSearchBox) {
+            dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
+          }
+        }
+        
 
         return { filteredUsers, filteredClients, matchingValue };
       }
@@ -46,7 +56,7 @@ export const filterData = (
     filteredClients = result.filteredClients;
     matchingValue = result.lowerCaseInput;
 
-    console.log("testaaa" + filteredUsers.length);
+    console.log("filtredUsers" + filteredUsers);
 
     if (filteredUsers.length === 0 && filteredClients.length === 0) {
 

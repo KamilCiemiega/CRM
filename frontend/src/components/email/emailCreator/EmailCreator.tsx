@@ -42,12 +42,12 @@ const EmailCreator = () => {
     const value = e.target.value;
 
     if (field === "to") {
-      dispatch(findUserOrClientEmailAction.setToInputValue({value: value, valutType: ''}));
+      dispatch(findUserOrClientEmailAction.setToInputValue({value, valutType: ''}));
       if (value) {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: false }));
       }
     } else if (field === "cc") {
-      dispatch(findUserOrClientEmailAction.setCcInputValue(value));
+      dispatch(findUserOrClientEmailAction.setCcInputValue({value, valutType: ''}));
       if (value) {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ cc: false }));
       }

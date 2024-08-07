@@ -8,7 +8,7 @@ import { RootState } from "../../../store";
 import { fetchUserAndClientData } from "../../../store/thunks/fetchUserAndClientData";
 import { AppDispatch } from "../../../store";
 import RenderBox from "../../../../style/RenderBox";
-import { filterData } from "./filterData";
+import { filterData } from "./helperFunctions/filterData";
 import { UserAndClient } from "../../../../interfaces/UserAndClient";
 
 
@@ -59,14 +59,15 @@ const FindUserOrClientEmail = () => {
         handleFilterData(ccInputValueState);
       }
     }
+
   }, [ccInputValueState, users, clients]);
 
   const onClickHandler = (email: string) => {
     if(openToSearchBox){
       dispatch(findUserOrClientEmailAction.setToInputValue({value: email, valutType:"filtredValue"}));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-    }else {
-      dispatch(findUserOrClientEmailAction.setCcInputValue(email));
+    }else if (openCcSearchBox){
+      dispatch(findUserOrClientEmailAction.setCcInputValue({value: email, valutType:"filtredValue"}));
       dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
     }
   };

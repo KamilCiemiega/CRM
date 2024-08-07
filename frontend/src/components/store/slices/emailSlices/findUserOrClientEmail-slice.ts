@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserAndClient } from "../../../../interfaces/UserAndClient";
+import { addCommaToFiltredInputValue } from "../../../email/emailCreator/findUserOrClientEmail/helperFunctions/addCommaToFltredInputValue";
 
 interface ErrorState {
   to: boolean;
@@ -36,46 +37,27 @@ const findUserOrClientEmailSlice = createSlice({
   name: "findUserOrClientEmail",
   initialState,
   reducers: {
-    setToInputValue(
-      state,
-      action: PayloadAction<{ value: string; valutType: string }>
-    ) {
-      const payload = action.payload;
-      let toInputValue = state.toInputValue;
+    setToInputValue(state, action) {
+      const { value, theSameUserInInput, openSearchBox } = addCommaToFiltredInputValue(
+        state.toInputValue,
+        action.payload,
+        state.trimValue
+      );
 
-      if (payload.valutType === "filtredValue") {
-        if (!toInputValue.includes(payload.value)) {
-          const lastCommaIndex = toInputValue.lastIndexOf(",");
-          const beforeLastComma = toInputValue.substring(0, lastCommaIndex + 1);
-          const afterLastComma = toInputValue.substring(lastCommaIndex + 1);
-
-          const updatedAfterLastComma = afterLastComma.replace(
-            state.trimValue,
-            ""
-          );
-          toInputValue = beforeLastComma + updatedAfterLastComma;
-          state.openToSearchBox = true;
-
-          toInputValue += payload.value;
-        } else {
-          state.theSameUserInInput = true;
-        }
-      } else {
-        toInputValue = payload.value;
-      }
-
-      state.toInputValue = toInputValue;
-
-      if (toInputValue.length > 0) {
-        state.openToSearchBox = true;
-        // state.openCcSearchBox = false;
-      } else {
-        state.openToSearchBox = false;
-      }
+      state.toInputValue = value;
+      state.theSameUserInInput = theSameUserInInput;
+      state.openToSearchBox = openSearchBox;
     },
-    setCcInputValue(state, action: PayloadAction<string>) {
-      state.ccInputValue = action.payload;
-      state.openCcSearchBox = state.ccInputValue.length > 0;
+    setCcInputValue(state, action) {
+      const { value, theSameUserInInput, openSearchBox } = addCommaToFiltredInputValue(
+        state.ccInputValue,
+        action.payload,
+        state.trimValue
+      );
+
+      state.ccInputValue = value;
+      state.theSameUserInInput = theSameUserInInput;
+      state.openCcSearchBox = openSearchBox;
     },
     setValueToTrim(state, action: PayloadAction<string>) {
       state.trimValue = action.payload;
