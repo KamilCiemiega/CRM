@@ -1,12 +1,10 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.UserDto;
-import com.crm.entity.Role;
 import com.crm.entity.User;
-import com.crm.password.PasswordRequestUtil;
 import com.crm.service.PasswordResetTokenService;
-import com.crm.service.RoleService;
 import com.crm.service.UserService;
+import com.crm.utils.PasswordRequestUtil;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -31,18 +29,60 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final PasswordResetTokenService passwordResetTokenService;
-    private final RoleService roleService;
     private final BCryptPasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, RoleService roleService, BCryptPasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, BCryptPasswordEncoder passwordEncoder, ModelMapper modelMapper) {
         this.userService = userService;
         this.passwordResetTokenService = passwordResetTokenService;
-        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper  = modelMapper;
+    }
+
+    @GetMapping("/get-users")
+    public ResponseEntity<?> findAllUsers() {
+        List<User> listOfUsers = userService.findAllUsers();
+
+        if (!listOfUsers.isEmpty()) {
+            List<UserDto> userDtos = listOfUsers.stream()
+                    .map(user -> modelMapper.map(user, UserDto.class))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(userDtos, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("There are no users in the database", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Transactional
+    @PostMapping("/users")
+    public ResponseEntity<String> saveUser(@RequestBody User user) {
+        String plainPassword = user.getPassword();
+        String encodedPassword = passwordEncoder.encode(plainPassword);
+        user.setPassword(encodedPassword);
+
+        userService.save(user);
+
+        return ResponseEntity.ok("User saved successfully");
+
+    }
+
+    @Transactional
+    @PutMapping("/{user-id}")
+    public ResponseEntity<String> updateUser(@PathVariable("user-id") int userId, @RequestBody UserDto userDto){
+        Optional<User> userOptional = userService.findById(userId);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User user = userOptional.get();
+        modelMapper.map(userDto, user);
+
+        userService.save(user);
+
+        return ResponseEntity.ok("User updated successfully");
     }
 
     @GetMapping("/login")
@@ -52,7 +92,9 @@ public class UserController {
             User user = userOptional.get();
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Invalid username or password", HttpStatus.NOT_FOUND);
         }
@@ -68,28 +110,12 @@ public class UserController {
         }
     }
 
-    @Transactional
-    @PostMapping("/users")
-    public ResponseEntity<String> saveUser(@RequestBody User user) {
-            String plainPassword = user.getPassword();
-            String encodedPassword = passwordEncoder.encode(plainPassword);
-            user.setPassword(encodedPassword);
-
-            Role role = roleService.findById(user)
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-            user.setRole(role);
-
-            userService.save(user);
-
-            return ResponseEntity.ok("User saved successfully");
-
-    }
     @PostMapping("/password-reset-request")
     public ResponseEntity<String> resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
                                        final HttpServletRequest servletRequest)
             throws MessagingException, UnsupportedEncodingException{
+
         Optional<User> user = userService.findByEmail(passwordRequestUtil.getEmail());
-        System.out.println(user);
         String passwordResetUrl = "";
         if (user.isPresent()) {
             String passwordResetToken = UUID.randomUUID().toString();
@@ -118,8 +144,8 @@ public class UserController {
         }
         Optional<User> theUserOptional = userService.findUserByPasswordToken(token);
         if (theUserOptional.isPresent()) {
-            User theUser = theUserOptional.get();
-            userService.changePassword(theUser, passwordRequestUtil.getNewPassword());
+            User user = theUserOptional.get();
+            userService.changePassword(user, passwordRequestUtil.getNewPassword());
             return "Password has been reset successfully";
         } else {
             return "Invalid password reset token";
@@ -129,21 +155,5 @@ public class UserController {
     public String applicationUrl(HttpServletRequest request) {
         return "http://"+request.getServerName()+":"
                 +request.getServerPort()+request.getContextPath();
-    }
-
-
-    @GetMapping("/get-users")
-    public ResponseEntity<?> findAllUsers() {
-        List<User> listOfUsers = userService.findAllUsers();
-
-        if (!listOfUsers.isEmpty()) {
-            List<UserDto> userDtos = listOfUsers.stream()
-                    .map(user -> modelMapper.map(user, UserDto.class))
-                    .collect(Collectors.toList());
-
-            return new ResponseEntity<>(userDtos, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("There are no users in the database", HttpStatus.NOT_FOUND);
-        }
     }
 }

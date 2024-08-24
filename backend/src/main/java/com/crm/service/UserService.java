@@ -12,6 +12,7 @@ public interface UserService {
     Optional<User> findByEmailAndPassword(String email, String password);
 
     Optional<User> findByEmail(String email);
+    Optional<User> findById(Integer id);
 
     void createPasswordResetTokenForUser(User user, String passwordResetToken);
 

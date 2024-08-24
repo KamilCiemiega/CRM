@@ -1,22 +1,22 @@
-package com.crm.password;
+package com.crm.utils;
 
 public class PasswordRequestUtil {
-    private String emailName;
+    private String email;
     private String oldPassword;
     private String newPassword;
 
-    public PasswordRequestUtil(String emailName, String oldPassword, String newPassword) {
-        this.emailName = emailName;
+    public PasswordRequestUtil(String email, String oldPassword, String newPassword) {
+        this.email = email;
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
     }
 
     public String getEmail() {
-        return emailName;
+        return email;
     }
 
     public void setEmail(String email) {
-        this.emailName = email;
+        this.email = email;
     }
 
     public String getOldPassword() {
