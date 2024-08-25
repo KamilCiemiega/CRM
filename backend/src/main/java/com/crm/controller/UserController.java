@@ -87,17 +87,24 @@ public class UserController {
 
     @GetMapping("/login")
     public ResponseEntity<?> loginUser(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
-        Optional<User> userOptional = userService.findByEmailAndPassword(email, password);
-        if (userOptional.isPresent()) {
+            Optional<User> userOptional = userService.findByEmail(email);
+            if (userOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username or password");
+            }
+
             User user = userOptional.get();
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
+
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username or password");
+            }
 
             UserDto userDto = modelMapper.map(user, UserDto.class);
+
+            HttpSession session = request.getSession();
+            session.setAttribute("user", userDto);
+
             return new ResponseEntity<>(userDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Invalid username or password", HttpStatus.NOT_FOUND);
-        }
+
     }
     @GetMapping("/logout")
     public ResponseEntity<String> logoutUser(HttpServletRequest request) {
@@ -124,6 +131,7 @@ public class UserController {
 
             return ResponseEntity.ok("Your token " + passwordResetUrl);
         }
+        logger.warn("Password reset request for non-existent email: {}", passwordRequestUtil.getEmail());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with that email not found");
 
     }
