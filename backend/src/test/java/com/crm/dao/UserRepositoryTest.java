@@ -53,7 +53,7 @@ class UserRepositoryTest {
         // then
         assertThat(expectedUser).isPresent();
         expectedUser.ifPresent(u -> {
-            logger.debug("Found user: {}", u);
+            logger.info("Found user: {}", u);
             assertThat(u.getEmail()).isEqualTo(email);
             assertThat(u.getRole().getName()).isEqualTo("admin");
         });

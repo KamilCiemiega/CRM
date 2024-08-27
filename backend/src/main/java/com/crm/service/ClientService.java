@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientService {
-    List<Client> findAllClient();
+    List<Client> findAllClients();
     void save(Client client);
     Optional<Client> findById(Integer id);
 }

@@ -11,19 +11,19 @@ import java.util.Optional;
 
 @Service
 public class ClientServiceImpl implements ClientService {
+    private final ClientRepository clientRepository;
+
     @Override
     public void save(Client client) {
         clientRepository.save(client);
     }
-
-    private final ClientRepository clientRepository;
     @Autowired
     public ClientServiceImpl(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
     @Override
-    public List<Client> findAllClient() {
+    public List<Client> findAllClients() {
         return clientRepository.findAll();
     }
     @Override
