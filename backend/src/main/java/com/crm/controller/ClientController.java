@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/api")
 public class ClientController {
 
     private final ClientService clientService;
@@ -25,7 +25,7 @@ public class ClientController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/get-clients")
+    @GetMapping("/clients")
     public ResponseEntity<List<Client>> findAllClients(){
         List<Client> listOfClients = clientService.findAllClients();
 
@@ -45,18 +45,18 @@ public class ClientController {
     }
 
     @Transactional
-    @PutMapping("/{clientId}")
-    public ResponseEntity<String> updateClient(@PathVariable("client-id") int clientId, @RequestBody Client client){
+    @PutMapping("/clients/{clientId}")
+    public ResponseEntity<Client> updateClient(@PathVariable("client-id") int clientId, @RequestBody Client client){
         Optional<Client> clientOptional = clientService.findById(clientId);
         if (clientOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Client existingClient = clientOptional.get();
         modelMapper.map(client, existingClient);
 
-        clientService.save(existingClient);
+        clientService.save(clientOptional.get());
 
-        return ResponseEntity.ok("Client updated successfully");
+        return new ResponseEntity<>(client, HttpStatus.OK);
     }
 }

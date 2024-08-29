@@ -36,17 +36,8 @@ public class User {
     @JsonIgnoreProperties("users")
     private List<Client> clients;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
-    @JsonIgnoreProperties("user")
-    private List<Message> messages;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties("user")
-    private List<Folder> folders;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties("user")
-    private List<MessageRecipients> messageRecipients;
+    @OneToMany(mappedBy = "owner")
+    private List<MessageFolder> messageFolders;
 
 
     public User() {
@@ -111,19 +102,4 @@ public class User {
         this.clients = clients;
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public List<Folder> getFolders() {
-        return folders;
-    }
-
-    public void setFolders(List<Folder> folders) {
-        this.folders = folders;
-    }
 }
