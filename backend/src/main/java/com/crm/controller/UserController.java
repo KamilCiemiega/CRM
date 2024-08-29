@@ -1,5 +1,6 @@
 package com.crm.controller;
 
+import com.crm.controller.dto.NewUserDto;
 import com.crm.controller.dto.UserDto;
 import com.crm.entity.User;
 import com.crm.service.PasswordResetTokenService;
@@ -41,48 +42,45 @@ public class UserController {
         this.modelMapper  = modelMapper;
     }
 
-    @GetMapping("/get-users")
-    public ResponseEntity<?> findAllUsers() {
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDto>> findAllUsers() {
         List<User> listOfUsers = userService.findAllUsers();
 
-        if (!listOfUsers.isEmpty()) {
             List<UserDto> userDtos = listOfUsers.stream()
                     .map(user -> modelMapper.map(user, UserDto.class))
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(userDtos, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("There are no users in the database", HttpStatus.NOT_FOUND);
-        }
     }
 
     @Transactional
     @PostMapping("/users")
-    public ResponseEntity<String> saveUser(@RequestBody User user) {
-        String plainPassword = user.getPassword();
+    public ResponseEntity<UserDto> saveUser(@RequestBody NewUserDto newUserDto) {
+        String plainPassword = newUserDto.getPassword();
         String encodedPassword = passwordEncoder.encode(plainPassword);
+        User user =  modelMapper.map(newUserDto, User.class);
         user.setPassword(encodedPassword);
 
         userService.save(user);
 
-        return ResponseEntity.ok("User saved successfully");
+        UserDto userDto = modelMapper.map(user, UserDto.class);
 
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @Transactional
-    @PutMapping("/{user-id}")
-    public ResponseEntity<String> updateUser(@PathVariable("user-id") int userId, @RequestBody UserDto userDto){
+    @PutMapping("/users/{user-id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable("user-id") int userId, @RequestBody UserDto userDto){
         Optional<User> userOptional = userService.findById(userId);
+
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        User existingUser = userOptional.get();
+        modelMapper.map(userDto, existingUser);
+        userService.save(existingUser);
 
-        User user = userOptional.get();
-        modelMapper.map(userDto, user);
-
-        userService.save(user);
-
-        return ResponseEntity.ok("User updated successfully");
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @GetMapping("/login")
@@ -138,9 +136,8 @@ public class UserController {
 
     private String passwordResetEmailLink(User user, String applicationUrl, String passwordResetToken)
             throws MessagingException, UnsupportedEncodingException {
-        String url = applicationUrl+"/api/auth/reset-password?token="+ passwordResetToken;
 
-        return url;
+        return applicationUrl+"/api/auth/reset-password?token="+ passwordResetToken;
     }
 
     @PostMapping("/reset-password")
