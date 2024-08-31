@@ -36,7 +36,7 @@ public class User {
     @JsonIgnoreProperties("users")
     private List<Client> clients;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "user")
     private List<MessageFolder> messageFolders;
 
 
