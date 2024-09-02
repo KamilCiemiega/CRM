@@ -26,7 +26,7 @@ public class MessageFolderImpl implements MessageFolderService {
 
     @Override
     public Optional<MessageFolder> findByNameAndOwner(String messageFolderName, User user) {
-        return messageFolderRepository.findByNameAndOwner(messageFolderName, user);
+        return messageFolderRepository.findByNameAndUser(messageFolderName, user);
     }
 
 }

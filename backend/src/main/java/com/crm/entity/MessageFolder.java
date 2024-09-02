@@ -3,7 +3,7 @@ package com.crm.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="messageFolder")
+@Table(name="messagefolder")
 public class MessageFolder {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

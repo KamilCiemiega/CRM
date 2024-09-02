@@ -1,7 +1,9 @@
 package com.crm.controller;
 
 import com.crm.entity.MessageFolder;
+import com.crm.entity.User;
 import com.crm.service.MessageFolderService;
+import com.crm.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ import java.util.Optional;
 public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
+    private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(MessageFolderController.class);
 
     @Autowired
-    public MessageFolderController(MessageFolderService messageFolderService) {
+    public MessageFolderController(MessageFolderService messageFolderService, UserService userService) {
         this.messageFolderService = messageFolderService;
+        this.userService = userService;
     }
 
     @PostMapping("/create")
@@ -36,6 +40,12 @@ public class MessageFolderController {
         if (existingMessageFolder.isPresent()) {
             return new ResponseEntity<>(existingMessageFolder.get(), HttpStatus.CONFLICT);
         } else {
+            User user = messageFolder.getUser();
+            if (user != null && user.getId() == 0) {
+                user = userService.save(user);
+                messageFolder.setUser(user);
+            }
+
             MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);
             return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED);
         }

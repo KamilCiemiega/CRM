@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    void save(User user);
+    User save(User user);
 
     void changePassword(User user, String newPassword);
     Optional<User> findByEmailAndPassword(String email, String password);

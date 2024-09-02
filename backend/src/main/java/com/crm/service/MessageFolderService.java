@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface MessageFolderService {
     MessageFolder save(MessageFolder messageFolder);
-    Optional<MessageFolder> findByNameAndOwner(String messageFolderName, User owner);
+    Optional<MessageFolder> findByNameAndOwner(String messageFolderName, User user);
 }

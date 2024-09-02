@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MessageFolderRepository extends JpaRepository<MessageFolder, Integer> {
-    Optional<MessageFolder> findByNameAndOwner(String name, User owner);
+    Optional<MessageFolder> findByNameAndUser(String name, User user);
 }
