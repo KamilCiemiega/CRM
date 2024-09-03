@@ -6,29 +6,36 @@ import jakarta.persistence.*;
 @Table(name="messagefolder")
 public class MessageFolder {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="id")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
     @ManyToOne
-    @JoinColumn(name="parentFolder", nullable = true)
+    @JoinColumn(name = "parentFolder", nullable = true)
     private MessageFolder parentFolder;
 
-    @Column(name="ownerUserId")
-    private int ownerUserId;
-
     @ManyToOne
-    @JoinColumn(name="ownerUserId",insertable = false, updatable = false)
+    @JoinColumn(name = "ownerUserId")
     private User user;
 
-    public int getId() {
+    public MessageFolder() {
+    }
+
+    public MessageFolder(Integer id, String name, MessageFolder parentFolder, User user) {
+        this.id = id;
+        this.name = name;
+        this.parentFolder = parentFolder;
+        this.user = user;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -46,14 +53,6 @@ public class MessageFolder {
 
     public void setParentFolder(MessageFolder parentFolder) {
         this.parentFolder = parentFolder;
-    }
-
-    public int getOwnerUserId() {
-        return ownerUserId;
-    }
-
-    public void setOwnerUserId(int ownerUserId) {
-        this.ownerUserId = ownerUserId;
     }
 
     public User getUser() {

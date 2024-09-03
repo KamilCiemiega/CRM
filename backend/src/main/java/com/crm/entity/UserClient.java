@@ -9,7 +9,7 @@ public class UserClient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -20,9 +20,7 @@ public class UserClient {
     private Client client;
 
 
-    public UserClient() {
-
-    }
+    public UserClient() {}
 
     public UserClient(User user, Client client) {
         this.user = user;
@@ -30,11 +28,11 @@ public class UserClient {
     }
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

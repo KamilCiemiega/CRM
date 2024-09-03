@@ -13,7 +13,7 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name = "name")
     private String name;
@@ -22,23 +22,18 @@ public class Role {
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-    public Role() {
+    public Role() {}
 
-    }
-
-    public Role(int id) {
+    public Role(Integer id, String name) {
         this.id = id;
-    }
-
-    public Role(String name) {
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

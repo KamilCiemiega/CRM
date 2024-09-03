@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/messageFolders")
+@RequestMapping("/api/messageFolders")
 public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
@@ -32,7 +32,7 @@ public class MessageFolderController {
 
     @PostMapping("/create")
     public ResponseEntity<MessageFolder> createMessageFolderIfNotExist(@RequestBody MessageFolder messageFolder) {
-        Optional<MessageFolder> existingMessageFolder = messageFolderService.findByNameAndOwner(
+        Optional<MessageFolder> existingMessageFolder = messageFolderService.findByNameAndUser(
                 messageFolder.getName(),
                 messageFolder.getUser()
         );
@@ -41,9 +41,11 @@ public class MessageFolderController {
             return new ResponseEntity<>(existingMessageFolder.get(), HttpStatus.CONFLICT);
         } else {
             User user = messageFolder.getUser();
-            if (user != null && user.getId() == 0) {
-                user = userService.save(user);
-                messageFolder.setUser(user);
+            if (user != null) {
+                if (user.getId() == null || userService.findById(user.getId()).isEmpty()) {
+                    user = userService.save(user);
+                    messageFolder.setUser(user);
+                }
             }
 
             MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);

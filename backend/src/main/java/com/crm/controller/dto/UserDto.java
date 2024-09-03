@@ -8,9 +8,7 @@ public class UserDto {
     private String email;
     private Role role;
 
-    public UserDto() {
-
-    }
+    public UserDto() {}
 
     public UserDto(String firstName, String lastName, String email, Role role) {
         this.firstName = firstName;

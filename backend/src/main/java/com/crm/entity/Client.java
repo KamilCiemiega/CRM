@@ -11,7 +11,7 @@ public class Client {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="name")
     private String name;
@@ -37,9 +37,7 @@ public class Client {
     @JsonBackReference
     private List<User> users;
 
-    public Client() {
-
-    }
+    public Client() {}
 
     public Client(String name, String surname, String email, String phone, String address) {
         this.name = name;
@@ -49,11 +47,11 @@ public class Client {
         this.address = address;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="first_name")
     private String firstName;
@@ -40,9 +40,7 @@ public class User {
     private List<MessageFolder> messageFolders;
 
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(String firstName, String lastName, String password, String email, Role role) {
         this.firstName = firstName;
@@ -52,7 +50,7 @@ public class User {
         this.role = role;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
