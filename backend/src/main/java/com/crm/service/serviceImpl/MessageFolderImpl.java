@@ -7,6 +7,7 @@ import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,8 +26,18 @@ public class MessageFolderImpl implements MessageFolderService {
     }
 
     @Override
+    public List<MessageFolder> findAllMessageFolders() {
+        return messageFolderRepository.findAll();
+    }
+
+    @Override
     public Optional<MessageFolder> findByNameAndUser(String messageFolderName, User user) {
         return messageFolderRepository.findByNameAndUser(messageFolderName, user);
+    }
+
+    @Override
+    public Optional<MessageFolder> findById(int parentFolderId) {
+        return messageFolderRepository.findById(parentFolderId);
     }
 
 }

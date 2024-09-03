@@ -9,11 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -48,8 +46,25 @@ public class MessageFolderController {
                 }
             }
 
+            if (messageFolder.getParentFolder() != null) {
+                Optional<MessageFolder> parentFolder = messageFolderService.findById(messageFolder.getParentFolder().getId());
+                if (parentFolder.isPresent()) {
+                    messageFolder.setParentFolder(parentFolder.get());
+                } else {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            }
+
             MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);
             return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED);
         }
     }
+    @GetMapping("all")
+    public ResponseEntity<List<MessageFolder>> getMessageFolders(){
+        List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
+
+        return  new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
+    }
+
+
 }
