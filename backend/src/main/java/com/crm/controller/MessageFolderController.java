@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/messageFolders")
+// TODO use kebab-case for URLs (https://www.freecodecamp.org/news/snake-case-vs-camel-case-vs-pascal-case-vs-kebab-case-whats-the-difference/)
+// so api/message-folders
+@RequestMapping("/api/messageFolders") 
 public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
@@ -30,11 +32,15 @@ public class MessageFolderController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create") // just "/". We are doing POST to /api/message-folders resource
     public ResponseEntity<MessageFolder> createFolderIfNotExist(@RequestBody MessageFolderDto messageFolderDto) {
 
         MessageFolder messageFolder = modelMapper.map(messageFolderDto, MessageFolder.class);
 
+        // this is business logic (query for user, link it, save it) This should be INSIDE service method call.
+        // then service should just throw a new type of a exception NoSuchUserException extends RuntimeException. 
+        // For now just leave this throwing exception. Later we will add proper error handling 
+        // like is described here: https://www.baeldung.com/exception-handling-for-rest-with-spring
         Optional<User> user = userService.findById(messageFolderDto.getOwnerUserId());
         if (user.isPresent()) {
             messageFolder.setUser(user.get());
@@ -51,6 +57,8 @@ public class MessageFolderController {
             }
         }
 
+        // This is not done this way. The way to do this is to create a UNIQUE index on a pair of fields 
+        // (user, name). See https://www.baeldung.com/jpa-indexes
         Optional<MessageFolder> existingMessageFolder = messageFolderService.findByNameAndUser(
                 messageFolderDto.getName(),
                 messageFolder.getUser()
@@ -60,10 +68,10 @@ public class MessageFolderController {
             return new ResponseEntity<>(existingMessageFolder.get(), HttpStatus.CONFLICT);
         } else {
             MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);
-            return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED); // should return DTO, not a model 
         }
     }
-    @GetMapping("/all")
+    @GetMapping("/all") // just GET /api/message-folders - no need for ALL
     public ResponseEntity<List<MessageFolder>> getFolders(){
         List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
