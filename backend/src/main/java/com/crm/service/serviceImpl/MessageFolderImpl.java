@@ -40,4 +40,9 @@ public class MessageFolderImpl implements MessageFolderService {
         return messageFolderRepository.findById(parentFolderId);
     }
 
+    @Override
+    public void deleteFolder(int folderId) {
+        messageFolderRepository.deleteById(folderId);
+    }
+
 }

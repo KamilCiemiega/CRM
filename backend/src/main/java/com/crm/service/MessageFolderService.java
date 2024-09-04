@@ -10,6 +10,6 @@ public interface MessageFolderService {
     MessageFolder save(MessageFolder messageFolder);
     Optional<MessageFolder> findByNameAndUser(String messageFolderName, User user);
     Optional<MessageFolder> findById(int parentFolderId);
-
     List<MessageFolder> findAllMessageFolders();
+    void deleteFolder(int folderId);
 }

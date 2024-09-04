@@ -1,14 +1,15 @@
 package com.crm.controller;
 
+import com.crm.controller.dto.MessageFolderDto;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
 import com.crm.service.MessageFolderService;
 import com.crm.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,50 +21,66 @@ public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
     private final UserService userService;
-    private static final Logger logger = LoggerFactory.getLogger(MessageFolderController.class);
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageFolderController(MessageFolderService messageFolderService, UserService userService) {
+    public MessageFolderController(MessageFolderService messageFolderService, UserService userService, ModelMapper modelMapper) {
         this.messageFolderService = messageFolderService;
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<MessageFolder> createMessageFolderIfNotExist(@RequestBody MessageFolder messageFolder) {
+    public ResponseEntity<MessageFolder> createFolderIfNotExist(@RequestBody MessageFolderDto messageFolderDto) {
+
+        MessageFolder messageFolder = modelMapper.map(messageFolderDto, MessageFolder.class);
+
+        Optional<User> user = userService.findById(messageFolderDto.getOwnerUserId());
+        if (user.isPresent()) {
+            messageFolder.setUser(user.get());
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (messageFolderDto.getParentFolderId() != null) {
+            Optional<MessageFolder> parentFolder = messageFolderService.findById(messageFolderDto.getParentFolderId());
+            if (parentFolder.isPresent()) {
+                messageFolder.setParentFolder(parentFolder.get());
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+
         Optional<MessageFolder> existingMessageFolder = messageFolderService.findByNameAndUser(
-                messageFolder.getName(),
+                messageFolderDto.getName(),
                 messageFolder.getUser()
         );
 
         if (existingMessageFolder.isPresent()) {
             return new ResponseEntity<>(existingMessageFolder.get(), HttpStatus.CONFLICT);
         } else {
-            User user = messageFolder.getUser();
-            if (user != null) {
-                if (user.getId() == null || userService.findById(user.getId()).isEmpty()) {
-                    user = userService.save(user);
-                    messageFolder.setUser(user);
-                }
-            }
-
-            if (messageFolder.getParentFolder() != null) {
-                Optional<MessageFolder> parentFolder = messageFolderService.findById(messageFolder.getParentFolder().getId());
-                if (parentFolder.isPresent()) {
-                    messageFolder.setParentFolder(parentFolder.get());
-                } else {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
-            }
-
             MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);
             return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED);
         }
     }
-    @GetMapping("all")
-    public ResponseEntity<List<MessageFolder>> getMessageFolders(){
+    @GetMapping("/all")
+    public ResponseEntity<List<MessageFolder>> getFolders(){
         List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
         return  new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
+    }
+
+    @Transactional
+    @DeleteMapping("/{folder-id}")
+    public ResponseEntity<MessageFolder> deleteFolder(@PathVariable("folder-id") int folderId) {
+        Optional<MessageFolder> folder = messageFolderService.findById(folderId);
+        if (folder.isPresent()) {
+            MessageFolder folderToDelete = folder.get();
+            messageFolderService.deleteFolder(folderId);
+            return new ResponseEntity<>(folderToDelete, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
