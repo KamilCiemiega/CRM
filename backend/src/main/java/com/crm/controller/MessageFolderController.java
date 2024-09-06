@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-// TODO use kebab-case for URLs (https://www.freecodecamp.org/news/snake-case-vs-camel-case-vs-pascal-case-vs-kebab-case-whats-the-difference/)
-// so api/message-folders
-@RequestMapping("/api/messageFolders") 
+@RequestMapping("/api/message-folders")
 public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
@@ -32,30 +30,8 @@ public class MessageFolderController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/create") // just "/". We are doing POST to /api/message-folders resource
+    @PostMapping
     public ResponseEntity<MessageFolder> createFolderIfNotExist(@RequestBody MessageFolderDto messageFolderDto) {
-
-        MessageFolder messageFolder = modelMapper.map(messageFolderDto, MessageFolder.class);
-
-        // this is business logic (query for user, link it, save it) This should be INSIDE service method call.
-        // then service should just throw a new type of a exception NoSuchUserException extends RuntimeException. 
-        // For now just leave this throwing exception. Later we will add proper error handling 
-        // like is described here: https://www.baeldung.com/exception-handling-for-rest-with-spring
-        Optional<User> user = userService.findById(messageFolderDto.getOwnerUserId());
-        if (user.isPresent()) {
-            messageFolder.setUser(user.get());
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        if (messageFolderDto.getParentFolderId() != null) {
-            Optional<MessageFolder> parentFolder = messageFolderService.findById(messageFolderDto.getParentFolderId());
-            if (parentFolder.isPresent()) {
-                messageFolder.setParentFolder(parentFolder.get());
-            } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
 
         // This is not done this way. The way to do this is to create a UNIQUE index on a pair of fields 
         // (user, name). See https://www.baeldung.com/jpa-indexes
@@ -71,7 +47,7 @@ public class MessageFolderController {
             return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED); // should return DTO, not a model 
         }
     }
-    @GetMapping("/all") // just GET /api/message-folders - no need for ALL
+    @GetMapping
     public ResponseEntity<List<MessageFolder>> getFolders(){
         List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 

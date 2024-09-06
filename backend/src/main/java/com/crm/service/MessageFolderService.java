@@ -1,5 +1,6 @@
 package com.crm.service;
 
+import com.crm.controller.dto.MessageFolderDto;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
 
@@ -12,4 +13,6 @@ public interface MessageFolderService {
     Optional<MessageFolder> findById(int parentFolderId);
     List<MessageFolder> findAllMessageFolders();
     void deleteFolder(int folderId);
+
+    MessageFolderDto createOrUpdateMessageFolder(MessageFolderDto messageFolderDto);
 }
