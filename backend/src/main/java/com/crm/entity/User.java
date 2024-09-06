@@ -42,7 +42,7 @@ public class User {
 
     public User() {}
 
-    public User(String firstName, String lastName, String password, String email, Role role) {
+    public User(Integer id, String firstName, String lastName, String password, String email, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
@@ -52,6 +52,10 @@ public class User {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {

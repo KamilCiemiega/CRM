@@ -2,11 +2,11 @@ package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
 import com.crm.entity.MessageFolder;
-import com.crm.entity.User;
+import com.crm.exception.NoSuchFolderException;
+import com.crm.exception.NoSuchUserException;
 import com.crm.service.MessageFolderService;
-import com.crm.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,31 +20,23 @@ import java.util.Optional;
 public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
-    private final UserService userService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageFolderController(MessageFolderService messageFolderService, UserService userService, ModelMapper modelMapper) {
+    public MessageFolderController(MessageFolderService messageFolderService) {
         this.messageFolderService = messageFolderService;
-        this.userService = userService;
-        this.modelMapper = modelMapper;
     }
 
     @PostMapping
-    public ResponseEntity<MessageFolder> createFolderIfNotExist(@RequestBody MessageFolderDto messageFolderDto) {
-
-        // This is not done this way. The way to do this is to create a UNIQUE index on a pair of fields 
-        // (user, name). See https://www.baeldung.com/jpa-indexes
-        Optional<MessageFolder> existingMessageFolder = messageFolderService.findByNameAndUser(
-                messageFolderDto.getName(),
-                messageFolder.getUser()
-        );
-
-        if (existingMessageFolder.isPresent()) {
-            return new ResponseEntity<>(existingMessageFolder.get(), HttpStatus.CONFLICT);
-        } else {
-            MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);
-            return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED); // should return DTO, not a model 
+    public ResponseEntity<MessageFolderDto> createOrUpdateFolder(@RequestBody MessageFolderDto messageFolderDto) {
+        try {
+            MessageFolderDto savedMessageFolderDto = messageFolderService.createOrUpdateMessageFolder(messageFolderDto);
+            return new ResponseEntity<>(savedMessageFolderDto, HttpStatus.CREATED);
+        } catch (NoSuchUserException | NoSuchFolderException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping
