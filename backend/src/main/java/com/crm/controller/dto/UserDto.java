@@ -3,6 +3,7 @@ package com.crm.controller.dto;
 import com.crm.entity.Role;
 
 public class UserDto {
+    private Integer id;
     private String firstName;
     private String lastName;
     private String email;
@@ -10,11 +11,19 @@ public class UserDto {
 
     public UserDto() {}
 
-    public UserDto(String firstName, String lastName, String email, Role role) {
+    public UserDto(Integer id, String firstName, String lastName, String email, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {

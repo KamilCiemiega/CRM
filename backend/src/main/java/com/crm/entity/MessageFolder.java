@@ -8,7 +8,10 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="messagefolder")
+@Table(
+        name = "messagefolder",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "owner_user_id"})}
+)
 public class MessageFolder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,11 +92,11 @@ public class MessageFolder {
         this.user = user;
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
+//    public List<Message> getMessages() {
+//        return messages;
+//    }
+//
+//    public void setMessages(List<Message> messages) {
+//        this.messages = messages;
+//    }
 }

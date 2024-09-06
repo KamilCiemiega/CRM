@@ -2,11 +2,11 @@ package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
 import com.crm.entity.MessageFolder;
-import com.crm.entity.User;
+import com.crm.exception.NoSuchFolderException;
+import com.crm.exception.NoSuchUserException;
 import com.crm.service.MessageFolderService;
-import com.crm.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,54 +16,30 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/messageFolders")
+@RequestMapping("/api/message-folders")
 public class MessageFolderController {
 
     private final MessageFolderService messageFolderService;
-    private final UserService userService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageFolderController(MessageFolderService messageFolderService, UserService userService, ModelMapper modelMapper) {
+    public MessageFolderController(MessageFolderService messageFolderService) {
         this.messageFolderService = messageFolderService;
-        this.userService = userService;
-        this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<MessageFolder> createFolderIfNotExist(@RequestBody MessageFolderDto messageFolderDto) {
-
-        MessageFolder messageFolder = modelMapper.map(messageFolderDto, MessageFolder.class);
-
-        Optional<User> user = userService.findById(messageFolderDto.getOwnerUserId());
-        if (user.isPresent()) {
-            messageFolder.setUser(user.get());
-        } else {
+    @PostMapping
+    public ResponseEntity<MessageFolderDto> createOrUpdateFolder(@RequestBody MessageFolderDto messageFolderDto) {
+        try {
+            MessageFolderDto savedMessageFolderDto = messageFolderService.createOrUpdateMessageFolder(messageFolderDto);
+            return new ResponseEntity<>(savedMessageFolderDto, HttpStatus.CREATED);
+        } catch (NoSuchUserException | NoSuchFolderException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        if (messageFolderDto.getParentFolderId() != null) {
-            Optional<MessageFolder> parentFolder = messageFolderService.findById(messageFolderDto.getParentFolderId());
-            if (parentFolder.isPresent()) {
-                messageFolder.setParentFolder(parentFolder.get());
-            } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        Optional<MessageFolder> existingMessageFolder = messageFolderService.findByNameAndUser(
-                messageFolderDto.getName(),
-                messageFolder.getUser()
-        );
-
-        if (existingMessageFolder.isPresent()) {
-            return new ResponseEntity<>(existingMessageFolder.get(), HttpStatus.CONFLICT);
-        } else {
-            MessageFolder savedMessageFolder = messageFolderService.save(messageFolder);
-            return new ResponseEntity<>(savedMessageFolder, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<MessageFolder>> getFolders(){
         List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 

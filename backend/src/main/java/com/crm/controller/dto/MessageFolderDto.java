@@ -1,6 +1,8 @@
 package com.crm.controller.dto;
 
 public class MessageFolderDto {
+
+        private Integer id;
         private String name;
         private Integer parentFolderId;
         private Integer ownerUserId;
@@ -8,14 +10,23 @@ public class MessageFolderDto {
 
         public MessageFolderDto() {}
 
-        public MessageFolderDto(String name, Integer parentFolderId, Integer ownerUserId, UserDto user) {
+        public MessageFolderDto(Integer id, String name, Integer parentFolderId, Integer ownerUserId, UserDto user) {
+            this.id = id;
             this.name = name;
             this.parentFolderId = parentFolderId;
             this.ownerUserId = ownerUserId;
             this.user = user;
         }
 
-        public String getName() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
             return name;
         }
 

@@ -9,8 +9,8 @@ public class NewUserDto extends UserDto{
         super();
     }
 
-    public NewUserDto(String firstName, String lastName, String email, Role role, String password) {
-        super(firstName, lastName, email, role);
+    public NewUserDto(Integer id, String firstName, String lastName, String email, Role role, String password) {
+        super(id,firstName, lastName, email, role);
         this.password = password;
     }
 

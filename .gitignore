@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-backend/logs
-=======
-backend/logs/info.log
-.idea
->>>>>>> 18c274efbb4c867ce47896d51d9311157c007a08
+backend/logs/
+backend/logs/*.log
+backend/logs/*.log.*
