@@ -32,12 +32,13 @@ public class MessageFolder {
 
     @ManyToMany
     @JoinTable(
-            name = "messagelocation",
+            name = "message_folder_message",
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
     @JsonIgnore
     private List<Message> messages;
+
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
@@ -92,11 +93,11 @@ public class MessageFolder {
         this.user = user;
     }
 
-//    public List<Message> getMessages() {
-//        return messages;
-//    }
-//
-//    public void setMessages(List<Message> messages) {
-//        this.messages = messages;
-//    }
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 }

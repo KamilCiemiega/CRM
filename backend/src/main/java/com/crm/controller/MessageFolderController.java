@@ -43,7 +43,7 @@ public class MessageFolderController {
     public ResponseEntity<List<MessageFolder>> getFolders(){
         List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
-        return  new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
+        return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
     }
 
     @Transactional

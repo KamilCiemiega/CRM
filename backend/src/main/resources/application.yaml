@@ -18,7 +18,7 @@ spring:
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-  server:
-    port: 8082
+server:
+  port: 8082
   main:
     banner-mode: off
