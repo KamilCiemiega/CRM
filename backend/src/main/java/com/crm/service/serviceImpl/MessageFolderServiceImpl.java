@@ -4,14 +4,10 @@ import com.crm.controller.dto.MessageFolderDto;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
-import com.crm.exception.DuplicateFolderException;
-import com.crm.exception.NoSuchFolderException;
-import com.crm.exception.NoSuchUserException;
+import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import com.crm.service.UserService;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,15 +16,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MessageFolderImpl implements MessageFolderService {
+public class MessageFolderServiceImpl implements MessageFolderService {
 
     private final MessageFolderRepository messageFolderRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(MessageFolderImpl.class);
 
     @Autowired
-    public MessageFolderImpl(MessageFolderRepository messageFolderRepository, UserService userService, ModelMapper modelMapper) {
+    public MessageFolderServiceImpl(MessageFolderRepository messageFolderRepository, UserService userService, ModelMapper modelMapper) {
         this.messageFolderRepository = messageFolderRepository;
         this.userService = userService;
         this.modelMapper = modelMapper;
@@ -39,7 +34,7 @@ public class MessageFolderImpl implements MessageFolderService {
         try {
             return messageFolderRepository.save(messageFolder);
         } catch (DataIntegrityViolationException e) {
-            throw new DuplicateFolderException("Folder already exists for user: " + messageFolder.getUser().getId());
+            throw new SendMessageExceptionHandlers.DuplicateFolderException("Folder already exists for user: " + messageFolder.getUser().getId());
         }
     }
 
@@ -66,12 +61,12 @@ public class MessageFolderImpl implements MessageFolderService {
     @Override
     public MessageFolderDto createOrUpdateMessageFolder(MessageFolderDto messageFolderDto) {
         User user = userService.findById(messageFolderDto.getOwnerUserId())
-                .orElseThrow(() -> new NoSuchUserException("User not found for ID: " + messageFolderDto.getOwnerUserId()));
+                .orElseThrow(() -> new SendMessageExceptionHandlers.NoSuchUserException("User not found for ID: " + messageFolderDto.getOwnerUserId()));
 
         MessageFolder parentFolder = null;
         if (messageFolderDto.getParentFolderId() != null) {
             parentFolder = messageFolderRepository.findById(messageFolderDto.getParentFolderId())
-                    .orElseThrow(() -> new NoSuchFolderException("Parent folder not found for ID: " + messageFolderDto.getParentFolderId()));
+                    .orElseThrow(() -> new SendMessageExceptionHandlers.NoSuchFolderException("Parent folder not found for ID: " + messageFolderDto.getParentFolderId()));
         }
 
         MessageFolder messageFolder = new MessageFolder();

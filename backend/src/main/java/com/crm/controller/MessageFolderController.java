@@ -2,8 +2,7 @@ package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
 import com.crm.entity.MessageFolder;
-import com.crm.exception.NoSuchFolderException;
-import com.crm.exception.NoSuchUserException;
+import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,12 +25,13 @@ public class MessageFolderController {
         this.messageFolderService = messageFolderService;
     }
 
+    @Transactional
     @PostMapping
     public ResponseEntity<MessageFolderDto> createOrUpdateFolder(@RequestBody MessageFolderDto messageFolderDto) {
         try {
             MessageFolderDto savedMessageFolderDto = messageFolderService.createOrUpdateMessageFolder(messageFolderDto);
             return new ResponseEntity<>(savedMessageFolderDto, HttpStatus.CREATED);
-        } catch (NoSuchUserException | NoSuchFolderException e) {
+        } catch ( SendMessageExceptionHandlers.NoSuchUserException | SendMessageExceptionHandlers.NoSuchFolderException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -43,7 +43,7 @@ public class MessageFolderController {
     public ResponseEntity<List<MessageFolder>> getFolders(){
         List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
-        return  new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
+        return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
     }
 
     @Transactional

@@ -87,6 +87,7 @@ public class Message {
         return messageFolders;
     }
 
+
     public void setMessageFolders(List<MessageFolder> messageFolders) {
         this.messageFolders = messageFolders;
     }
