@@ -1,9 +1,15 @@
 package com.crm.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "userclient")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserClient {
 
     @Id
@@ -18,37 +24,4 @@ public class UserClient {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
-
-
-    public UserClient() {}
-
-    public UserClient(User user, Client client) {
-        this.user = user;
-        this.client = client;
-    }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
 }

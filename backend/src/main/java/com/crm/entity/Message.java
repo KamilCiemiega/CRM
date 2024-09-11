@@ -2,12 +2,18 @@ package com.crm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
 @Table(name="message")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Message {
 
     @Id
@@ -31,66 +37,6 @@ public class Message {
     @ManyToMany(mappedBy = "messages")
     @JsonIgnore
     private List<MessageFolder> messageFolders;
-
-
-    public Message() {}
-
-    public Message(Integer id, String subject, String body, Timestamp sentDate, Status status) {
-        this.id = id;
-        this.subject = subject;
-        this.body = body;
-        this.sentDate = sentDate;
-        this.status = status;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public Timestamp getSentDate() {
-        return sentDate;
-    }
-
-    public void setSentDate(Timestamp sentDate) {
-        this.sentDate = sentDate;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public List<MessageFolder> getMessageFolders() {
-        return messageFolders;
-    }
-
-
-    public void setMessageFolders(List<MessageFolder> messageFolders) {
-        this.messageFolders = messageFolders;
-    }
 
     public enum Status {
         NEW,

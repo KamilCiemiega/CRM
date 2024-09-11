@@ -1,7 +1,7 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
-import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
+import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/message-folders")
@@ -22,6 +21,17 @@ public class MessageFolderController {
     @Autowired
     public MessageFolderController(MessageFolderService messageFolderService) {
         this.messageFolderService = messageFolderService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MessageFolderDto>> getFolders() {
+        List<MessageFolderDto> listOfMessageFolders = messageFolderService.findAllMessageFolders();
+
+        if (listOfMessageFolders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
+        }
     }
 
     @Transactional
@@ -38,25 +48,10 @@ public class MessageFolderController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping
-    public ResponseEntity<List<MessageFolderDto>> getFolders() {
-        List<MessageFolderDto> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
-        if (listOfMessageFolders.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
-        }
-    }
     @Transactional
     @DeleteMapping("/{folder-id}")
     public ResponseEntity<MessageFolderDto> deleteFolder(@PathVariable("folder-id") int folderId) {
-        Optional<MessageFolderDto> folder = messageFolderService.findById(folderId);
-
-        return folder.map(folderToDelete -> {
-            messageFolderService.deleteFolder(folderId);
-            return new ResponseEntity<>(folderToDelete, HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(messageFolderService.deleteFolder(folderId),HttpStatus.OK);
     }
-
 }

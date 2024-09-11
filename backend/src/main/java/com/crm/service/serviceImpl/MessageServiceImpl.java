@@ -4,11 +4,10 @@ package com.crm.service.serviceImpl;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
-import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
+import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class MessageServiceImpl implements MessageService {
                 updatedMessage.setStatus(message.getStatus());
                 updatedMessage.setSentDate(message.getSentDate());
 
-                List<MessageFolder> newFolders = message.getMessageFolders();
+                List<MessageFolder> newFolders = message.getMessageFolders() != null ? message.getMessageFolders() : new ArrayList<>();
                 List<MessageFolder> existingFolders = new ArrayList<>(updatedMessage.getMessageFolders());
 
                 existingFolders.removeIf(folder -> !newFolders.contains(folder));
@@ -71,6 +70,4 @@ public class MessageServiceImpl implements MessageService {
             return messageRepository.save(message);
         }
     }
-
-
 }

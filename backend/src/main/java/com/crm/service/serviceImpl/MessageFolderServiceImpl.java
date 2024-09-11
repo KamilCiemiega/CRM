@@ -4,7 +4,7 @@ import com.crm.controller.dto.MessageFolderDto;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
-import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
+import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import com.crm.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -56,9 +56,19 @@ public class MessageFolderServiceImpl implements MessageFolderService {
     }
 
     @Override
-    public void deleteFolder(int folderId) {
-        messageFolderRepository.deleteById(folderId);
+    public MessageFolderDto deleteFolder(int folderId) {
+        return messageFolderRepository.findById(folderId)
+                .filter(folder -> folder.getDefaultFolder() != 1)
+                .map(folder -> {
+                    messageFolderRepository.deleteById(folderId);
+                    return modelMapper.map(folder, MessageFolderDto.class);
+                })
+                .orElseThrow(() -> new SendMessageExceptionHandlers.deleteDefaultFolderException(
+                        "Cannot delete the default folder or folder not found for ID: " + folderId
+                ));
     }
+
+
 
     @Override
     public MessageFolderDto createOrUpdateMessageFolder(MessageFolderDto messageFolderDto) {
@@ -76,14 +86,10 @@ public class MessageFolderServiceImpl implements MessageFolderService {
             Optional<MessageFolder> existingFolder = messageFolderRepository.findById(messageFolderDto.getId());
             if (existingFolder.isPresent()) {
                 messageFolder = existingFolder.get();
-                messageFolder.setName(messageFolderDto.getName());
-                messageFolder.setParentFolder(parentFolder);
-                messageFolder.setUser(user);
-            } else {
-                messageFolder.setName(messageFolderDto.getName());
-                messageFolder.setParentFolder(parentFolder);
-                messageFolder.setUser(user);
             }
+            messageFolder.setName(messageFolderDto.getName());
+            messageFolder.setParentFolder(parentFolder);
+            messageFolder.setUser(user);
         }
 
         MessageFolder savedMessageFolder = messageFolderRepository.save(messageFolder);

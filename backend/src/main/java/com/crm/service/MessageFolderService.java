@@ -10,6 +10,6 @@ public interface MessageFolderService {
     MessageFolder save(MessageFolder messageFolder);
     Optional<MessageFolderDto> findById(int parentFolderId);
     List<MessageFolderDto> findAllMessageFolders();
-    void deleteFolder(int folderId);
+    MessageFolderDto deleteFolder(int folderId);
     MessageFolderDto createOrUpdateMessageFolder(MessageFolderDto messageFolderDto);
 }

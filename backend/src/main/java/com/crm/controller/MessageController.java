@@ -1,7 +1,7 @@
 package com.crm.controller;
 
 import com.crm.entity.Message;
-import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
+import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
