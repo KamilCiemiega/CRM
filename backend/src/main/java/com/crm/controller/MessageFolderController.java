@@ -1,7 +1,6 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
-import com.crm.entity.MessageFolder;
 import com.crm.exception.sendMessageExceptionHandlers.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,24 +39,24 @@ public class MessageFolderController {
         }
     }
     @GetMapping
-    public ResponseEntity<List<MessageFolder>> getFolders(){
-        List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
+    public ResponseEntity<List<MessageFolderDto>> getFolders() {
+        List<MessageFolderDto> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
-        return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
-    }
-
-    @Transactional
-    @DeleteMapping("/{folder-id}")
-    public ResponseEntity<MessageFolder> deleteFolder(@PathVariable("folder-id") int folderId) {
-        Optional<MessageFolder> folder = messageFolderService.findById(folderId);
-        if (folder.isPresent()) {
-            MessageFolder folderToDelete = folder.get();
-            messageFolderService.deleteFolder(folderId);
-            return new ResponseEntity<>(folderToDelete, HttpStatus.OK);
+        if (listOfMessageFolders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
         }
     }
+    @Transactional
+    @DeleteMapping("/{folder-id}")
+    public ResponseEntity<MessageFolderDto> deleteFolder(@PathVariable("folder-id") int folderId) {
+        Optional<MessageFolderDto> folder = messageFolderService.findById(folderId);
 
+        return folder.map(folderToDelete -> {
+            messageFolderService.deleteFolder(folderId);
+            return new ResponseEntity<>(folderToDelete, HttpStatus.OK);
+        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
 }

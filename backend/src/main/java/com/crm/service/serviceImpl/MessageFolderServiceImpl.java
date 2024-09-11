@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageFolderServiceImpl implements MessageFolderService {
@@ -39,18 +40,19 @@ public class MessageFolderServiceImpl implements MessageFolderService {
     }
 
     @Override
-    public List<MessageFolder> findAllMessageFolders() {
-        return messageFolderRepository.findAll();
+    public List<MessageFolderDto> findAllMessageFolders() {
+        List<MessageFolder> messageFolders = messageFolderRepository.findAll();
+
+        return messageFolders.stream()
+                .map(folder -> modelMapper.map(folder, MessageFolderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<MessageFolder> findByNameAndUser(String messageFolderName, User user) {
-        return messageFolderRepository.findByNameAndUser(messageFolderName, user);
-    }
+    public Optional<MessageFolderDto> findById(int folderId) {
+        Optional<MessageFolder> messageFolder = messageFolderRepository.findById(folderId);
 
-    @Override
-    public Optional<MessageFolder> findById(int folderId) {
-        return messageFolderRepository.findById(folderId);
+        return messageFolder.map(folder -> modelMapper.map(folder, MessageFolderDto.class));
     }
 
     @Override

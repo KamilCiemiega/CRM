@@ -1,10 +1,5 @@
 package com.crm.entity;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
@@ -23,22 +18,18 @@ public class MessageFolder {
 
     @ManyToOne
     @JoinColumn(name = "parent_folder_id")
-    @JsonBackReference
     private MessageFolder parentFolder;
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<MessageFolder> subFolders;
 
     @ManyToMany
     @JoinTable(
-            name = "messageLocation",
+            name = "messagelocation",
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
-    @JsonIgnore
     private List<Message> messages;
-
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
