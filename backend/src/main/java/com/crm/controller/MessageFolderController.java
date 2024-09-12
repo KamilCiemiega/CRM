@@ -1,9 +1,8 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
-import com.crm.entity.MessageFolder;
-import com.crm.exception.NoSuchFolderException;
-import com.crm.exception.NoSuchUserException;
+import com.crm.entity.Message;
+import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,12 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/message-folders")
 public class MessageFolderController {
-
     private final MessageFolderService messageFolderService;
 
     @Autowired
@@ -26,12 +23,24 @@ public class MessageFolderController {
         this.messageFolderService = messageFolderService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<MessageFolderDto>> getFolders() {
+        List<MessageFolderDto> listOfMessageFolders = messageFolderService.findAllMessageFolders();
+
+        if (listOfMessageFolders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
+        }
+    }
+
+    @Transactional
     @PostMapping
     public ResponseEntity<MessageFolderDto> createOrUpdateFolder(@RequestBody MessageFolderDto messageFolderDto) {
         try {
             MessageFolderDto savedMessageFolderDto = messageFolderService.createOrUpdateMessageFolder(messageFolderDto);
             return new ResponseEntity<>(savedMessageFolderDto, HttpStatus.CREATED);
-        } catch (NoSuchUserException | NoSuchFolderException e) {
+        } catch ( SendMessageExceptionHandlers.NoSuchUserException | SendMessageExceptionHandlers.NoSuchFolderException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -39,25 +48,16 @@ public class MessageFolderController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping
-    public ResponseEntity<List<MessageFolder>> getFolders(){
-        List<MessageFolder> listOfMessageFolders = messageFolderService.findAllMessageFolders();
-
-        return new ResponseEntity<>(listOfMessageFolders, HttpStatus.OK);
-    }
 
     @Transactional
     @DeleteMapping("/{folder-id}")
-    public ResponseEntity<MessageFolder> deleteFolder(@PathVariable("folder-id") int folderId) {
-        Optional<MessageFolder> folder = messageFolderService.findById(folderId);
-        if (folder.isPresent()) {
-            MessageFolder folderToDelete = folder.get();
-            messageFolderService.deleteFolder(folderId);
-            return new ResponseEntity<>(folderToDelete, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<MessageFolderDto> deleteFolder(@PathVariable("folder-id") int folderId) {
+        return new ResponseEntity<>(messageFolderService.deleteFolder(folderId),HttpStatus.OK);
     }
 
-
+    @Transactional
+    @DeleteMapping("/{folder-id}/messages")
+    public ResponseEntity<List<Message>> deleteAllMessagesFromFolder(@PathVariable("folder-id") int folderId) {
+        return new ResponseEntity<>(messageFolderService.deleteAllMessagesFromFolder(folderId), HttpStatus.OK);
+    }
 }

@@ -6,22 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "userclient")
+@Table(name = "messagelocation")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserClient {
-
+public class MessageLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
+    private Long id;
+    @Column(name = "folder_id")
+    private Integer folderId;
+    @Column(name = "message_id")
+    private Integer messageId;
 }
