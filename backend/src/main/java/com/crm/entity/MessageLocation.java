@@ -16,7 +16,6 @@ public class MessageLocation {
     private Long id;
     @Column(name = "folder_id")
     private Integer folderId;
-
     @Column(name = "message_id")
     private Integer messageId;
 }

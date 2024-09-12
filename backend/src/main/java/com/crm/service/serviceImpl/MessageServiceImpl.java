@@ -8,6 +8,8 @@ import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,5 +71,23 @@ public class MessageServiceImpl implements MessageService {
         } else {
             return messageRepository.save(message);
         }
+    }
+
+    @Override
+    public Message deleteMessage(int messageId) {
+        Optional<Message> message = messageRepository.findById(messageId);
+
+        if (message.isPresent()) {
+            Message deletedMessage = message.get();
+            messageRepository.deleteById(messageId);
+            return deletedMessage;
+        } else {
+            throw new SendMessageExceptionHandlers.NoSuchMessageException("Can't find message with id " + messageId);
+        }
+    }
+
+    @Override
+    public List<Message> getMessagesByFolderAndDateRange(int folderId, Timestamp startDate, Timestamp endDate) {
+        return messageRepository.findMessagesByFolderIdAndDateRange(folderId, startDate, endDate);
     }
 }

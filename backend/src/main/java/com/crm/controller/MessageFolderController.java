@@ -1,6 +1,7 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.MessageFolderDto;
+import com.crm.entity.Message;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/message-folders")
 public class MessageFolderController {
-
     private final MessageFolderService messageFolderService;
 
     @Autowired
@@ -53,5 +53,11 @@ public class MessageFolderController {
     @DeleteMapping("/{folder-id}")
     public ResponseEntity<MessageFolderDto> deleteFolder(@PathVariable("folder-id") int folderId) {
         return new ResponseEntity<>(messageFolderService.deleteFolder(folderId),HttpStatus.OK);
+    }
+
+    @Transactional
+    @DeleteMapping("/{folder-id}/messages")
+    public ResponseEntity<List<Message>> deleteAllMessagesFromFolder(@PathVariable("folder-id") int folderId) {
+        return new ResponseEntity<>(messageFolderService.deleteAllMessagesFromFolder(folderId), HttpStatus.OK);
     }
 }

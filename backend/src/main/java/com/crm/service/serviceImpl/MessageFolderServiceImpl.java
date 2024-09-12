@@ -2,16 +2,19 @@ package com.crm.service.serviceImpl;
 
 import com.crm.controller.dto.MessageFolderDto;
 import com.crm.dao.MessageFolderRepository;
+import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
+import com.crm.service.MessageService;
 import com.crm.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,12 +23,14 @@ import java.util.stream.Collectors;
 public class MessageFolderServiceImpl implements MessageFolderService {
 
     private final MessageFolderRepository messageFolderRepository;
+    private final MessageService messageService;
     private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageFolderServiceImpl(MessageFolderRepository messageFolderRepository, UserService userService, ModelMapper modelMapper) {
+    public MessageFolderServiceImpl(MessageFolderRepository messageFolderRepository,MessageService messageService, UserService userService, ModelMapper modelMapper) {
         this.messageFolderRepository = messageFolderRepository;
+        this.messageService = messageService;
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
@@ -68,8 +73,6 @@ public class MessageFolderServiceImpl implements MessageFolderService {
                 ));
     }
 
-
-
     @Override
     public MessageFolderDto createOrUpdateMessageFolder(MessageFolderDto messageFolderDto) {
         User user = userService.findById(messageFolderDto.getOwnerUserId())
@@ -95,4 +98,21 @@ public class MessageFolderServiceImpl implements MessageFolderService {
         MessageFolder savedMessageFolder = messageFolderRepository.save(messageFolder);
         return modelMapper.map(savedMessageFolder, MessageFolderDto.class);
     }
+
+    @Override
+    public List<Message> deleteAllMessagesFromFolder(int folderId) {
+        Optional<MessageFolder> folder = messageFolderRepository.findById(folderId);
+
+        return folder.map(presentFolder -> {
+            List<Message> listOfDeletedMessages = new ArrayList<>();
+
+            presentFolder.getMessages().forEach(message -> {
+                Message deletedMessage = messageService.deleteMessage(message.getId());
+                listOfDeletedMessages.add(deletedMessage);
+            });
+            return listOfDeletedMessages;
+        }).orElseThrow(() -> new SendMessageExceptionHandlers.NoSuchFolderException("Folder doesn't exist " + folderId));
+    }
+
+
 }

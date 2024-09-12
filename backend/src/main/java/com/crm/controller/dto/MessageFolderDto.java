@@ -13,4 +13,5 @@ public class MessageFolderDto {
     private Integer parentFolderId;
     private Integer ownerUserId;
     private UserDto user;
+    private int defaultFolder;
 }
