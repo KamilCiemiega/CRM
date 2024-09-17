@@ -36,7 +36,7 @@ public class MessageFolder {
     @JsonManagedReference
     private List<MessageFolder> subFolders;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "messagelocation",
             joinColumns = @JoinColumn(name = "folder_id"),

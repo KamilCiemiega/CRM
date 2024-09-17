@@ -1,6 +1,8 @@
 package com.crm.service.serviceImpl;
 
 
+import com.crm.Enum.MessageSortType;
+import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
@@ -9,8 +11,8 @@ import com.crm.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +20,12 @@ import java.util.Optional;
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
+    private final MessageFolderRepository messageFolderRepository;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, MessageFolderRepository messageFolderRepository) {
         this.messageRepository = messageRepository;
+        this.messageFolderRepository = messageFolderRepository;
     }
 
     @Override
@@ -87,7 +91,25 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getMessagesByFolderAndDateRange(int folderId, Timestamp startDate, Timestamp endDate) {
-        return messageRepository.findMessagesByFolderIdAndDateRange(folderId, startDate, endDate);
+    public List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType) {
+        Optional<MessageFolder> messageFolder = messageFolderRepository.findById(folderId);
+
+        if (messageFolder.isPresent()) {
+            List<Message> messages = messageFolder.get().getMessages();
+
+            Comparator<Message> comparator = switch (sortType) {
+                case SIZE -> Comparator.comparing(Message::getSize);
+                default -> Comparator.comparing(Message::getSentDate);
+            };
+
+            if ("DESC".equalsIgnoreCase(orderType)) {
+                comparator = comparator.reversed();
+            }
+
+            messages.sort(comparator);
+            return messages;
+        } else {
+            throw new SendMessageExceptionHandlers.NoSuchFolderException("Can't find folder with id " + folderId);
+        }
     }
 }

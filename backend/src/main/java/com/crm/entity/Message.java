@@ -34,6 +34,9 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "size")
+    private Long size;
+
     @ManyToMany(mappedBy = "messages")
     @JsonIgnore
     private List<MessageFolder> messageFolders;
@@ -47,5 +50,11 @@ public class Message {
         DRAFT,
         FOLLOW_UP,
         TRASH
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void calculateSize() {
+        this.size = (long) (body != null ? body.getBytes().length : 0);
     }
 }
