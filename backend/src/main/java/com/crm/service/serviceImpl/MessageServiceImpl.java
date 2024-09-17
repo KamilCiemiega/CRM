@@ -2,12 +2,14 @@ package com.crm.service.serviceImpl;
 
 
 import com.crm.Enum.MessageSortType;
+import com.crm.controller.dto.MessageDTO;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +23,19 @@ public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
     private final MessageFolderRepository messageFolderRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, MessageFolderRepository messageFolderRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, MessageFolderRepository messageFolderRepository, ModelMapper modelMapper) {
         this.messageRepository = messageRepository;
         this.messageFolderRepository = messageFolderRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public Message save(Message message) {
-        return messageRepository.save(message);
+    public MessageDTO save(Message message) {
+        messageRepository.save(message);
+        return modelMapper.map(message, MessageDTO.class);
     }
 
     @Override
@@ -99,6 +104,7 @@ public class MessageServiceImpl implements MessageService {
 
             Comparator<Message> comparator = switch (sortType) {
                 case SIZE -> Comparator.comparing(Message::getSize);
+                case SUBJECT -> Comparator.comparing(Message::getSubject);
                 default -> Comparator.comparing(Message::getSentDate);
             };
 

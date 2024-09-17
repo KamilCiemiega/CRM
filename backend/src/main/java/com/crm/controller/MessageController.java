@@ -58,7 +58,7 @@ public class MessageController {
     }
 
     @GetMapping("/folders/{folderId}/messages")
-    public ResponseEntity<List<Message>> getSortedMessagesByFolder(
+    public ResponseEntity<List<Message>> getSortedMessagesByType(
             @PathVariable Integer folderId,
             @RequestParam MessageSortType sortType,
             @RequestParam String orderType) {

@@ -1,8 +1,12 @@
 package com.crm.Enum;
 
+import lombok.Getter;
+
+@Getter
 public enum MessageSortType {
     DATE("sentDate"),
-    SIZE("size");
+    SIZE("size"),
+    SUBJECT("subject");
 
     private final String fieldName;
 
@@ -10,7 +14,4 @@ public enum MessageSortType {
         this.fieldName = fieldName;
     }
 
-    public String getFieldName() {
-        return fieldName;
-    }
 }
