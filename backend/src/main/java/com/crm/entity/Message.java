@@ -50,6 +50,9 @@ public class Message {
         TRASH
     }
 
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments;
+
     @PrePersist
     @PreUpdate
     public void calculateSize() {

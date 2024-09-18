@@ -11,7 +11,7 @@ public interface MessageService {
     MessageDTO save(Message message);
     List<MessageDTO> findAllMessage();
     Optional<MessageDTO> findById(int messageId);
-    Message createOrUpdateMessage (Message message);
+    MessageDTO createOrUpdateMessage(MessageDTO messageDTO);
     MessageDTO deleteMessage(int messageId);
     List<MessageDTO> getSortedMessages(int folderId, MessageSortType sortType, String orderType);
 }

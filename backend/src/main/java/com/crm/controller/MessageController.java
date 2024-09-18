@@ -43,9 +43,9 @@ public class MessageController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity<Message> createOrUpdateMessage(@RequestBody Message message) {
+    public ResponseEntity<MessageDTO> createOrUpdateMessage(@RequestBody MessageDTO messageDTO) {
         try {
-            Message savedMessage = messageService.createOrUpdateMessage(message);
+            MessageDTO savedMessage = messageService.createOrUpdateMessage(messageDTO);
             return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
         } catch (SendMessageExceptionHandlers.NoSuchMessageException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

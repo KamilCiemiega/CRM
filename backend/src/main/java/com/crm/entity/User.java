@@ -35,11 +35,9 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id")
-    @JsonBackReference
     private Role role;
 
     @ManyToMany(mappedBy = "users")
-    @JsonIgnoreProperties("users")
     private List<Client> clients;
 
     @OneToMany(mappedBy = "user")

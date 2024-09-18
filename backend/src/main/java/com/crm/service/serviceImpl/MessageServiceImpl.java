@@ -7,6 +7,7 @@ import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
+import com.crm.entity.MessageParticipant;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
@@ -54,17 +55,26 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message createOrUpdateMessage(Message message) {
+    public MessageDTO createOrUpdateMessage(MessageDTO messageDTO) {
         Message updatedMessage;
+
+        Message message = modelMapper.map(messageDTO, Message.class);
 
         if (message.getId() != null) {
             Optional<Message> existingMessage = messageRepository.findById(message.getId());
+
             if (existingMessage.isPresent()) {
                 updatedMessage = existingMessage.get();
+
                 updatedMessage.setSubject(message.getSubject());
                 updatedMessage.setBody(message.getBody());
                 updatedMessage.setStatus(message.getStatus());
                 updatedMessage.setSentDate(message.getSentDate());
+
+                if (message.getAttachments() != null) {
+                    updatedMessage.getAttachments().clear();
+                    updatedMessage.getAttachments().addAll(message.getAttachments());
+                }
 
                 List<MessageFolder> newFolders = message.getMessageFolders() != null ? message.getMessageFolders() : new ArrayList<>();
                 List<MessageFolder> existingFolders = new ArrayList<>(updatedMessage.getMessageFolders());
@@ -82,14 +92,35 @@ public class MessageServiceImpl implements MessageService {
 
                 updatedMessage.setMessageFolders(newFolders);
 
-                return messageRepository.save(updatedMessage);
+                List<MessageParticipant> newParticipants = message.getMessageParticipants() != null ? message.getMessageParticipants() : new ArrayList<>();
+                List<MessageParticipant> existingParticipants = new ArrayList<>(updatedMessage.getMessageParticipants());
+
+                existingParticipants.removeIf(participant -> !newParticipants.contains(participant));
+                for (MessageParticipant participant : existingParticipants) {
+                    participant.getMessages().remove(updatedMessage);
+                }
+
+                for (MessageParticipant participant : newParticipants) {
+                    if (!updatedMessage.getMessageParticipants().contains(participant)) {
+                        participant.getMessages().add(updatedMessage);
+                    }
+                }
+
+                updatedMessage.setMessageParticipants(newParticipants);
+
+                messageRepository.save(updatedMessage);
             } else {
                 throw new SendMessageExceptionHandlers.NoSuchMessageException("Message not found for ID: " + message.getId());
             }
         } else {
-            return messageRepository.save(message);
+            // Tworzenie nowej wiadomości
+            updatedMessage = messageRepository.save(message);
         }
+
+        // Mapowanie z powrotem do DTO i zwrócenie
+        return modelMapper.map(updatedMessage, MessageDTO.class);
     }
+
 
     @Override
     public MessageDTO deleteMessage(int messageId) {

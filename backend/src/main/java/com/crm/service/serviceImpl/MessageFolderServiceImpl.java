@@ -36,15 +36,6 @@ public class MessageFolderServiceImpl implements MessageFolderService {
     }
 
     @Override
-    public MessageFolder save(MessageFolder messageFolder) {
-        try {
-            return messageFolderRepository.save(messageFolder);
-        } catch (DataIntegrityViolationException e) {
-            throw new SendMessageExceptionHandlers.DuplicateFolderException("Folder already exists for user: " + messageFolder.getUser().getId());
-        }
-    }
-
-    @Override
     public List<MessageFolderDto> findAllMessageFolders() {
         List<MessageFolder> messageFolders = messageFolderRepository.findAll();
 
