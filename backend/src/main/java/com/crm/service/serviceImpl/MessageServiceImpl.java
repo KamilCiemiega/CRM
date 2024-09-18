@@ -11,12 +11,13 @@ import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -39,10 +40,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> findAllMessage() { return messageRepository.findAll(); }
+    public List<MessageDTO> findAllMessage() {
+       return messageRepository.findAll()
+                .stream()
+                .map(m -> modelMapper.map(m, MessageDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
-    public Optional<Message> findById(int messageId) { return messageRepository.findById(messageId); }
+    public Optional<MessageDTO> findById(int messageId) {
+        return messageRepository.findById(messageId)
+                .map(message -> modelMapper.map(message, MessageDTO.class));
+    }
 
     @Override
     public Message createOrUpdateMessage(Message message) {
@@ -83,39 +92,30 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message deleteMessage(int messageId) {
+    public MessageDTO deleteMessage(int messageId) {
         Optional<Message> message = messageRepository.findById(messageId);
 
         if (message.isPresent()) {
             Message deletedMessage = message.get();
             messageRepository.deleteById(messageId);
-            return deletedMessage;
+            return modelMapper.map(deletedMessage, MessageDTO.class);
         } else {
             throw new SendMessageExceptionHandlers.NoSuchMessageException("Can't find message with id " + messageId);
         }
     }
 
     @Override
-    public List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType) {
-        Optional<MessageFolder> messageFolder = messageFolderRepository.findById(folderId);
+    public List<MessageDTO> getSortedMessages(int folderId, MessageSortType sortType, String orderType) {
+        Sort.Direction direction = "DESC".equalsIgnoreCase(orderType) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sort = switch (sortType) {
+            case SIZE -> Sort.by(direction, "size");
+            case SUBJECT -> Sort.by(direction, "subject");
+            default -> Sort.by(direction, "sentDate");
+        };
 
-        if (messageFolder.isPresent()) {
-            List<Message> messages = messageFolder.get().getMessages();
-
-            Comparator<Message> comparator = switch (sortType) {
-                case SIZE -> Comparator.comparing(Message::getSize);
-                case SUBJECT -> Comparator.comparing(Message::getSubject);
-                default -> Comparator.comparing(Message::getSentDate);
-            };
-
-            if ("DESC".equalsIgnoreCase(orderType)) {
-                comparator = comparator.reversed();
-            }
-
-            messages.sort(comparator);
-            return messages;
-        } else {
-            throw new SendMessageExceptionHandlers.NoSuchFolderException("Can't find folder with id " + folderId);
-        }
+        return messageRepository.findMessagesByFolderId(folderId, sort)
+                .stream()
+                .map(m -> modelMapper.map(m, MessageDTO.class))
+                .collect(Collectors.toList());
     }
 }

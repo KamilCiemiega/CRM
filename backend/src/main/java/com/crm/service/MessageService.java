@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface MessageService {
     MessageDTO save(Message message);
-    List<Message> findAllMessage();
-    Optional<Message> findById(int messageId);
+    List<MessageDTO> findAllMessage();
+    Optional<MessageDTO> findById(int messageId);
     Message createOrUpdateMessage (Message message);
-    Message deleteMessage(int messageId);
-    List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType);
+    MessageDTO deleteMessage(int messageId);
+    List<MessageDTO> getSortedMessages(int folderId, MessageSortType sortType, String orderType);
 }

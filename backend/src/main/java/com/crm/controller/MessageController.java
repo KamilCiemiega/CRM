@@ -1,6 +1,7 @@
 package com.crm.controller;
 
 import com.crm.Enum.MessageSortType;
+import com.crm.controller.dto.MessageDTO;
 import com.crm.entity.Message;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
@@ -25,16 +26,16 @@ public class MessageController {
     }
 
     @GetMapping
-    public List<Message> getAllMessages() {
+    public List<MessageDTO> getAllMessages() {
         return  messageService.findAllMessage();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Message> getMessageById(@PathVariable("id") int messageId) {
-        Optional<Message> message = messageService.findById(messageId);
+    public ResponseEntity<MessageDTO> getMessageById(@PathVariable("id") int messageId) {
+        Optional<MessageDTO> message = messageService.findById(messageId);
         if(message.isPresent()){
-            Message findedMessage = message.get();
-            return new ResponseEntity<>(findedMessage, HttpStatus.OK);
+            MessageDTO foundMessage = message.get();
+            return new ResponseEntity<>(foundMessage, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -53,16 +54,19 @@ public class MessageController {
 
     @Transactional
     @DeleteMapping("/{message-id}")
-    public ResponseEntity<Message> deleteMessage(@PathVariable("message-id") int messageId){
+    public ResponseEntity<MessageDTO> deleteMessage(@PathVariable("message-id") int messageId){
         return new ResponseEntity<>(messageService.deleteMessage(messageId), HttpStatus.OK);
     }
 
     @GetMapping("/folders/{folderId}/messages")
-    public ResponseEntity<List<Message>> getSortedMessagesByType(
+    public ResponseEntity<List<MessageDTO>> getSortedMessages(
             @PathVariable Integer folderId,
-            @RequestParam MessageSortType sortType,
+            @RequestParam String sortType,
             @RequestParam String orderType) {
-        List<Message> messages = messageService.getSortedMessages(folderId, sortType, orderType);
+
+        MessageSortType messageSortType = MessageSortType.valueOf(sortType.toUpperCase());
+        List<MessageDTO> messages = messageService.getSortedMessages(folderId, messageSortType, orderType);
+
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 }

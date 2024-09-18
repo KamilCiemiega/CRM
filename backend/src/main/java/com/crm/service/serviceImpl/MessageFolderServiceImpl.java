@@ -1,8 +1,8 @@
 package com.crm.service.serviceImpl;
 
+import com.crm.controller.dto.MessageDTO;
 import com.crm.controller.dto.MessageFolderDto;
 import com.crm.dao.MessageFolderRepository;
-import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
 import com.crm.exception.SendMessageExceptionHandlers;
@@ -100,14 +100,15 @@ public class MessageFolderServiceImpl implements MessageFolderService {
     }
 
     @Override
-    public List<Message> deleteAllMessagesFromFolder(int folderId) {
+    public List<MessageDTO> deleteAllMessagesFromFolder(int folderId) {
         Optional<MessageFolder> folder = messageFolderRepository.findById(folderId);
 
         return folder.map(presentFolder -> {
-            List<Message> listOfDeletedMessages = new ArrayList<>();
+            List<MessageDTO> listOfDeletedMessages = new ArrayList<>();
 
             presentFolder.getMessages().forEach(message -> {
-                Message deletedMessage = messageService.deleteMessage(message.getId());
+                MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
+                MessageDTO deletedMessage = messageService.deleteMessage(message.getId());
                 listOfDeletedMessages.add(deletedMessage);
             });
             return listOfDeletedMessages;

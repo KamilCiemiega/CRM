@@ -1,6 +1,5 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,7 +37,6 @@ public class Message {
     private Long size;
 
     @ManyToMany(mappedBy = "messages")
-    @JsonIgnore
     private List<MessageFolder> messageFolders;
 
     public enum Status {
