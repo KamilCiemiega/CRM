@@ -1,6 +1,5 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,8 +33,10 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "size")
+    private Long size;
+
     @ManyToMany(mappedBy = "messages")
-    @JsonIgnore
     private List<MessageFolder> messageFolders;
 
     public enum Status {
@@ -47,5 +48,14 @@ public class Message {
         DRAFT,
         FOLLOW_UP,
         TRASH
+    }
+
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments;
+
+    @PrePersist
+    @PreUpdate
+    public void calculateSize() {
+        this.size = (long) (body != null ? body.getBytes().length : 0);
     }
 }

@@ -20,8 +20,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Optional<Role> findById(User user) {
-        Optional<Role> role = roleRepository.findById(user.getRole().getId());
-
-        return role;
+        return roleRepository.findById(user.getRole().getId());
     }
 }

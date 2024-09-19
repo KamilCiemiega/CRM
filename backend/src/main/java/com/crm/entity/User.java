@@ -1,7 +1,5 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
@@ -35,11 +32,9 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id")
-    @JsonBackReference
     private Role role;
 
     @ManyToMany(mappedBy = "users")
-    @JsonIgnoreProperties("users")
     private List<Client> clients;
 
     @OneToMany(mappedBy = "user")
