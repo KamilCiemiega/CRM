@@ -55,22 +55,36 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public MessageDTO createNewMessage(MessageDTO messageDTO) {
+        Message message = modelMapper.map(messageDTO, Message.class);
+        messageRepository.save(message);
+
+
+    }
+
+    @Override
+    public MessageDTO updateExistingMessage(MessageDTO messageDTO) {
+        return null;
+    }
+
+    @Override
     public MessageDTO createOrUpdateMessage(MessageDTO messageDTO) {
         Message updatedMessage;
-
         Message message = modelMapper.map(messageDTO, Message.class);
 
         if (message.getId() != null) {
             Optional<Message> existingMessage = messageRepository.findById(message.getId());
 
             if (existingMessage.isPresent()) {
-                updatedMessage = existingMessage.get();
 
+                //Updating message
+                updatedMessage = existingMessage.get();
                 updatedMessage.setSubject(message.getSubject());
                 updatedMessage.setBody(message.getBody());
                 updatedMessage.setStatus(message.getStatus());
                 updatedMessage.setSentDate(message.getSentDate());
 
+                //Updating attachments
                 if (message.getAttachments() != null) {
                     updatedMessage.getAttachments().clear();
                     updatedMessage.getAttachments().addAll(message.getAttachments());
@@ -113,11 +127,8 @@ public class MessageServiceImpl implements MessageService {
                 throw new SendMessageExceptionHandlers.NoSuchMessageException("Message not found for ID: " + message.getId());
             }
         } else {
-            // Tworzenie nowej wiadomości
             updatedMessage = messageRepository.save(message);
         }
-
-        // Mapowanie z powrotem do DTO i zwrócenie
         return modelMapper.map(updatedMessage, MessageDTO.class);
     }
 

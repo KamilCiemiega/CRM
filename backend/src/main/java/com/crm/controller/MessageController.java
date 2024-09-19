@@ -2,7 +2,6 @@ package com.crm.controller;
 
 import com.crm.Enum.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
-import com.crm.entity.Message;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,18 @@ public class MessageController {
         } catch (SendMessageExceptionHandlers.NoSuchMessageException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Transactional
+    @PostMapping("/message")
+    public ResponseEntity<MessageDTO> createNewMessage(@RequestBody MessageDTO messageDTO){
+
+    }
+
+    @Transactional
+    @PostMapping("/message/{message-id}")
+    public ResponseEntity<MessageDTO> createNewMessage(@PathVariable("message-id") int messageId){
+
     }
 
     @Transactional
