@@ -6,8 +6,6 @@ import com.crm.controller.dto.MessageDTO;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.Message;
-import com.crm.entity.MessageFolder;
-import com.crm.entity.MessageParticipant;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
@@ -15,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,83 +53,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageDTO createNewMessage(MessageDTO messageDTO) {
-        Message message = modelMapper.map(messageDTO, Message.class);
-        messageRepository.save(message);
-
-
-    }
-
-    @Override
-    public MessageDTO updateExistingMessage(MessageDTO messageDTO) {
-        return null;
-    }
-
-    @Override
-    public MessageDTO createOrUpdateMessage(MessageDTO messageDTO) {
-        Message updatedMessage;
+    public MessageDTO CreateOrUpdateExistingMessage(MessageDTO messageDTO) {
         Message message = modelMapper.map(messageDTO, Message.class);
 
-        if (message.getId() != null) {
-            Optional<Message> existingMessage = messageRepository.findById(message.getId());
-
-            if (existingMessage.isPresent()) {
-
-                //Updating message
-                updatedMessage = existingMessage.get();
-                updatedMessage.setSubject(message.getSubject());
-                updatedMessage.setBody(message.getBody());
-                updatedMessage.setStatus(message.getStatus());
-                updatedMessage.setSentDate(message.getSentDate());
-
-                //Updating attachments
-                if (message.getAttachments() != null) {
-                    updatedMessage.getAttachments().clear();
-                    updatedMessage.getAttachments().addAll(message.getAttachments());
-                }
-
-                List<MessageFolder> newFolders = message.getMessageFolders() != null ? message.getMessageFolders() : new ArrayList<>();
-                List<MessageFolder> existingFolders = new ArrayList<>(updatedMessage.getMessageFolders());
-
-                existingFolders.removeIf(folder -> !newFolders.contains(folder));
-                for (MessageFolder folder : existingFolders) {
-                    folder.getMessages().remove(updatedMessage);
-                }
-
-                for (MessageFolder folder : newFolders) {
-                    if (!updatedMessage.getMessageFolders().contains(folder)) {
-                        folder.getMessages().add(updatedMessage);
-                    }
-                }
-
-                updatedMessage.setMessageFolders(newFolders);
-
-                List<MessageParticipant> newParticipants = message.getMessageParticipants() != null ? message.getMessageParticipants() : new ArrayList<>();
-                List<MessageParticipant> existingParticipants = new ArrayList<>(updatedMessage.getMessageParticipants());
-
-                existingParticipants.removeIf(participant -> !newParticipants.contains(participant));
-                for (MessageParticipant participant : existingParticipants) {
-                    participant.getMessages().remove(updatedMessage);
-                }
-
-                for (MessageParticipant participant : newParticipants) {
-                    if (!updatedMessage.getMessageParticipants().contains(participant)) {
-                        participant.getMessages().add(updatedMessage);
-                    }
-                }
-
-                updatedMessage.setMessageParticipants(newParticipants);
-
-                messageRepository.save(updatedMessage);
-            } else {
-                throw new SendMessageExceptionHandlers.NoSuchMessageException("Message not found for ID: " + message.getId());
-            }
-        } else {
-            updatedMessage = messageRepository.save(message);
+        if (message.getId() == null) {
+            message.setSentDate(new Timestamp(System.currentTimeMillis()));
         }
-        return modelMapper.map(updatedMessage, MessageDTO.class);
-    }
 
+        Message savedMessage = messageRepository.save(message);
+
+        return modelMapper.map(savedMessage, MessageDTO.class);
+    }
 
     @Override
     public MessageDTO deleteMessage(int messageId) {

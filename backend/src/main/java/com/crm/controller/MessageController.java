@@ -41,26 +41,9 @@ public class MessageController {
     }
 
     @Transactional
-    @PostMapping
-    public ResponseEntity<MessageDTO> createOrUpdateMessage(@RequestBody MessageDTO messageDTO) {
-        try {
-            MessageDTO savedMessage = messageService.createOrUpdateMessage(messageDTO);
-            return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
-        } catch (SendMessageExceptionHandlers.NoSuchMessageException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Transactional
     @PostMapping("/message")
-    public ResponseEntity<MessageDTO> createNewMessage(@RequestBody MessageDTO messageDTO){
-
-    }
-
-    @Transactional
-    @PostMapping("/message/{message-id}")
-    public ResponseEntity<MessageDTO> createNewMessage(@PathVariable("message-id") int messageId){
-
+    public ResponseEntity<MessageDTO> CreateOrUpdateMessage(@RequestBody MessageDTO messageDTO) {
+        return new ResponseEntity<>(messageService.CreateOrUpdateExistingMessage(messageDTO), HttpStatus.CREATED);
     }
 
     @Transactional
