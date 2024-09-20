@@ -1,7 +1,7 @@
 package com.crm.controller;
 
-import com.crm.controller.dto.NewUserDto;
-import com.crm.controller.dto.UserDto;
+import com.crm.controller.dto.NewUserDTO;
+import com.crm.controller.dto.UserDTO;
 import com.crm.entity.User;
 import com.crm.service.PasswordResetTokenService;
 import com.crm.service.UserService;
@@ -43,44 +43,44 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> findAllUsers() {
+    public ResponseEntity<List<UserDTO>> findAllUsers() {
         List<User> listOfUsers = userService.findAllUsers();
 
-            List<UserDto> userDtos = listOfUsers.stream()
-                    .map(user -> modelMapper.map(user, UserDto.class))
+            List<UserDTO> UserDTOs = listOfUsers.stream()
+                    .map(user -> modelMapper.map(user, UserDTO.class))
                     .collect(Collectors.toList());
 
-            return new ResponseEntity<>(userDtos, HttpStatus.OK);
+            return new ResponseEntity<>(UserDTOs, HttpStatus.OK);
     }
 
     @Transactional
     @PostMapping("/users")
-    public ResponseEntity<UserDto> saveUser(@RequestBody NewUserDto newUserDto) {
-        String plainPassword = newUserDto.getPassword();
+    public ResponseEntity<UserDTO> saveUser(@RequestBody NewUserDTO newUserDTO) {
+        String plainPassword = newUserDTO.getPassword();
         String encodedPassword = passwordEncoder.encode(plainPassword);
-        User user =  modelMapper.map(newUserDto, User.class);
+        User user =  modelMapper.map(newUserDTO, User.class);
         user.setPassword(encodedPassword);
 
         userService.save(user);
 
-        UserDto userDto = modelMapper.map(user, UserDto.class);
+        UserDTO UserDTO = modelMapper.map(user, UserDTO.class);
 
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+        return new ResponseEntity<>(UserDTO, HttpStatus.OK);
     }
 
     @Transactional
     @PutMapping("/users/{user-id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("user-id") int userId, @RequestBody UserDto userDto){
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("user-id") int userId, @RequestBody UserDTO UserDTO){
         Optional<User> userOptional = userService.findById(userId);
 
         if (userOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User existingUser = userOptional.get();
-        modelMapper.map(userDto, existingUser);
+        modelMapper.map(UserDTO, existingUser);
         userService.save(existingUser);
 
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+        return new ResponseEntity<>(UserDTO, HttpStatus.OK);
     }
 
     @GetMapping("/login")
@@ -96,12 +96,12 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username or password");
             }
 
-            UserDto userDto = modelMapper.map(user, UserDto.class);
+            UserDTO UserDTO = modelMapper.map(user, UserDTO.class);
 
             HttpSession session = request.getSession();
-            session.setAttribute("user", userDto);
+            session.setAttribute("user", UserDTO);
 
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
+            return new ResponseEntity<>(UserDTO, HttpStatus.OK);
 
     }
     @GetMapping("/logout")

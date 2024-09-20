@@ -1,11 +1,10 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -14,7 +13,8 @@ import java.util.List;
         name = "messagefolder",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "owner_user_id"})}
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageFolder {
@@ -28,11 +28,9 @@ public class MessageFolder {
 
     @ManyToOne
     @JoinColumn(name = "parent_folder_id")
-    @JsonBackReference
     private MessageFolder parentFolder;
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<MessageFolder> subFolders;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

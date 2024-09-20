@@ -3,7 +3,6 @@ package com.crm.service.serviceImpl;
 
 import com.crm.Enum.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
-import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.Message;
 import com.crm.exception.SendMessageExceptionHandlers;
@@ -12,8 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,20 +21,35 @@ import java.util.stream.Collectors;
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
-    private final MessageFolderRepository messageFolderRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, MessageFolderRepository messageFolderRepository, ModelMapper modelMapper) {
+    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper) {
         this.messageRepository = messageRepository;
-        this.messageFolderRepository = messageFolderRepository;
         this.modelMapper = modelMapper;
     }
 
+    @Transactional
     @Override
-    public MessageDTO save(Message message) {
-        messageRepository.save(message);
-        return modelMapper.map(message, MessageDTO.class);
+    public MessageDTO save(MessageDTO messageDTO) {
+        Message savedMessage = messageRepository.save(modelMapper.map(messageDTO, Message.class));
+        return modelMapper.map(savedMessage, MessageDTO.class);
+    }
+
+    @Transactional
+    @Override
+    public MessageDTO updateMessage(int messageId, MessageDTO messageDTO) {
+        Message existingMessage = messageRepository.findById(messageId)
+                .orElseThrow(() -> new SendMessageExceptionHandlers.NoSuchMessageException("Message not found for ID: " + messageId));
+
+        existingMessage.setSubject(messageDTO.getSubject());
+        existingMessage.setBody(messageDTO.getBody());
+        existingMessage.setStatus(messageDTO.getStatus());
+        existingMessage.setSentDate(messageDTO.getSentDate());
+
+        Message updatedMessage = messageRepository.save(existingMessage);
+
+        return modelMapper.map(updatedMessage, MessageDTO.class);
     }
 
     @Override
@@ -52,19 +66,7 @@ public class MessageServiceImpl implements MessageService {
                 .map(message -> modelMapper.map(message, MessageDTO.class));
     }
 
-    @Override
-    public MessageDTO CreateOrUpdateExistingMessage(MessageDTO messageDTO) {
-        Message message = modelMapper.map(messageDTO, Message.class);
-
-        if (message.getId() == null) {
-            message.setSentDate(new Timestamp(System.currentTimeMillis()));
-        }
-
-        Message savedMessage = messageRepository.save(message);
-
-        return modelMapper.map(savedMessage, MessageDTO.class);
-    }
-
+    @Transactional
     @Override
     public MessageDTO deleteMessage(int messageId) {
         Optional<Message> message = messageRepository.findById(messageId);

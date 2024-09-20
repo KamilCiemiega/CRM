@@ -2,12 +2,10 @@ package com.crm.controller;
 
 import com.crm.Enum.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
-import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,14 +37,17 @@ public class MessageController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    @Transactional
-    @PostMapping("/message")
-    public ResponseEntity<MessageDTO> CreateOrUpdateMessage(@RequestBody MessageDTO messageDTO) {
-        return new ResponseEntity<>(messageService.CreateOrUpdateExistingMessage(messageDTO), HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<MessageDTO> saveNewMessage(@RequestBody MessageDTO messageDTO) {
+        return new ResponseEntity<>(messageService.save(messageDTO), HttpStatus.CREATED);
     }
 
-    @Transactional
+    @PostMapping("/{message-id}")
+    public ResponseEntity<MessageDTO> updateMessage(@PathVariable("message-id") int messageId, @RequestBody MessageDTO messageDTO) {
+        MessageDTO updatedMessage = messageService.updateMessage(messageId, messageDTO);
+        return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{message-id}")
     public ResponseEntity<MessageDTO> deleteMessage(@PathVariable("message-id") int messageId){
         return new ResponseEntity<>(messageService.deleteMessage(messageId), HttpStatus.OK);
