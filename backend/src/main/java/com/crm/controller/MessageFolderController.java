@@ -2,6 +2,7 @@ package com.crm.controller;
 
 import com.crm.controller.dto.MessageDTO;
 import com.crm.controller.dto.MessageFolderDto;
+import com.crm.exception.NoSuchFolderException;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class MessageFolderController {
         try {
             MessageFolderDto savedMessageFolderDto = messageFolderService.createOrUpdateMessageFolder(messageFolderDto);
             return new ResponseEntity<>(savedMessageFolderDto, HttpStatus.CREATED);
-        } catch ( SendMessageExceptionHandlers.NoSuchUserException | SendMessageExceptionHandlers.NoSuchFolderException e) {
+        } catch (SendMessageExceptionHandlers.NoSuchUserException | NoSuchFolderException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);

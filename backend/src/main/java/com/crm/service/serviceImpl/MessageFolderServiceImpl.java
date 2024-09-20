@@ -5,13 +5,13 @@ import com.crm.controller.dto.MessageFolderDto;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
+import com.crm.exception.NoSuchFolderException;
 import com.crm.exception.SendMessageExceptionHandlers;
 import com.crm.service.MessageFolderService;
 import com.crm.service.MessageService;
 import com.crm.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class MessageFolderServiceImpl implements MessageFolderService {
         MessageFolder parentFolder = null;
         if (messageFolderDto.getParentFolderId() != null) {
             parentFolder = messageFolderRepository.findById(messageFolderDto.getParentFolderId())
-                    .orElseThrow(() -> new SendMessageExceptionHandlers.NoSuchFolderException("Parent folder not found for ID: " + messageFolderDto.getParentFolderId()));
+                    .orElseThrow(() -> new NoSuchFolderException("Parent folder not found for ID: " + messageFolderDto.getParentFolderId()));
         }
 
         MessageFolder messageFolder = new MessageFolder();
@@ -103,7 +103,7 @@ public class MessageFolderServiceImpl implements MessageFolderService {
                 listOfDeletedMessages.add(deletedMessage);
             });
             return listOfDeletedMessages;
-        }).orElseThrow(() -> new SendMessageExceptionHandlers.NoSuchFolderException("Folder doesn't exist " + folderId));
+        }).orElseThrow(() -> new NoSuchFolderException("Folder doesn't exist " + folderId));
     }
 
 

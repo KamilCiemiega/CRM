@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -36,7 +37,7 @@ public class Message {
     @Column(name = "size")
     private Long size;
 
-    @ManyToMany(mappedBy = "messages")
+    @ManyToMany(mappedBy = "messages", cascade = CascadeType.ALL)// https://www.geeksforgeeks.org/jpa-cascading-operations/
     private List<MessageFolder> messageFolders;
 
     public enum Status {

@@ -40,11 +40,27 @@ public class MessageController {
         }
     }
 
-    @Transactional
+    @Transactional // should be enough to put TX around service method, not a controller method
     @PostMapping("/message")
     public ResponseEntity<MessageDTO> CreateOrUpdateMessage(@RequestBody MessageDTO messageDTO) {
         return new ResponseEntity<>(messageService.CreateOrUpdateExistingMessage(messageDTO), HttpStatus.CREATED);
     }
+
+    /**
+     * Current state:
+     *
+     * POST /api/messages/message - update / create
+     *
+     * Should be:
+     *
+     * GET /api/messages - get all messages (list)
+     * GET /api/messages/:id - get single message
+     * POST /api/messages/:id - update message
+     * DELETE /api/message/:id - delete message
+     * POST /api/messages - create message
+     * POST /api/messages/:id - update or create (!!!!)
+
+     */
 
     @Transactional
     @DeleteMapping("/{message-id}")

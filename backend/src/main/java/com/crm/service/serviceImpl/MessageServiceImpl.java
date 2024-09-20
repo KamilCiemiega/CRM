@@ -55,6 +55,19 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public MessageDTO CreateOrUpdateExistingMessage(MessageDTO messageDTO) {
         Message message = modelMapper.map(messageDTO, Message.class);
+        /*
+        message = map(dto)
+        sender = findSender(dto.from)
+        recipient = findRecipient(dto.to)
+        senderFolder = getSenderFolder() // for example folder marked as OUTBOX
+        recipientFolder = getRecipientFolder() // for example folder marked as default INBOX
+
+        save(message)
+        save(buildSenderLocation(sender, senderFolder)
+        save(buildRecipientLocation(recipient, recipientFolder)
+        save(senderRole)
+        save(
+         */
 
         if (message.getId() == null) {
             message.setSentDate(new Timestamp(System.currentTimeMillis()));
