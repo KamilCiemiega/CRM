@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,7 +40,7 @@ public class Message {
     private Long size;
 
     @ManyToMany(mappedBy = "messages")
-    private List<MessageFolder> messageFolders;
+    private List<MessageFolder> messageFolders = new ArrayList<>();;
 
     public enum Status {
         NEW,
@@ -53,7 +54,7 @@ public class Message {
     }
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Attachment> attachments;
+    private List<Attachment> attachments = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

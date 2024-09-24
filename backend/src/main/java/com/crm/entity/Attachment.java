@@ -20,11 +20,9 @@ public class Attachment {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name="message_id", nullable = false)
+    @JoinColumn(name="message_id")
     private Message message;
 
     @Column(name="file_path")
     private String filePath;
-
-
 }

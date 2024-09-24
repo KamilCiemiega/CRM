@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,13 +33,13 @@ public class MessageFolder {
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MessageFolder> subFolders;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "messagelocation",
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
