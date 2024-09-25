@@ -1,5 +1,8 @@
 package com.crm.controller.dto;
 
+import com.crm.entity.MessageFolder;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +18,6 @@ public class MessageFolderDTO {
     private Integer parentFolderId;
     private Integer ownerUserId;
     private UserDTO user;
-    private int defaultFolder;
+    @Enumerated(EnumType.STRING)
+    private MessageFolder.FolderType folderType;
 }

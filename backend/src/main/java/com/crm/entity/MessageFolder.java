@@ -45,6 +45,9 @@ public class MessageFolder {
     @JoinColumn(name = "owner_user_id")
     private User user;
 
-    @Column(name = "default-folder")
-    private int defaultFolder;
+    @Column(name = "folder_type")
+    @Enumerated(EnumType.STRING)
+    private  FolderType folderType;
+
+    public enum FolderType {SYSTEM, USER}
 }

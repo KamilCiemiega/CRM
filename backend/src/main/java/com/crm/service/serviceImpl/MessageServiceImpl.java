@@ -10,6 +10,7 @@ import com.crm.entity.Attachment;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.MessageLocation;
+import com.crm.exception.NoSuchFolderException;
 import com.crm.exception.NoSuchMessageException;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
@@ -54,7 +55,7 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setAttachments(attachments);
 
         MessageFolder folder = messageFolderRepository.findById(messageDTO.getFolderId())
-                .orElseThrow(() -> new RuntimeException("Folder not found with id: " + messageDTO.getFolderId()));
+                .orElseThrow(() -> new NoSuchFolderException("Folder not found with id: " + messageDTO.getFolderId()));
 
         folder.getMessages().add(newMessage);
         newMessage.getMessageFolders().add(folder);

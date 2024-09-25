@@ -90,7 +90,7 @@ public class MessageFolderServiceImpl implements MessageFolderService {
                     .orElseThrow(() -> new NoSuchMessageException("User not found for ID: " + messageFolderDTO.getOwnerUserId()));
             existingFolder.setUser(user);
         }
-        existingFolder.setDefaultFolder(messageFolderDTO.getDefaultFolder());
+        existingFolder.setFolderType(messageFolderDTO.getFolderType());
 
         MessageFolder updatedFolder = messageFolderRepository.save(existingFolder);
 
@@ -108,7 +108,7 @@ public class MessageFolderServiceImpl implements MessageFolderService {
     @Transactional
     public MessageFolderDTO deleteFolder(int folderId) {
         return messageFolderRepository.findById(folderId)
-                .filter(folder -> folder.getDefaultFolder() != 1)
+                .filter(folder -> !folder.getFolderType().equals("system"))
                 .map(folder -> {
                     messageFolderRepository.deleteById(folderId);
                     return modelMapper.map(folder, MessageFolderDTO.class);

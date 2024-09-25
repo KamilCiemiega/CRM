@@ -26,4 +26,5 @@ public class MessageDTO {
     private Long size;
     private List<AttachmentDTO> attachmentDTOs = new ArrayList<>();
     private int folderId;
+    private List<MessageFolderDTO> messageFolders = new ArrayList<>();
 }
