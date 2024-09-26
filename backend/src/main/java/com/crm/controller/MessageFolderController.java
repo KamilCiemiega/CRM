@@ -1,16 +1,13 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.MessageDTO;
-import com.crm.controller.dto.MessageFolderDto;
-import com.crm.exception.SendMessageExceptionHandlers;
+import com.crm.controller.dto.MessageFolderDTO;
 import com.crm.service.MessageFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -24,8 +21,8 @@ public class MessageFolderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MessageFolderDto>> getFolders() {
-        List<MessageFolderDto> listOfMessageFolders = messageFolderService.findAllMessageFolders();
+    public ResponseEntity<List<MessageFolderDTO>> getFolders() {
+        List<MessageFolderDTO> listOfMessageFolders = messageFolderService.findAllMessageFolders();
 
         if (listOfMessageFolders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -34,24 +31,19 @@ public class MessageFolderController {
         }
     }
 
-    @Transactional
     @PostMapping
-    public ResponseEntity<MessageFolderDto> createOrUpdateFolder(@RequestBody MessageFolderDto messageFolderDto) {
-        try {
-            MessageFolderDto savedMessageFolderDto = messageFolderService.createOrUpdateMessageFolder(messageFolderDto);
-            return new ResponseEntity<>(savedMessageFolderDto, HttpStatus.CREATED);
-        } catch ( SendMessageExceptionHandlers.NoSuchUserException | SendMessageExceptionHandlers.NoSuchFolderException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<MessageFolderDTO> saveNewFolderMessage(@RequestBody MessageFolderDTO messageFolderDTO) {
+        return new ResponseEntity<>(messageFolderService.save(messageFolderDTO), HttpStatus.CREATED);
     }
 
-    @Transactional
+    @PostMapping("/{message-id}")
+    public ResponseEntity<MessageFolderDTO> updateMessageFolder(@PathVariable("message-id") int messageId, @RequestBody MessageFolderDTO messageFolderDTO) {
+        MessageFolderDTO updatedFolder = messageFolderService.updateMessageFolder(messageId, messageFolderDTO);
+        return new ResponseEntity<>(updatedFolder, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{folder-id}")
-    public ResponseEntity<MessageFolderDto> deleteFolder(@PathVariable("folder-id") int folderId) {
+    public ResponseEntity<MessageFolderDTO> deleteFolder(@PathVariable("folder-id") int folderId) {
         return new ResponseEntity<>(messageFolderService.deleteFolder(folderId),HttpStatus.OK);
     }
 

@@ -1,7 +1,6 @@
 package com.crm.controller.dto;
 
-
-import com.crm.entity.MessageRole;
+import com.crm.entity.MessageFolder;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -13,9 +12,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageRoleDTO {
+public class MessageFolderDTO {
     private Integer id;
+    private String name;
+    private Integer parentFolderId;
+    private Integer ownerUserId;
+    private UserDTO user;
     @Enumerated(EnumType.STRING)
-    private MessageRole.RoleStatus status;
-    private Integer participantId;
+    private MessageFolder.FolderType folderType;
 }

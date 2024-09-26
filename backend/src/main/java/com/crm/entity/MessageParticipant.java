@@ -2,14 +2,16 @@ package com.crm.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Table(name="message")
-@Data
+@Table(name="message_participant")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageParticipant {
@@ -32,9 +34,5 @@ public class MessageParticipant {
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
     private List<MessageRole> messageRoles;
 
-    public enum ParticipantType {
-        CUSTOMER,
-        USER
-    }
-
+    public enum ParticipantType {CUSTOMER, USER}
 }

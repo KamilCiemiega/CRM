@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageParticipantDTO {
+public class AttachmentDTO {
     private Integer id;
-    private Integer messageId;
-    private Integer userId;
-    private String role;
+    private MessageDTO messageDTO;
+    private String filePath;
 }

@@ -1,16 +1,16 @@
 package com.crm.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="message")
-@Data
+@Table(name = "message")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
@@ -29,15 +29,27 @@ public class Message {
     @Column(name = "sent_date")
     private Timestamp sentDate;
 
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
     @Column(name = "size")
     private Long size;
 
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageRole> messageRoles = new ArrayList<>();
+
     @ManyToMany(mappedBy = "messages")
-    private List<MessageFolder> messageFolders;
+    private List<MessageFolder> messageFolders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments = new ArrayList<>();
+
+    @PrePersist
+    @PreUpdate
+    public void calculateSize() {
+        this.size = (long) (body != null ? body.getBytes().length : 0);
+    }
 
     public enum Status {
         NEW,
@@ -48,14 +60,5 @@ public class Message {
         DRAFT,
         FOLLOW_UP,
         TRASH
-    }
-
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Attachment> attachments;
-
-    @PrePersist
-    @PreUpdate
-    public void calculateSize() {
-        this.size = (long) (body != null ? body.getBytes().length : 0);
     }
 }

@@ -2,14 +2,16 @@ package com.crm.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name="`user`")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -39,4 +41,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<MessageFolder> messageFolders;
+
+    // Constructor used in testing
+    public User(String firstName, String lastName, String password, String email, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 }

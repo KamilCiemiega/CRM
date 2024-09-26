@@ -43,6 +43,7 @@ class UserRepositoryTest {
         String email = "testEmail@gmail.com";
         Role role = roleRepository.findById(1).orElseThrow();
 
+
         // Create and save a User with the existing Role
         User user = new User("John", "Doe", "password123", email, role);
         underTest.save(user);

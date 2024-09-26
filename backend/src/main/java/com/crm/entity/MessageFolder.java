@@ -1,12 +1,11 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.Setter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,7 +13,8 @@ import java.util.List;
         name = "messagefolder",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "owner_user_id"})}
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageFolder {
@@ -28,25 +28,26 @@ public class MessageFolder {
 
     @ManyToOne
     @JoinColumn(name = "parent_folder_id")
-    @JsonBackReference
     private MessageFolder parentFolder;
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<MessageFolder> subFolders;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "messagelocation",
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
     private User user;
 
-    @Column(name = "default-folder")
-    private int defaultFolder;
+    @Column(name = "folder_type")
+    @Enumerated(EnumType.STRING)
+    private  FolderType folderType;
+
+    public enum FolderType {SYSTEM, USER}
 }

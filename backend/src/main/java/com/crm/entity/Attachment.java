@@ -2,14 +2,14 @@ package com.crm.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.Setter;
 
 @Entity
 @Table(name="attachments")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Attachment {
@@ -20,11 +20,9 @@ public class Attachment {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name="message_id", nullable = false)
+    @JoinColumn(name="message_id")
     private Message message;
 
     @Column(name="file_path")
     private String filePath;
-
-
 }
