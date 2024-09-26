@@ -5,13 +5,12 @@ import com.crm.Enum.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageLocationRepository;
+import com.crm.dao.MessageParticipantRepository;
 import com.crm.dao.MessageRepository;
-import com.crm.entity.Attachment;
-import com.crm.entity.Message;
-import com.crm.entity.MessageFolder;
-import com.crm.entity.MessageLocation;
+import com.crm.entity.*;
 import com.crm.exception.NoSuchFolderException;
 import com.crm.exception.NoSuchMessageException;
+import com.crm.exception.NoSuchParticipantException;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,15 @@ public class MessageServiceImpl implements MessageService {
     private final ModelMapper modelMapper;
     private final MessageFolderRepository messageFolderRepository;
     private final MessageLocationRepository messageLocationRepository;
+    private final MessageParticipantRepository messageParticipantRepository;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageLocationRepository messageLocationRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageLocationRepository messageLocationRepository, MessageParticipantRepository messageParticipantRepository) {
         this.messageRepository = messageRepository;
         this.modelMapper = modelMapper;
         this.messageFolderRepository = messageFolderRepository;
         this.messageLocationRepository = messageLocationRepository;
+        this.messageParticipantRepository = messageParticipantRepository;
     }
 
     @Transactional
@@ -44,7 +45,7 @@ public class MessageServiceImpl implements MessageService {
     public MessageDTO save(MessageDTO messageDTO) {
         Message newMessage = modelMapper.map(messageDTO, Message.class);
 
-        List<Attachment> attachments = messageDTO.getAttachmentDTOs().stream()
+        List<Attachment> attachments = messageDTO.getAttachments().stream()
                 .map(attachmentDTO -> {
                     Attachment attachment = modelMapper.map(attachmentDTO, Attachment.class);
                     attachment.setMessage(newMessage);
@@ -59,11 +60,30 @@ public class MessageServiceImpl implements MessageService {
 
         folder.getMessages().add(newMessage);
         newMessage.getMessageFolders().add(folder);
-        messageFolderRepository.save(folder);
 
+        List<MessageRole> messageRoles = messageDTO.getMessageRoles().stream()
+                .map(roleDTO -> {
+                    MessageRole messageRole = new MessageRole();
+                    messageRole.setMessage(newMessage);
+                    messageRole.setStatus(roleDTO.getStatus());
+
+                    MessageParticipant participant = messageParticipantRepository.findById(roleDTO.getParticipantId())
+                            .orElseThrow(() -> new NoSuchParticipantException("Participant not found with id: " + roleDTO.getParticipantId()));
+                    messageRole.setParticipant(participant);
+
+                    return messageRole;
+                })
+                .toList();
+
+        newMessage.setMessageRoles(messageRoles);
+
+        messageFolderRepository.save(folder);
         Message savedMessage = messageRepository.save(newMessage);
+
         return modelMapper.map(savedMessage, MessageDTO.class);
     }
+
+
 
     @Transactional
     @Override

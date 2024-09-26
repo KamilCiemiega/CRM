@@ -27,9 +27,5 @@ public class MessageRole {
     @JoinColumn(name = "participant_id")
     private MessageParticipant participant;
 
-    public enum RoleStatus {
-        TO,
-        CC
-    }
-
+    public enum RoleStatus {TO, CC}
 }

@@ -1,6 +1,9 @@
 package com.crm.controller.dto;
 
 
+import com.crm.entity.MessageRole;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,5 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MessageRoleDTO {
     private Integer id;
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private MessageRole.RoleStatus status;
+    private Integer participantId;
 }
