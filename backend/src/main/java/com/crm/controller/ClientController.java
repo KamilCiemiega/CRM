@@ -1,62 +1,41 @@
 package com.crm.controller;
 
-import com.crm.entity.Client;
+import com.crm.controller.dto.ClientDTO;
 import com.crm.service.ClientService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
 public class ClientController {
 
     private final ClientService clientService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public ClientController(ClientService clientService, ModelMapper modelMapper) {
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/clients")
-    public ResponseEntity<List<Client>> findAllClients(){
-        List<Client> listOfClients = clientService.findAllClients();
-
-        if(!listOfClients.isEmpty()){
-            return new ResponseEntity<>(listOfClients, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<ClientDTO>> findAllClients(){
+        List<ClientDTO> listOfClients = clientService.findAllClients();
+        return ResponseEntity.ok(listOfClients);
     }
 
-    @Transactional
     @PostMapping("/clients")
-    public ResponseEntity<String> saveClient(@RequestBody Client client){
-        clientService.save(client);
-
-        return ResponseEntity.ok("Client saved successfully");
+    public ResponseEntity<String> saveClient(@RequestBody ClientDTO clientDTO){
+        clientService.save(clientDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Client saved successfully");
     }
 
-    @Transactional
-    @PutMapping("/clients/{clientId}")
-    public ResponseEntity<Client> updateClient(@PathVariable("client-id") int clientId, @RequestBody Client client){
-        Optional<Client> clientOptional = clientService.findById(clientId);
-        if (clientOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Client existingClient = clientOptional.get();
-        modelMapper.map(client, existingClient);
-
-        clientService.save(clientOptional.get());
-
-        return new ResponseEntity<>(client, HttpStatus.OK);
+    @PostMapping("/clients/{clientId}")
+    public ResponseEntity<ClientDTO> updateClient(@PathVariable("clientId") int clientId, @RequestBody ClientDTO clientDTO){
+        ClientDTO updatedClient = clientService.updateClient(clientId, clientDTO);
+        return ResponseEntity.ok(updatedClient);
     }
 }

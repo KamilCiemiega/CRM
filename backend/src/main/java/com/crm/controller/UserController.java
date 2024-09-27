@@ -26,84 +26,36 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-    private final PasswordResetTokenService passwordResetTokenService;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, PasswordResetTokenService passwordResetTokenService, BCryptPasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.passwordResetTokenService = passwordResetTokenService;
-        this.passwordEncoder = passwordEncoder;
-        this.modelMapper  = modelMapper;
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     public ResponseEntity<List<UserDTO>> findAllUsers() {
-        List<User> listOfUsers = userService.findAllUsers();
-
-            List<UserDTO> UserDTOs = listOfUsers.stream()
-                    .map(user -> modelMapper.map(user, UserDTO.class))
-                    .collect(Collectors.toList());
-
-            return new ResponseEntity<>(UserDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
     }
 
-    @Transactional
-    @PostMapping("/users")
+    @PostMapping()
     public ResponseEntity<UserDTO> saveUser(@RequestBody NewUserDTO newUserDTO) {
-        String plainPassword = newUserDTO.getPassword();
-        String encodedPassword = passwordEncoder.encode(plainPassword);
-        User user =  modelMapper.map(newUserDTO, User.class);
-        user.setPassword(encodedPassword);
-
-        userService.save(user);
-
-        UserDTO UserDTO = modelMapper.map(user, UserDTO.class);
-
-        return new ResponseEntity<>(UserDTO, HttpStatus.OK);
+        return new ResponseEntity<>(userService.save(newUserDTO), HttpStatus.CREATED);
     }
 
     @Transactional
-    @PutMapping("/users/{user-id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable("user-id") int userId, @RequestBody UserDTO UserDTO){
-        Optional<User> userOptional = userService.findById(userId);
-
-        if (userOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        User existingUser = userOptional.get();
-        modelMapper.map(UserDTO, existingUser);
-        userService.save(existingUser);
-
-        return new ResponseEntity<>(UserDTO, HttpStatus.OK);
+    @PostMapping("/{user-id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("user-id") int userId, @RequestBody NewUserDTO newUserDTO){
+        return new ResponseEntity<>(userService.updateUser(userId, newUserDTO), HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
-            Optional<User> userOptional = userService.findByEmail(email);
-            if (userOptional.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username or password");
-            }
-
-            User user = userOptional.get();
-
-            if (!passwordEncoder.matches(password, user.getPassword())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username or password");
-            }
-
-            UserDTO UserDTO = modelMapper.map(user, UserDTO.class);
-
-            HttpSession session = request.getSession();
-            session.setAttribute("user", UserDTO);
-
-            return new ResponseEntity<>(UserDTO, HttpStatus.OK);
-
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> loginUser(@RequestBody NewUserDTO newUserDTO, HttpServletRequest request) {
+            return new ResponseEntity<>(userService.login(newUserDTO, request), HttpStatus.OK);
     }
+
     @GetMapping("/logout")
     public ResponseEntity<String> logoutUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -117,48 +69,26 @@ public class UserController {
 
     @PostMapping("/password-reset-request")
     public ResponseEntity<String> resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
-                                       final HttpServletRequest servletRequest)
-            throws MessagingException, UnsupportedEncodingException{
-
-        Optional<User> user = userService.findByEmail(passwordRequestUtil.getEmail());
-        String passwordResetUrl = "";
-        if (user.isPresent()) {
-            String passwordResetToken = UUID.randomUUID().toString();
-            userService.createPasswordResetTokenForUser(user.get(), passwordResetToken);
-            passwordResetUrl = passwordResetEmailLink(user.get(), applicationUrl(servletRequest), passwordResetToken);
-
-            return ResponseEntity.ok("Your token " + passwordResetUrl);
-        }
-        logger.warn("Password reset request for non-existent email: {}", passwordRequestUtil.getEmail());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with that email not found");
-
+                                                       final HttpServletRequest servletRequest) throws MessagingException, UnsupportedEncodingException {
+        String passwordResetUrl = userService.createPasswordResetRequest(passwordRequestUtil.getEmail(), applicationUrl(servletRequest));
+        return passwordResetUrl != null
+                ? ResponseEntity.ok("Your token " + passwordResetUrl)
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with that email not found");
     }
 
     private String passwordResetEmailLink(User user, String applicationUrl, String passwordResetToken)
             throws MessagingException, UnsupportedEncodingException {
-
         return applicationUrl+"/api/auth/reset-password?token="+ passwordResetToken;
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestBody PasswordRequestUtil passwordRequestUtil,
-                                @RequestParam("token") String token){
-        String tokenVerificationResult = passwordResetTokenService.validatePasswordResetToken(token);
-        if (!tokenVerificationResult.equalsIgnoreCase("valid")) {
-            return "Invalid token password reset token";
-        }
-        Optional<User> theUserOptional = userService.findUserByPasswordToken(token);
-        if (theUserOptional.isPresent()) {
-            User user = theUserOptional.get();
-            userService.changePassword(user, passwordRequestUtil.getNewPassword());
-            return "Password has been reset successfully";
-        } else {
-            return "Invalid password reset token";
-        }
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordRequestUtil passwordRequestUtil,
+                                                @RequestParam("token") String token) {
+        String result = userService.resetPassword(passwordRequestUtil.getNewPassword(), token);
+        return ResponseEntity.ok(result);
     }
 
     public String applicationUrl(HttpServletRequest request) {
-        return "http://"+request.getServerName()+":"
-                +request.getServerPort()+request.getContextPath();
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 }
