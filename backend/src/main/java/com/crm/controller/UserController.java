@@ -38,7 +38,7 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<List<UserDTO>> findAllUsers() {
         return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
-    }//returning eventgit
+    }
 
     @PostMapping()
     public ResponseEntity<UserDTO> saveUser(@RequestBody NewUserDTO newUserDTO) {

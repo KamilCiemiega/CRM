@@ -1,16 +1,14 @@
 package com.crm.service.serviceImpl;
 
 
-import com.crm.Enum.MessageSortType;
+import com.crm.enums.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageLocationRepository;
 import com.crm.dao.MessageParticipantRepository;
 import com.crm.dao.MessageRepository;
 import com.crm.entity.*;
-import com.crm.exception.NoSuchFolderException;
-import com.crm.exception.NoSuchMessageException;
-import com.crm.exception.NoSuchParticipantException;
+import com.crm.exception.NoSuchEntityException;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,54 +41,46 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public MessageDTO save(MessageDTO messageDTO) {
-        Message newMessage = modelMapper.map(messageDTO, Message.class);
+    public Message save(Message message) {
+        List<Attachment> attachments = message.getAttachments().stream()
+                .peek(attachment -> attachment.setMessage(message))
+                .toList();
 
-        List<Attachment> attachments = messageDTO.getAttachments().stream()
-                .map(attachmentDTO -> {
-                    Attachment attachment = modelMapper.map(attachmentDTO, Attachment.class);
-                    attachment.setMessage(newMessage);
-                    return attachment;
+        message.setAttachments(attachments);
+
+        MessageFolder folder = message.getMessageFolders().stream()
+                .findFirst()
+                .flatMap(folderId -> messageFolderRepository.findById(folderId.getId()))
+                .orElseThrow(() -> new NoSuchEntityException("Folder not found"));
+
+        folder.getMessages().add(message);
+        message.getMessageFolders().add(folder);
+
+        List<MessageRole> messageRoles = message.getMessageRoles().stream()
+                .peek(role -> {
+                    role.setMessage(message);
+                    role.setStatus(role.getStatus());
+
+                    MessageParticipant participant = message.getMessageRoles().stream()
+                            .findFirst()
+                            .flatMap(messageRoleId -> messageParticipantRepository.findById(messageRoleId.getId()))
+                            .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
+                    role.setParticipant(participant);
+
                 })
                 .toList();
 
-        newMessage.setAttachments(attachments);
-
-        MessageFolder folder = messageFolderRepository.findById(messageDTO.getFolderId())
-                .orElseThrow(() -> new NoSuchFolderException("Folder not found with id: " + messageDTO.getFolderId()));
-
-        folder.getMessages().add(newMessage);
-        newMessage.getMessageFolders().add(folder);
-
-        List<MessageRole> messageRoles = messageDTO.getMessageRoles().stream()
-                .map(roleDTO -> {
-                    MessageRole messageRole = new MessageRole();
-                    messageRole.setMessage(newMessage);
-                    messageRole.setStatus(roleDTO.getStatus());
-
-                    MessageParticipant participant = messageParticipantRepository.findById(roleDTO.getParticipantId())
-                            .orElseThrow(() -> new NoSuchParticipantException("Participant not found with id: " + roleDTO.getParticipantId()));
-                    messageRole.setParticipant(participant);
-
-                    return messageRole;
-                })
-                .toList();
-
-        newMessage.setMessageRoles(messageRoles);
+        message.setMessageRoles(messageRoles);
 
         messageFolderRepository.save(folder);
-        Message savedMessage = messageRepository.save(newMessage);
-
-        return modelMapper.map(savedMessage, MessageDTO.class);
+        return messageRepository.save(message);
     }
-
-
 
     @Transactional
     @Override
     public MessageDTO updateMessage(int messageId, MessageDTO messageDTO) {
         Message existingMessage = messageRepository.findById(messageId)
-                .orElseThrow(() -> new NoSuchMessageException("Message not found for ID: " + messageId));
+                .orElseThrow(() -> new NoSuchEntityException("Message not found for ID: " + messageId));
 
         existingMessage.setSubject(messageDTO.getSubject());
         existingMessage.setBody(messageDTO.getBody());
@@ -98,7 +89,7 @@ public class MessageServiceImpl implements MessageService {
 
 
         MessageFolder newFolder = messageFolderRepository.findById(messageDTO.getFolderId())
-                .orElseThrow(() -> new NoSuchMessageException("Folder not found for ID: " + messageDTO.getFolderId()));
+                .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + messageDTO.getFolderId()));
 
         List<MessageLocation> existingLocations = messageLocationRepository.findByMessageId(messageId);
         existingLocations.forEach(messageLocationRepository::delete);
@@ -139,7 +130,7 @@ public class MessageServiceImpl implements MessageService {
             messageRepository.delete(deletedMessage);
             return modelMapper.map(deletedMessage, MessageDTO.class);
         } else {
-            throw new NoSuchMessageException("Can't find message with id " + messageId);
+            throw new NoSuchEntityException("Can't find message with id " + messageId);
         }
     }
 

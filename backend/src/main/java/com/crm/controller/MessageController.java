@@ -1,8 +1,10 @@
 package com.crm.controller;
 
-import com.crm.Enum.MessageSortType;
+import com.crm.entity.Message;
+import com.crm.enums.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.service.MessageService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,12 @@ import java.util.Optional;
 public class MessageController {
 
     private final MessageService messageService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, ModelMapper modelMapper) {
         this.messageService = messageService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
@@ -39,7 +43,9 @@ public class MessageController {
     }
     @PostMapping
     public ResponseEntity<MessageDTO> saveNewMessage(@RequestBody MessageDTO messageDTO) {
-        return new ResponseEntity<>(messageService.save(messageDTO), HttpStatus.CREATED);
+        Message savedMessage = messageService.save(modelMapper.map(messageDTO, Message.class));
+
+        return new ResponseEntity<>(modelMapper.map(savedMessage, MessageDTO.class), HttpStatus.CREATED);
     }
 
     @PostMapping("/{message-id}")

@@ -4,7 +4,7 @@ import com.crm.controller.dto.NewUserDTO;
 import com.crm.controller.dto.UserDTO;
 import com.crm.dao.UserRepository;
 import com.crm.entity.User;
-import com.crm.exception.NoSuchUserException;
+import com.crm.exception.NoSuchEntityException;
 import com.crm.service.PasswordResetTokenService;
 import com.crm.service.UserService;
 import jakarta.mail.MessagingException;
@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(plainPassword);
         User user =  modelMapper.map(newUserDTO, User.class);
         user.setPassword(encodedPassword);
+        user.setRole(user.getRole());
 
         userRepository.save(user);
 
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(int userId, NewUserDTO newUserDTO) {
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchUserException("User not found with id: " + userId));
+                .orElseThrow(() -> new NoSuchEntityException("User not found with id: " + userId));
 
         if (newUserDTO.getPassword() != null && !newUserDTO.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(newUserDTO.getPassword());
@@ -74,10 +75,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO login(NewUserDTO newUserDTO, HttpServletRequest request) {
         User user = userRepository.findByEmail(newUserDTO.getEmail())
-                .orElseThrow(() -> new NoSuchUserException("Can't find user with email " + newUserDTO.getEmail()));
+                .orElseThrow(() -> new NoSuchEntityException("Can't find user with email " + newUserDTO.getEmail()));
 
         if (!passwordEncoder.matches(newUserDTO.getPassword(), user.getPassword())) {
-            throw new NoSuchUserException("Can't find user with password " + newUserDTO.getPassword());
+            throw new NoSuchEntityException("Can't find user with password " + newUserDTO.getPassword());
         }
 
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);

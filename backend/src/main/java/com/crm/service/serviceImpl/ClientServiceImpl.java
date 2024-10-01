@@ -3,7 +3,7 @@ package com.crm.service.serviceImpl;
 import com.crm.controller.dto.ClientDTO;
 import com.crm.dao.ClientRepository;
 import com.crm.entity.Client;
-import com.crm.exception.NoSuchClientException;
+import com.crm.exception.NoSuchEntityException;
 import com.crm.service.ClientService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -44,7 +44,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO updateClient(Integer clientId, ClientDTO clientDTO) {
         Client existingClient = clientRepository.findById(clientId)
-                .orElseThrow(() -> new NoSuchClientException("Client not found with id: " + clientId));
+                .orElseThrow(() -> new NoSuchEntityException("Client not found with id: " + clientId));
 
         modelMapper.map(clientDTO, existingClient);
         clientRepository.save(existingClient);

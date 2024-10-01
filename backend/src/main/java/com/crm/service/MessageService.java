@@ -1,13 +1,14 @@
 package com.crm.service;
 
-import com.crm.Enum.MessageSortType;
+import com.crm.entity.Message;
+import com.crm.enums.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MessageService {
-    MessageDTO save(MessageDTO messageDTO);
+    Message save(Message message);
     List<MessageDTO> findAllMessage();
     Optional<MessageDTO> findById(int messageId);
     MessageDTO updateMessage(int messageId, MessageDTO messageDTO);
