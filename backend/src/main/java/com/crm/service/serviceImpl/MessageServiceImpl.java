@@ -13,6 +13,8 @@ import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,64 +80,60 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public MessageDTO updateMessage(int messageId, MessageDTO messageDTO) {
+    public Message updateMessage(int messageId, Message message) {
         Message existingMessage = messageRepository.findById(messageId)
                 .orElseThrow(() -> new NoSuchEntityException("Message not found for ID: " + messageId));
 
-        existingMessage.setSubject(messageDTO.getSubject());
-        existingMessage.setBody(messageDTO.getBody());
-        existingMessage.setStatus(messageDTO.getStatus());
-        existingMessage.setSentDate(messageDTO.getSentDate());
+        existingMessage.setSubject(message.getSubject());
+        existingMessage.setBody(message.getBody());
+        existingMessage.setStatus(message.getStatus());
+        existingMessage.setSentDate(message.getSentDate());
 
-
-        MessageFolder newFolder = messageFolderRepository.findById(messageDTO.getFolderId())
-                .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + messageDTO.getFolderId()));
+        MessageFolder newFolder = message.getMessageFolders().stream()
+                .findFirst()
+                .flatMap(folderId -> messageFolderRepository.findById(folderId.getId()))
+                .orElseThrow(() -> new NoSuchEntityException("Folder not found" ));
 
         List<MessageLocation> existingLocations = messageLocationRepository.findByMessageId(messageId);
-        existingLocations.forEach(messageLocationRepository::delete);
+                existingLocations.forEach(messageLocationRepository::delete);
 
         MessageLocation newLocation = new MessageLocation();
         newLocation.setFolderId(newFolder.getId());
         newLocation.setMessageId(existingMessage.getId());
         messageLocationRepository.save(newLocation);
 
-        Message updatedMessage = messageRepository.save(existingMessage);
-
-        return modelMapper.map(updatedMessage, MessageDTO.class);
+        return messageRepository.save(existingMessage);
     }
 
     @Override
-    public List<MessageDTO> findAllMessage() {
-       return messageRepository.findAll()
-                .stream()
-                .map(m -> modelMapper.map(m, MessageDTO.class))
-                .collect(Collectors.toList());
+    public List<Message> findAllMessage() {
+       return messageRepository.findAll();
     }
 
     @Override
-    public Optional<MessageDTO> findById(int messageId) {
-        return messageRepository.findById(messageId)
-                .map(message -> modelMapper.map(message, MessageDTO.class));
+    public Message getMessageById(int messageId) {
+       return messageRepository.findById(messageId)
+                .orElseThrow(() -> new NoSuchEntityException("Can't find message with id " + messageId));
     }
 
     @Transactional
     @Override
-    public MessageDTO deleteMessage(int messageId) {
+    public Message deleteMessage(int messageId) {
         messageLocationRepository.deleteByMessageId(messageId);
         Optional<Message> message = messageRepository.findById(messageId);
 
         if (message.isPresent()) {
             Message deletedMessage = message.get();
-
             messageRepository.delete(deletedMessage);
-            return modelMapper.map(deletedMessage, MessageDTO.class);
+
+            return deletedMessage;
         } else {
             throw new NoSuchEntityException("Can't find message with id " + messageId);
         }
     }
 
     @Override
-    public List<MessageDTO> getSortedMessages(int folderId, MessageSortType sortType, String orderType) {
+    public List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType) {
         Sort.Direction direction = "DESC".equalsIgnoreCase(orderType) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = switch (sortType) {
             case SIZE -> Sort.by(direction, "size");
@@ -143,9 +141,6 @@ public class MessageServiceImpl implements MessageService {
             default -> Sort.by(direction, "sentDate");
         };
 
-        return messageRepository.findMessagesByFolderId(folderId, sort)
-                .stream()
-                .map(m -> modelMapper.map(m, MessageDTO.class))
-                .collect(Collectors.toList());
+        return messageRepository.findMessagesByFolderId(folderId, sort);
     }
 }

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientService {
-    List<ClientDTO> findAllClients();
-    void save(ClientDTO clientDTO);
-    ClientDTO updateClient(Integer clientId, ClientDTO clientDTO);
+    List<Client> findAllClients();
+    Client save(Client client);
+    Client updateClient(Integer clientId, Client client);
     Optional<Client> findById(Integer id);
 }
 

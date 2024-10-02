@@ -11,16 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-
-    UserDTO save(NewUserDTO newUserDTO);
-    UserDTO updateUser(int userId, NewUserDTO newUserDTO);
+    User save(User User);
+    User updateUser(int userId, User User);
     UserDTO login(NewUserDTO newUserDTO, HttpServletRequest request);
     void changePassword(User user, String newPassword);
     Optional<User> findByEmailAndPassword(String email, String password);
     Optional<User> findByEmail(String email);
     Optional<User> findById(Integer id);
     void createPasswordResetTokenForUser(User user, String passwordResetToken);
-    List <UserDTO> findAllUsers();
+    List <User> findAllUsers();
     Optional<User> findUserByPasswordToken(String passwordResetToken);
     String createPasswordResetRequest(String email, String applicationUrl) throws MessagingException, UnsupportedEncodingException;
     String resetPassword(String newPassword, String token);

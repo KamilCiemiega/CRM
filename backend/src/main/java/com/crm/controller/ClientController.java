@@ -1,6 +1,7 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.ClientDTO;
+import com.crm.entity.Client;
 import com.crm.service.ClientService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,27 +16,33 @@ import java.util.List;
 public class ClientController {
 
     private final ClientService clientService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, ModelMapper modelMapper) {
         this.clientService = clientService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/clients")
     public ResponseEntity<List<ClientDTO>> findAllClients(){
-        List<ClientDTO> listOfClients = clientService.findAllClients();
-        return ResponseEntity.ok(listOfClients);
+        List<Client> listOfClients = clientService.findAllClients();
+        List<ClientDTO> listOfClientsDTOs = listOfClients.stream()
+                .map(client -> modelMapper.map(client, ClientDTO.class))
+                .toList();
+
+        return ResponseEntity.ok(listOfClientsDTOs);
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<String> saveClient(@RequestBody ClientDTO clientDTO){
-        clientService.save(clientDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Client saved successfully");
+    public ResponseEntity<ClientDTO> saveClient(@RequestBody ClientDTO clientDTO){
+        Client client = clientService.save(modelMapper.map(clientDTO, Client.class));
+        return new ResponseEntity<>(modelMapper.map(client, ClientDTO.class), HttpStatus.OK);
     }
 
     @PostMapping("/clients/{clientId}")
-    public ResponseEntity<ClientDTO> updateClient(@PathVariable("clientId") int clientId, @RequestBody ClientDTO clientDTO){
-        ClientDTO updatedClient = clientService.updateClient(clientId, clientDTO);
+    public ResponseEntity<Client> updateClient(@PathVariable("clientId") int clientId, @RequestBody ClientDTO clientDTO){
+        Client updatedClient = clientService.updateClient(clientId, modelMapper.map(clientDTO, Client.class));
         return ResponseEntity.ok(updatedClient);
     }
 }

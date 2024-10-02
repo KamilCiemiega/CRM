@@ -29,26 +29,41 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
     public ResponseEntity<List<UserDTO>> findAllUsers() {
-        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+        List<User> allUsers = userService.findAllUsers();
+        List<UserDTO> allUsersDTO = allUsers.stream()
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .toList();
+
+        return new ResponseEntity<>(allUsersDTO, HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<UserDTO> saveUser(@RequestBody NewUserDTO newUserDTO) {
-        return new ResponseEntity<>(userService.save(newUserDTO), HttpStatus.CREATED);
+        User user = modelMapper.map(newUserDTO, User.class);
+        User savedUser = userService.save(user);
+        UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
-    @Transactional
     @PostMapping("/{user-id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable("user-id") int userId, @RequestBody NewUserDTO newUserDTO){
-        return new ResponseEntity<>(userService.updateUser(userId, newUserDTO), HttpStatus.OK);
+    @Transactional
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("user-id") int userId, @RequestBody NewUserDTO newUserDTO) {
+        User userToUpdate = modelMapper.map(newUserDTO, User.class);
+        User updatedUser = userService.updateUser(userId, userToUpdate);
+        UserDTO userDTO = modelMapper.map(updatedUser, UserDTO.class);
+
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @PostMapping("/login")

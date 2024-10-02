@@ -40,35 +40,37 @@ public class UserServiceImpl implements UserService {
         this.modelMapper = modelMapper;
     }
 
-    @Transactional
     @Override
-    public UserDTO save(NewUserDTO newUserDTO) {
-        String plainPassword = newUserDTO.getPassword();
-        String encodedPassword = passwordEncoder.encode(plainPassword);
-        User user =  modelMapper.map(newUserDTO, User.class);
-        user.setPassword(encodedPassword);
-        user.setRole(user.getRole());
-
-        userRepository.save(user);
-
-        return modelMapper.map(user, UserDTO.class);
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     @Transactional
     @Override
-    public UserDTO updateUser(int userId, NewUserDTO newUserDTO) {
+    public User save(User user) {
+        String plainPassword = user.getPassword();
+        String encodedPassword = passwordEncoder.encode(plainPassword);
+        user.setPassword(encodedPassword);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public User updateUser(int userId, User userToUpdate) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchEntityException("User not found with id: " + userId));
 
-        if (newUserDTO.getPassword() != null && !newUserDTO.getPassword().isEmpty()) {
-            String encodedPassword = passwordEncoder.encode(newUserDTO.getPassword());
+        if (userToUpdate.getPassword() != null && !userToUpdate.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(userToUpdate.getPassword());
             existingUser.setPassword(encodedPassword);
         }
 
-        modelMapper.map(newUserDTO, existingUser);
-        userRepository.save(existingUser);
+        existingUser.setFirstName(userToUpdate.getFirstName());
+        existingUser.setLastName(userToUpdate.getLastName());
+        existingUser.setEmail(userToUpdate.getEmail());
+        existingUser.setRole(userToUpdate.getRole());
 
-        return modelMapper.map(existingUser, UserDTO.class);
+        return userRepository.save(existingUser);
     }
 
 
@@ -151,15 +153,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createPasswordResetTokenForUser(User user, String passwordResetToken) {
         passwordResetTokenService.createPasswordResetTokenForUser(user, passwordResetToken);
-    }
-
-    @Override
-    public List<UserDTO> findAllUsers() {
-        List<User> listOfUsers = userRepository.findAll();
-
-        return listOfUsers.stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .toList();
     }
 
     @Override
