@@ -4,11 +4,11 @@ import com.crm.controller.dto.MessageDTO;
 import com.crm.controller.dto.MessageFolderDTO;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.UserRepository;
+import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
 import com.crm.entity.User;
 import com.crm.exception.DeleteDefaultFolderException;
-import com.crm.exception.NoSuchFolderException;
-import com.crm.exception.NoSuchMessageException;
+import com.crm.exception.NoSuchEntityException;
 import com.crm.service.MessageFolderService;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
@@ -38,80 +38,76 @@ public class MessageFolderServiceImpl implements MessageFolderService {
     }
 
     @Override
-    public List<MessageFolderDTO> findAllMessageFolders() {
-        List<MessageFolder> messageFolders = messageFolderRepository.findAll();
-
-        return messageFolders.stream()
-                .map(folder -> modelMapper.map(folder, MessageFolderDTO.class))
-                .collect(Collectors.toList());
+    public List<MessageFolder> findAllMessageFolders() {
+        return messageFolderRepository.findAll();
     }
 
 
     @Override
     @Transactional
-    public MessageFolderDTO save(MessageFolderDTO messageFolderDTO) {
-        MessageFolder newMessageFolder = modelMapper.map(messageFolderDTO, MessageFolder.class);
+    public MessageFolder save(MessageFolder messageFolder) {
+        if (messageFolder.getName() == null || messageFolder.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Folder name cannot be null or empty.");
+        }
 
-        if (messageFolderDTO.getParentFolderId() != null) {
-            MessageFolder parentFolder = messageFolderRepository.findById(messageFolderDTO.getParentFolderId())
-                    .orElseThrow(() -> new NoSuchMessageException("Parent folder not found for ID: " + messageFolderDTO.getParentFolderId()));
+        if (messageFolder.getUser().getId() == null) {
+            throw new IllegalArgumentException("Owner user ID must be provided.");
+        }
+
+        if (messageFolder.getParentFolder().getId() != null && messageFolder.getParentFolder().getId() <= 0) {
+            throw new IllegalArgumentException("Parent folder ID must be greater than 0.");
+        }
+
+        MessageFolder newMessageFolder = modelMapper.map(messageFolder, MessageFolder.class);
+
+        if (messageFolder.getParentFolder().getId() != null) {
+            MessageFolder parentFolder = messageFolderRepository.findById(messageFolder.getParentFolder().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("Parent folder not found for ID: " + messageFolder.getParentFolder().getId()));
             newMessageFolder.setParentFolder(parentFolder);
         }
 
-        if (messageFolderDTO.getOwnerUserId() != null) {
-            User user = userRepository.findById(messageFolderDTO.getOwnerUserId())
-                    .orElseThrow(() -> new NoSuchMessageException("User not found for ID: " + messageFolderDTO.getOwnerUserId()));
-            newMessageFolder.setUser(user);
-        }
+        User user = userRepository.findById(messageFolder.getUser().getId())
+                .orElseThrow(() -> new NoSuchEntityException("User not found for ID: " + messageFolder.getUser().getId()));
+        newMessageFolder.setUser(user);
 
-        MessageFolder savedFolder = messageFolderRepository.save(newMessageFolder);
-
-        return modelMapper.map(savedFolder, MessageFolderDTO.class);
+        return messageFolderRepository.save(newMessageFolder);
     }
+
 
     @Override
     @Transactional
-    public MessageFolderDTO updateMessageFolder(int folderId, MessageFolderDTO messageFolderDTO) {
+    public MessageFolder updateMessageFolder(int folderId, MessageFolder messageFolder) {
         MessageFolder existingFolder = messageFolderRepository.findById(folderId)
-                .orElseThrow(() -> new NoSuchMessageException("Folder not found for ID: " + folderId));
+                .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folderId));
 
-        existingFolder.setName(messageFolderDTO.getName());
+        existingFolder.setName(messageFolder.getName());
 
-        if (messageFolderDTO.getParentFolderId() != null) {
-            MessageFolder parentFolder = messageFolderRepository.findById(messageFolderDTO.getParentFolderId())
-                    .orElseThrow(() -> new NoSuchMessageException("Parent folder not found for ID: " + messageFolderDTO.getParentFolderId()));
+        if (messageFolder.getParentFolder().getId() != null) {
+            MessageFolder parentFolder = messageFolderRepository.findById(messageFolder.getParentFolder().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("Parent folder not found for ID: " + messageFolder.getParentFolder().getId()));
             existingFolder.setParentFolder(parentFolder);
         } else {
             existingFolder.setParentFolder(null);
         }
 
-        if (messageFolderDTO.getOwnerUserId() != null) {
-            User user = userRepository.findById(messageFolderDTO.getOwnerUserId())
-                    .orElseThrow(() -> new NoSuchMessageException("User not found for ID: " + messageFolderDTO.getOwnerUserId()));
+        if (messageFolder.getUser().getId() != null) {
+            User user = userRepository.findById(messageFolder.getUser().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("User not found for ID: " + messageFolder.getUser().getId()));
             existingFolder.setUser(user);
         }
-        existingFolder.setFolderType(messageFolderDTO.getFolderType());
+        existingFolder.setFolderType(messageFolder.getFolderType());
 
-        MessageFolder updatedFolder = messageFolderRepository.save(existingFolder);
-
-        return modelMapper.map(updatedFolder, MessageFolderDTO.class);
-    }
-
-    @Override
-    public Optional<MessageFolderDTO> findById(int folderId) {
-        Optional<MessageFolder> messageFolder = messageFolderRepository.findById(folderId);
-
-        return messageFolder.map(folder -> modelMapper.map(folder, MessageFolderDTO.class));
+        return messageFolderRepository.save(existingFolder);
     }
 
     @Override
     @Transactional
-    public MessageFolderDTO deleteFolder(int folderId) {
+    public MessageFolder deleteFolder(int folderId) {
         return messageFolderRepository.findById(folderId)
                 .filter(folder -> !folder.getFolderType().equals("system"))
                 .map(folder -> {
                     messageFolderRepository.deleteById(folderId);
-                    return modelMapper.map(folder, MessageFolderDTO.class);
+                    return folder;
                 })
                 .orElseThrow(() -> new DeleteDefaultFolderException(
                         "Cannot delete the default folder or folder not found for ID: " + folderId
@@ -120,18 +116,17 @@ public class MessageFolderServiceImpl implements MessageFolderService {
 
     @Override
     @Transactional
-    public List<MessageDTO> deleteAllMessagesFromFolder(int folderId) {
+    public List<Message> deleteAllMessagesFromFolder(int folderId) {
         Optional<MessageFolder> folder = messageFolderRepository.findById(folderId);
 
         return folder.map(presentFolder -> {
-            List<MessageDTO> listOfDeletedMessages = new ArrayList<>();
+            List<Message> listOfDeletedMessages = new ArrayList<>();
 
             presentFolder.getMessages().forEach(message -> {
-                MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
-                MessageDTO deletedMessage = messageService.deleteMessage(message.getId());
+                Message deletedMessage = messageService.deleteMessage(message.getId());
                 listOfDeletedMessages.add(deletedMessage);
             });
             return listOfDeletedMessages;
-        }).orElseThrow(() -> new NoSuchFolderException("Folder doesn't exist " + folderId));
+        }).orElseThrow(() -> new NoSuchEntityException("Folder doesn't exist " + folderId));
     }
 }

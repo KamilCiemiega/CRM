@@ -1,4 +1,4 @@
-package com.crm.Enum;
+package com.crm.enums;
 
 import lombok.Getter;
 

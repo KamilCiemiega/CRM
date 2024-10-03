@@ -16,15 +16,19 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private Integer id;
 
-    @Column(name = "name")
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 
     @OneToMany(mappedBy = "role")
     private Set<User> users = new HashSet<>();
+
+    public enum RoleType { ADMIN, USER}
 }
+
+
+

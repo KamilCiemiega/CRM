@@ -1,8 +1,10 @@
 package com.crm.controller;
 
-import com.crm.Enum.MessageSortType;
+import com.crm.entity.Message;
+import com.crm.enums.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.service.MessageService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,47 +12,52 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
 
     private final MessageService messageService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, ModelMapper modelMapper) {
         this.messageService = messageService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<MessageDTO> getAllMessages() {
-        return  messageService.findAllMessage();
+    public ResponseEntity<List<MessageDTO>> getAllMessages() {
+        List<MessageDTO> listOfMessage = messageService.findAllMessage()
+                .stream()
+                .map(m -> modelMapper.map(m, MessageDTO.class))
+                .toList();
+
+        return new ResponseEntity<>(listOfMessage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MessageDTO> getMessageById(@PathVariable("id") int messageId) {
-        Optional<MessageDTO> message = messageService.findById(messageId);
-        if(message.isPresent()){
-            MessageDTO foundMessage = message.get();
-            return new ResponseEntity<>(foundMessage, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(modelMapper.map(messageService.getMessageById(messageId), MessageDTO.class), HttpStatus.OK);
     }
+
     @PostMapping
     public ResponseEntity<MessageDTO> saveNewMessage(@RequestBody MessageDTO messageDTO) {
-        return new ResponseEntity<>(messageService.save(messageDTO), HttpStatus.CREATED);
+        Message savedMessage = messageService.save(modelMapper.map(messageDTO, Message.class));
+
+        return new ResponseEntity<>(modelMapper.map(savedMessage, MessageDTO.class), HttpStatus.CREATED);
     }
 
     @PostMapping("/{message-id}")
     public ResponseEntity<MessageDTO> updateMessage(@PathVariable("message-id") int messageId, @RequestBody MessageDTO messageDTO) {
-        MessageDTO updatedMessage = messageService.updateMessage(messageId, messageDTO);
-        return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
+        Message updatedMessage = messageService.updateMessage(messageId, modelMapper.map(messageDTO, Message.class));
+        return new ResponseEntity<>(modelMapper.map(updatedMessage, MessageDTO.class), HttpStatus.OK);
     }
 
     @DeleteMapping("/{message-id}")
     public ResponseEntity<MessageDTO> deleteMessage(@PathVariable("message-id") int messageId){
-        return new ResponseEntity<>(messageService.deleteMessage(messageId), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(messageService.deleteMessage(messageId), MessageDTO.class), HttpStatus.OK);
     }
 
     @GetMapping("/folders/{folderId}/messages")
@@ -60,8 +67,11 @@ public class MessageController {
             @RequestParam String orderType) {
 
         MessageSortType messageSortType = MessageSortType.valueOf(sortType.toUpperCase());
-        List<MessageDTO> messages = messageService.getSortedMessages(folderId, messageSortType, orderType);
+        List<Message> messages = messageService.getSortedMessages(folderId, messageSortType, orderType);
+        List<MessageDTO> messageDTOs = messages.stream()
+                .map(m -> modelMapper.map(m, MessageDTO.class))
+                .toList();
 
-        return new ResponseEntity<>(messages, HttpStatus.OK);
+        return new ResponseEntity<>(messageDTOs, HttpStatus.OK);
     }
 }
