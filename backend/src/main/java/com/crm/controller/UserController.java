@@ -80,7 +80,7 @@ public class UserController {
         } else {
             return new ResponseEntity<>("No active session", HttpStatus.BAD_REQUEST);
         }
-    }
+    }//Entity <DTO>
 
     @PostMapping("/password-reset-request")
     public ResponseEntity<String> resetPasswordRequest(@RequestBody PasswordRequestUtil passwordRequestUtil,
