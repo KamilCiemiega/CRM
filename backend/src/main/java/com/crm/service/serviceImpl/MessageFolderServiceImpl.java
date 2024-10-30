@@ -50,27 +50,23 @@ public class MessageFolderServiceImpl implements MessageFolderService {
             throw new IllegalArgumentException("Folder name cannot be null or empty.");
         }
 
-        if (messageFolder.getUser().getId() == null) {
+        if (messageFolder.getParentFolder() != null && messageFolder.getParentFolder().getId() != null) {
+            MessageFolder parentFolder = messageFolderRepository.findById(messageFolder.getParentFolder().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("Parent folder not found for ID: " + messageFolder.getParentFolder().getId()));
+            messageFolder.setParentFolder(parentFolder);
+        } else {
+            messageFolder.setParentFolder(null);
+        }
+
+        if (messageFolder.getUser() != null && messageFolder.getUser().getId() != null) {
+            User user = userRepository.findById(messageFolder.getUser().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("User not found for ID: " + messageFolder.getUser().getId()));
+            messageFolder.setUser(user);
+        } else {
             throw new IllegalArgumentException("Owner user ID must be provided.");
         }
 
-        if (messageFolder.getParentFolder().getId() != null && messageFolder.getParentFolder().getId() <= 0) {
-            throw new IllegalArgumentException("Parent folder ID must be greater than 0.");
-        }
-
-        MessageFolder newMessageFolder = modelMapper.map(messageFolder, MessageFolder.class);
-
-        if (messageFolder.getParentFolder().getId() != null) {
-            MessageFolder parentFolder = messageFolderRepository.findById(messageFolder.getParentFolder().getId())
-                    .orElseThrow(() -> new NoSuchEntityException("Parent folder not found for ID: " + messageFolder.getParentFolder().getId()));
-            newMessageFolder.setParentFolder(parentFolder);
-        }
-
-        User user = userRepository.findById(messageFolder.getUser().getId())
-                .orElseThrow(() -> new NoSuchEntityException("User not found for ID: " + messageFolder.getUser().getId()));
-        newMessageFolder.setUser(user);
-
-        return messageFolderRepository.save(newMessageFolder);
+        return messageFolderRepository.save(messageFolder);
     }
 
 

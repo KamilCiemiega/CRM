@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,12 +35,15 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id")
+    @JsonIgnore
     private Role role;
 
     @ManyToMany(mappedBy = "users")
+    @JsonIgnore
     private List<Client> clients;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<MessageFolder> messageFolders;
 
     // Constructor used in testing

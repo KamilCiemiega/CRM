@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class MessageFolder {
     private MessageFolder parentFolder;
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<MessageFolder> subFolders;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})

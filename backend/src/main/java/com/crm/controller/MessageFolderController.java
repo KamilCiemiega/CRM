@@ -48,8 +48,8 @@ public class MessageFolderController {
     }
 
     @PostMapping("/{message-id}")
-    public ResponseEntity<MessageFolderDTO> updateMessageFolder(@PathVariable("message-id") int messageId, @RequestBody MessageFolderDTO messageFolderDTO) {
-        MessageFolder updatedFolder = messageFolderService.updateMessageFolder(messageId, modelMapper.map(messageFolderDTO, MessageFolder.class));
+    public ResponseEntity<MessageFolderDTO> updateMessageFolder(@PathVariable("message-id") int folderId, @RequestBody MessageFolderDTO messageFolderDTO) {
+        MessageFolder updatedFolder = messageFolderService.updateMessageFolder(folderId, modelMapper.map(messageFolderDTO, MessageFolder.class));
         return new ResponseEntity<>(modelMapper.map(updatedFolder, MessageFolderDTO.class), HttpStatus.OK);
     }
 
