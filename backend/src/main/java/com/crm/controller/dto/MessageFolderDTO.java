@@ -15,8 +15,7 @@ import lombok.Setter;
 public class MessageFolderDTO {
     private Integer id;
     private String name;
-    private Integer parentFolderId;
-    private Integer ownerUserId;
+    private MessageFolder parentFolder;
     private UserDTO user;
     @Enumerated(EnumType.STRING)
     private MessageFolder.FolderType folderType;

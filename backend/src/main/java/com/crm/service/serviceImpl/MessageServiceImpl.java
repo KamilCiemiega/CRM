@@ -1,8 +1,6 @@
 package com.crm.service.serviceImpl;
 
-
 import com.crm.enums.MessageSortType;
-import com.crm.controller.dto.MessageDTO;
 import com.crm.dao.MessageFolderRepository;
 import com.crm.dao.MessageLocationRepository;
 import com.crm.dao.MessageParticipantRepository;
@@ -13,21 +11,16 @@ import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
-    private final ModelMapper modelMapper;
     private final MessageFolderRepository messageFolderRepository;
     private final MessageLocationRepository messageLocationRepository;
     private final MessageParticipantRepository messageParticipantRepository;
@@ -35,7 +28,6 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageLocationRepository messageLocationRepository, MessageParticipantRepository messageParticipantRepository) {
         this.messageRepository = messageRepository;
-        this.modelMapper = modelMapper;
         this.messageFolderRepository = messageFolderRepository;
         this.messageLocationRepository = messageLocationRepository;
         this.messageParticipantRepository = messageParticipantRepository;
@@ -44,11 +36,13 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     @Override
     public Message save(Message message) {
-        List<Attachment> attachments = message.getAttachments().stream()
-                .peek(attachment -> attachment.setMessage(message))
-                .toList();
+        if (!message.getAttachments().isEmpty()) {
+            List<Attachment> attachments = message.getAttachments().stream()
+                    .peek(attachment -> attachment.setMessage(message))
+                    .toList();
 
-        message.setAttachments(attachments);
+            message.setAttachments(attachments);
+        }
 
         MessageFolder folder = message.getMessageFolders().stream()
                 .findFirst()
