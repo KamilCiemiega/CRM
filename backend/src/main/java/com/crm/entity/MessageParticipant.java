@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name="message_participant")
+@Table(name="messageparticipant")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,5 +34,5 @@ public class MessageParticipant {
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
     private List<MessageRole> messageRoles;
 
-    public enum ParticipantType {CUSTOMER, USER}
+    public enum ParticipantType {CLIENT, USER}
 }

@@ -40,35 +40,30 @@ public class MessageServiceImpl implements MessageService {
             List<Attachment> attachments = message.getAttachments().stream()
                     .peek(attachment -> attachment.setMessage(message))
                     .toList();
-
             message.setAttachments(attachments);
         }
 
-        MessageFolder folder = message.getMessageFolders().stream()
-                .findFirst()
-                .flatMap(folderId -> messageFolderRepository.findById(folderId.getId()))
-                .orElseThrow(() -> new NoSuchEntityException("Folder not found"));
-
-        folder.getMessages().add(message);
-        message.getMessageFolders().add(folder);
+        List<MessageFolder> messageFolders = message.getMessageFolders().stream()
+                .map(folder -> {
+                    return messageFolderRepository.findById(folder.getId())
+                            .orElseThrow(() -> new NoSuchEntityException("Folder not found"));
+                })
+                .toList();
+        message.setMessageFolders(messageFolders);
 
         List<MessageRole> messageRoles = message.getMessageRoles().stream()
                 .peek(role -> {
                     role.setMessage(message);
                     role.setStatus(role.getStatus());
 
-                    MessageParticipant participant = message.getMessageRoles().stream()
-                            .findFirst()
-                            .flatMap(messageRoleId -> messageParticipantRepository.findById(messageRoleId.getId()))
+                    MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
                             .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
                     role.setParticipant(participant);
-
                 })
                 .toList();
 
         message.setMessageRoles(messageRoles);
 
-        messageFolderRepository.save(folder);
         return messageRepository.save(message);
     }
 
@@ -81,9 +76,18 @@ public class MessageServiceImpl implements MessageService {
         existingMessage.setSubject(message.getSubject());
         existingMessage.setBody(message.getBody());
         existingMessage.setStatus(message.getStatus());
-        existingMessage.setSentDate(message.getSentDate());
 
-        MessageFolder newFolder = message.getMessageFolders().stream()
+        message.getMessageFolders().stream()
+                .map(folder -> {
+                   //sprawdzic czy foldery dla tej wiadomosci sie roznia
+                   // jesli tak to wtedy wykonac update
+                   messageFolderRepository.findById(folder.getId())
+                            .orElseThrow(() -> new NoSuchEntityException("Folder not found" ));
+
+
+                })
+
+
                 .findFirst()
                 .flatMap(folderId -> messageFolderRepository.findById(folderId.getId()))
                 .orElseThrow(() -> new NoSuchEntityException("Folder not found" ));

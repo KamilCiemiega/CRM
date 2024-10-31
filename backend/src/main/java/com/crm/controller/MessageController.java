@@ -1,6 +1,9 @@
 package com.crm.controller;
 
+import com.crm.dao.MessageLocationRepository;
 import com.crm.entity.Message;
+import com.crm.entity.MessageFolder;
+import com.crm.entity.MessageLocation;
 import com.crm.enums.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.service.MessageService;
@@ -17,11 +20,13 @@ public class MessageController {
 
     private final MessageService messageService;
     private final ModelMapper modelMapper;
+    private final MessageLocationRepository messageLocationRepository;
 
     @Autowired
-    public MessageController(MessageService messageService, ModelMapper modelMapper) {
+    public MessageController(MessageService messageService, ModelMapper modelMapper, MessageLocationRepository messageLocationRepository) {
         this.messageService = messageService;
         this.modelMapper = modelMapper;
+        this.messageLocationRepository = messageLocationRepository;
     }
 
     @GetMapping
@@ -41,10 +46,20 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<MessageDTO> saveNewMessage(@RequestBody MessageDTO messageDTO) {
-        Message savedMessage = messageService.save(modelMapper.map(messageDTO, Message.class));
+        Message message = modelMapper.map(messageDTO, Message.class);
+        Message savedMessage = messageService.save(message);
+
+        List<MessageFolder> messageFolders = savedMessage.getMessageFolders();
+        for (MessageFolder folder : messageFolders) {
+            MessageLocation location = new MessageLocation();
+            location.setMessageId(savedMessage.getId());
+            location.setFolderId(folder.getId());
+            messageLocationRepository.save(location);
+        }
 
         return new ResponseEntity<>(modelMapper.map(savedMessage, MessageDTO.class), HttpStatus.CREATED);
     }
+
 
     @PostMapping("/{message-id}")
     public ResponseEntity<MessageDTO> updateMessage(@PathVariable("message-id") int messageId, @RequestBody MessageDTO messageDTO) {
