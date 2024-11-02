@@ -1,52 +1,57 @@
 package com.crm.service.serviceImpl;
 
-import com.crm.controller.dto.MessageRoleDTO;
-import com.crm.dao.MessageRoleReposiitory;
+import com.crm.dao.MessageRoleRepository;
 import com.crm.entity.MessageRole;
+import com.crm.exception.NoSuchEntityException;
 import com.crm.service.MessageRoleService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MessageRoleServiceImpl implements MessageRoleService {
 
-    private final MessageRoleReposiitory roleRepository;
-    private final ModelMapper modelMapper;
+    private final MessageRoleRepository roleRepository;
 
     @Autowired
-    public MessageRoleServiceImpl(MessageRoleReposiitory roleRepository, ModelMapper modelMapper) {
+    public MessageRoleServiceImpl(MessageRoleRepository roleRepository) {
         this.roleRepository = roleRepository;
-        this.modelMapper = modelMapper;
+    }
+
+    @Transactional
+    @Override
+    public MessageRole save(MessageRole role) {return roleRepository.save(role);}
+
+    @Transactional
+    @Override
+    public MessageRole update(int messageRoleId, MessageRole role) {
+        MessageRole existingRole = roleRepository.findById(messageRoleId)
+                .orElseThrow(() -> new NoSuchEntityException("messageRole not found for ID: " + messageRoleId));
+
+        existingRole.setMessage(role.getMessage());
+        existingRole.setStatus(role.getStatus());
+        existingRole.setParticipant(role.getParticipant());
+
+        return roleRepository.save(existingRole);
     }
 
     @Override
-    public MessageRoleDTO save(MessageRoleDTO roleDTO) {
-        MessageRole role = modelMapper.map(roleDTO, MessageRole.class);
-        MessageRole savedRole = roleRepository.save(role);
-        return modelMapper.map(savedRole, MessageRoleDTO.class);
-    }
+    public List<MessageRole> findAllRoles() {return roleRepository.findAll();}
 
     @Override
-    public List<MessageRoleDTO> findAllRoles() {
-        return roleRepository.findAll()
-                .stream()
-                .map(role -> modelMapper.map(role, MessageRoleDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<MessageRoleDTO> findById(int roleId) {
+    public MessageRole findById(int roleId) {
         return roleRepository.findById(roleId)
-                .map(role -> modelMapper.map(role, MessageRoleDTO.class));
+                 .orElseThrow(() -> new NoSuchEntityException("messageRole not found for ID: " + roleId));
     }
 
     @Override
-    public void deleteRole(int roleId) {
-        roleRepository.deleteById(roleId);
+    public MessageRole deleteRole(int roleId) {
+        MessageRole existingRole = roleRepository.findById(roleId)
+                .orElseThrow(() -> new NoSuchEntityException("messageRole not found for ID: " + roleId));
+
+        roleRepository.delete(existingRole);
+        return existingRole;
     }
 }

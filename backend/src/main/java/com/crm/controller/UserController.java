@@ -68,7 +68,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserDTO> loginUser(@RequestBody NewUserDTO newUserDTO, HttpServletRequest request) {
-            return new ResponseEntity<>(userService.login(newUserDTO, request), HttpStatus.OK);
+            User user = modelMapper.map(newUserDTO, User.class);
+            UserDTO userDTO = modelMapper.map(userService.login(user, request), UserDTO.class);
+
+            return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @GetMapping("/logout")

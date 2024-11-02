@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,6 +41,7 @@ public class Message {
     private List<MessageRole> messageRoles = new ArrayList<>();
 
     @ManyToMany(mappedBy = "messages")
+    @JsonIgnore
     private List<MessageFolder> messageFolders = new ArrayList<>();
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)

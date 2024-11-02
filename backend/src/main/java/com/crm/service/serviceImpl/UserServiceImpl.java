@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,14 +27,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final PasswordResetTokenService passwordResetTokenService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PasswordResetTokenService passwordResetTokenService, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PasswordResetTokenService passwordResetTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.passwordResetTokenService = passwordResetTokenService;
-        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -75,20 +70,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDTO login(NewUserDTO newUserDTO, HttpServletRequest request) {
-        User user = userRepository.findByEmail(newUserDTO.getEmail())
-                .orElseThrow(() -> new NoSuchEntityException("Can't find user with email " + newUserDTO.getEmail()));
+    public User login(User user, HttpServletRequest request) {
+        User existingUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new NoSuchEntityException("Can't find user with email " + user.getEmail()));
 
-        if (!passwordEncoder.matches(newUserDTO.getPassword(), user.getPassword())) {
-            throw new NoSuchEntityException("Can't find user with password " + newUserDTO.getPassword());
+        if (!passwordEncoder.matches(user.getPassword(), user.getPassword())) {
+            throw new NoSuchEntityException("Can't find user with password " + user.getPassword());
         }
 
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-
         HttpSession session = request.getSession();
-        session.setAttribute("user", userDTO);
+        session.setAttribute("user", existingUser);
 
-        return userDTO;
+        return user;
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserService {
     User save(User User);
     User updateUser(int userId, User User);
-    UserDTO login(NewUserDTO newUserDTO, HttpServletRequest request);
+    User login(User user, HttpServletRequest request);
     void changePassword(User user, String newPassword);
     Optional<User> findByEmailAndPassword(String email, String password);
     Optional<User> findByEmail(String email);

@@ -14,8 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -77,28 +79,33 @@ public class MessageServiceImpl implements MessageService {
         existingMessage.setBody(message.getBody());
         existingMessage.setStatus(message.getStatus());
 
-        message.getMessageFolders().stream()
+        List<MessageFolder> messageFolders = message.getMessageFolders().stream()
                 .map(folder -> {
-                   //sprawdzic czy foldery dla tej wiadomosci sie roznia
-                   // jesli tak to wtedy wykonac update
-                   messageFolderRepository.findById(folder.getId())
+                   return messageFolderRepository.findById(folder.getId())
                             .orElseThrow(() -> new NoSuchEntityException("Folder not found" ));
-
-
                 })
+                .collect(Collectors.toCollection(ArrayList::new));
 
+        existingMessage.setMessageFolders(messageFolders);
 
-                .findFirst()
-                .flatMap(folderId -> messageFolderRepository.findById(folderId.getId()))
-                .orElseThrow(() -> new NoSuchEntityException("Folder not found" ));
+        existingMessage.getMessageRoles().clear();
+        message.getMessageRoles().forEach(role -> {
+            MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
+            role.setParticipant(participant);
+            role.setMessage(existingMessage);
+            existingMessage.getMessageRoles().add(role);
+        });
 
         List<MessageLocation> existingLocations = messageLocationRepository.findByMessageId(messageId);
                 existingLocations.forEach(messageLocationRepository::delete);
 
-        MessageLocation newLocation = new MessageLocation();
-        newLocation.setFolderId(newFolder.getId());
-        newLocation.setMessageId(existingMessage.getId());
-        messageLocationRepository.save(newLocation);
+        messageFolders.forEach(folder -> {
+            MessageLocation newLocation = new MessageLocation();
+            newLocation.setFolderId(folder.getId());
+            newLocation.setMessageId(existingMessage.getId());
+            messageLocationRepository.save(newLocation);
+        });
 
         return messageRepository.save(existingMessage);
     }

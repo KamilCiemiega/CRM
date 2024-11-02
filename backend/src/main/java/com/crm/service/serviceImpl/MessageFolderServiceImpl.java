@@ -22,7 +22,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class MessageFolderServiceImpl implements MessageFolderService {
+public class
+MessageFolderServiceImpl implements MessageFolderService {
 
     private final MessageFolderRepository messageFolderRepository;
     private final UserRepository userRepository;
@@ -78,7 +79,8 @@ public class MessageFolderServiceImpl implements MessageFolderService {
 
         existingFolder.setName(messageFolder.getName());
 
-        if (messageFolder.getParentFolder().getId() != null) {
+        // Sprawdź, czy parentFolder nie jest null przed dostępem do getId()
+        if (messageFolder.getParentFolder() != null && messageFolder.getParentFolder().getId() != null) {
             MessageFolder parentFolder = messageFolderRepository.findById(messageFolder.getParentFolder().getId())
                     .orElseThrow(() -> new NoSuchEntityException("Parent folder not found for ID: " + messageFolder.getParentFolder().getId()));
             existingFolder.setParentFolder(parentFolder);
@@ -86,15 +88,17 @@ public class MessageFolderServiceImpl implements MessageFolderService {
             existingFolder.setParentFolder(null);
         }
 
-        if (messageFolder.getUser().getId() != null) {
+        if (messageFolder.getUser() != null && messageFolder.getUser().getId() != null) {
             User user = userRepository.findById(messageFolder.getUser().getId())
                     .orElseThrow(() -> new NoSuchEntityException("User not found for ID: " + messageFolder.getUser().getId()));
             existingFolder.setUser(user);
         }
+
         existingFolder.setFolderType(messageFolder.getFolderType());
 
         return messageFolderRepository.save(existingFolder);
     }
+
 
     @Override
     @Transactional

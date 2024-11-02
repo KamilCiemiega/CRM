@@ -27,7 +27,7 @@ class UserRepositoryTest {
     void setUp() {
         Role role = new Role();
         role.setId(1);
-        role.setName("admin");
+        role.setRoleType(Role.RoleType.ADMIN);
         roleRepository.save(role);
     }
 
@@ -56,7 +56,7 @@ class UserRepositoryTest {
         expectedUser.ifPresent(u -> {
             logger.info("Found user: {}", u);
             assertThat(u.getEmail()).isEqualTo(email);
-            assertThat(u.getRole().getName()).isEqualTo("admin");
+            assertThat(u.getRole().getRoleType()).isEqualTo(Role.RoleType.ADMIN);
         });
     }
 }
