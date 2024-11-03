@@ -2,7 +2,9 @@ package com.crm.service.serviceImpl;
 
 import com.crm.controller.dto.NewUserDTO;
 import com.crm.controller.dto.UserDTO;
+import com.crm.dao.RoleRepository;
 import com.crm.dao.UserRepository;
+import com.crm.entity.Role;
 import com.crm.entity.User;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.PasswordResetTokenService;
@@ -27,12 +29,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final PasswordResetTokenService passwordResetTokenService;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PasswordResetTokenService passwordResetTokenService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PasswordResetTokenService passwordResetTokenService, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.passwordResetTokenService = passwordResetTokenService;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -43,11 +47,22 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User save(User user) {
+        if (user.getRole() == null || user.getRole().getId() == null) {
+            throw new IllegalArgumentException("Role ID must be provided for the user.");
+        }
+
+        Role role = roleRepository.findById(user.getRole().getId())
+                .orElseThrow(() -> new NoSuchEntityException("Role not found for ID: " + user.getRole().getId()));
+
+        user.setRole(role);
+
         String plainPassword = user.getPassword();
         String encodedPassword = passwordEncoder.encode(plainPassword);
         user.setPassword(encodedPassword);
+
         return userRepository.save(user);
     }
+
 
     @Transactional
     @Override
@@ -68,20 +83,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-
     @Override
     public User login(User user, HttpServletRequest request) {
         User existingUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new NoSuchEntityException("Can't find user with email " + user.getEmail()));
 
-        if (!passwordEncoder.matches(user.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
             throw new NoSuchEntityException("Can't find user with password " + user.getPassword());
         }
 
         HttpSession session = request.getSession();
         session.setAttribute("user", existingUser);
 
-        return user;
+        return existingUser;
     }
 
     @Override

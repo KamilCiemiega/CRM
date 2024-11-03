@@ -1,6 +1,5 @@
 package com.crm.controller.dto;
 
-import com.crm.entity.Role;
 import lombok.*;
 
 @Getter
@@ -12,5 +11,5 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private Role role;
+    private RoleDTO roleDTO;
 }
