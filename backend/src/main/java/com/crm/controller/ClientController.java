@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/clients")
 public class ClientController {
 
     private final ClientService clientService;
@@ -24,7 +24,7 @@ public class ClientController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/clients")
+    @GetMapping()
     public ResponseEntity<List<ClientDTO>> findAllClients(){
         List<Client> listOfClients = clientService.findAllClients();
         List<ClientDTO> listOfClientsDTOs = listOfClients.stream()
@@ -34,13 +34,13 @@ public class ClientController {
         return ResponseEntity.ok(listOfClientsDTOs);
     }
 
-    @PostMapping("/clients")
+    @PostMapping()
     public ResponseEntity<ClientDTO> saveClient(@RequestBody ClientDTO clientDTO){
         Client client = clientService.save(modelMapper.map(clientDTO, Client.class));
         return new ResponseEntity<>(modelMapper.map(client, ClientDTO.class), HttpStatus.OK);
     }
 
-    @PostMapping("/clients/{clientId}")
+    @PostMapping("/{clientId}")
     public ResponseEntity<Client> updateClient(@PathVariable("clientId") int clientId, @RequestBody ClientDTO clientDTO){
         Client updatedClient = clientService.updateClient(clientId, modelMapper.map(clientDTO, Client.class));
         return ResponseEntity.ok(updatedClient);
