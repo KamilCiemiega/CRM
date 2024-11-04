@@ -29,7 +29,9 @@ const SignUp = () => {
       lastName: "",
       password: "",
       email: "",
-      role: 2
+      roleDTO: {
+         "id": 1
+      }
     },
     validationSchema: yup.object({
       firstName: yup.string().required("FirstName is required"),
@@ -53,19 +55,22 @@ const SignUp = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await axios.post("http://localdev:8082/api/auth/register", values);
+        const payload = {
+          ...values,
+          roleDTO: values.roleDTO && values.roleDTO.id ? { id: values.roleDTO.id } : { id: 1 }
+        };
+
+        const response = await axios.post("http://localdev:8082/api/users", payload);
         
-        if(response.status === 200){
+        if(response.status === 201){
             navigate('/');
         }
         
       } catch (error: unknown) {
         let errorMessage = "An unknown error occurred";
         if (axios.isAxiosError(error)) {
-        
           errorMessage = error.message;
         } else if (error instanceof Error) {
-          
           errorMessage = error.message;
         }
         setError({ errMessage: errorMessage, openAlert: true });

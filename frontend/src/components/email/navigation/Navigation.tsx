@@ -39,7 +39,7 @@ const Navigation = () => {
 
   const handleLogoutUser = async () => {
     try{
-      const response = await axios.get("http://localdev:8082/api/auth/logout", {
+      const response = await axios.get("http://localdev:8082/api/users/logout", {
         withCredentials: true
       });
       console.log(response);

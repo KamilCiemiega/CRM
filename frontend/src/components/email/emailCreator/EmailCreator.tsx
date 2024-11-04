@@ -157,7 +157,7 @@ const EmailCreator = () => {
           <ActionBar />
         </Box>
       </Dialog>
-    </ThemeProvider>
+    </ThemeProvider> 
   );
 };
 

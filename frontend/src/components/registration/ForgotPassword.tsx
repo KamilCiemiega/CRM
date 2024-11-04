@@ -13,7 +13,7 @@ import {
   Typography,
   Container,
 } from "@mui/material";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const ForgotPassword = () => {
   const [resetPasswordMessage, setResetPasswordMessage] = useState({
@@ -71,17 +71,19 @@ const ForgotPassword = () => {
         }
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError;
           setResetPasswordMessage(prevState => ({
             ...prevState,
             openAlert: true,
-            errorMessage: error.response?.data || "An error occurred",
+            errorMessage: typeof axiosError.response?.data === 'string' ? axiosError.response.data : "An error occurred",
             successMessage: ""
           }));
         } else if (error instanceof Error) {
+          const errorMessage = (error as Error).message || "An unknown error occurred";
           setResetPasswordMessage(prevState => ({
             ...prevState,
             openAlert: true,
-            errorMessage: error.message,
+            errorMessage: errorMessage,
             successMessage: ""
           }));
         } else {
@@ -92,7 +94,7 @@ const ForgotPassword = () => {
             successMessage: ""
           }));
         }
-      }
+      }           
     },
   });
 

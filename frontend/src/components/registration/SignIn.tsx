@@ -50,12 +50,10 @@ const SignIn: React.FC = () => {
       password: yup.string().required("This field can't be empty"),
     }),
     onSubmit: async (values: SignInFormValues, { setSubmitting }: FormikHelpers<SignInFormValues>) => {
-      const { email, password } = values;
     
     try {
-      const response = await axios.get(`http://localdev:8082/api/auth/login?email=${email}&password=${password}`,{
-        withCredentials: true
-      });
+      const response = await axios.post("http://localdev:8082/api/users/login", values, {withCredentials: true}); 
+      
       const firstName: string = response.data.firstName;
       const lastName: string = response.data.lastName;
       

@@ -7,10 +7,10 @@ export const fetchUserAndClientData = () => {
 
         const fetchData = async () => {
             const usersResponse = await axios.get(
-                "http://localdev:8082/api/auth/get-users"
+                "http://localdev:8082/api/users"
               );
               const clientsResponse = await axios.get(
-                "http://localdev:8082/api/client/get-clients"
+                "http://localdev:8082/api/clients"
               );
             return {
                 users: usersResponse.data,

@@ -18,6 +18,8 @@ interface State {
   subtitleValue: string;
   users: UserAndClient[];
   clients: UserAndClient[];
+  usersId: number[],
+  clientsId: number[]
 }
 
 const initialState: State = {
@@ -31,6 +33,8 @@ const initialState: State = {
   subtitleValue: "",
   users: [],
   clients: [],
+  usersId: [],
+  clientsId: []
 };
 
 const findUserOrClientEmailSlice = createSlice({
@@ -82,6 +86,12 @@ const findUserOrClientEmailSlice = createSlice({
     },
     setClients(state, action: PayloadAction<UserAndClient[]>) {
       state.clients = action.payload;
+    },
+    addUserId(state, action: PayloadAction<number>) {
+      state.usersId.push(action.payload);
+    },
+    addClientId(state, action: PayloadAction<number>) {
+        state.clientsId.push(action.payload);
     },
   },
 });

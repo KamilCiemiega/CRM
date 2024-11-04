@@ -1,26 +1,33 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "display": "Create React App",
-    "_version": "2.0.0",
-  
-    "compilerOptions": {
-      "lib": ["dom", "dom.iterable", "esnext", "es6"],
-      "module": "esnext",
-      "moduleResolution": "bundler",
-      "target": "es2015",
-      "noImplicitAny": true,
-      "noImplicitThis": true,
-      "strictNullChecks": true,
-  
-      "allowJs": true,
-      "allowSyntheticDefaultImports": true,
-      "esModuleInterop": true,
-      "isolatedModules": true,
-      "jsx": "react-jsx",
-      "noEmit": true,
-      "noFallthroughCasesInSwitch": true,
-      "resolveJsonModule": true,
-      "skipLibCheck": true,
-      "strict": true
-    }
-  }
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Create React App",
+  "_version": "2.0.0",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "es6"
+    ],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2015",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src"
+  ]
+}

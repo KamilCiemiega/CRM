@@ -10,6 +10,7 @@ import { AppDispatch } from "../../../store";
 import RenderBox from "../../../../style/RenderBox";
 import { filterData } from "./helperFunctions/filterData";
 import { UserAndClient } from "../../../../interfaces/UserAndClient";
+import axios from "axios";
 
 
 const FindUserOrClientEmail = () => {
@@ -62,15 +63,42 @@ const FindUserOrClientEmail = () => {
 
   }, [ccInputValueState, users, clients]);
 
-  const onClickHandler = (email: string) => {
-    if(openToSearchBox){
-      dispatch(findUserOrClientEmailAction.setToInputValue({value: email, valutType:"filtredValue"}));
+  const getParticipiantFromBackend = async (type: string, id: number) => {
+
+      try{
+        const response = await axios.get(`http://localdev:8082/api/message-participant?type=${type.toUpperCase()}&userId=${id}`)
+        console.log(response);
+      }catch(error: unknown) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.message);
+        } else if (error instanceof Error) {
+          console.log(error.message);
+        }
+      }
+  }
+
+  const onClickHandler = async (email: string, id: number, type: 'user' | 'client') => {
+    if (openToSearchBox) {
+      dispatch(findUserOrClientEmailAction.setToInputValue({ value: email, valutType: "filtredValue" }));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-    }else if (openCcSearchBox){
-      dispatch(findUserOrClientEmailAction.setCcInputValue({value: email, valutType:"filtredValue"}));
+    } else if (openCcSearchBox) {
+      dispatch(findUserOrClientEmailAction.setCcInputValue({ value: email, valutType: "filtredValue" }));
       dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
     }
+
+    try {
+       await getParticipiantFromBackend(type, id);
+    }catch (error){
+      console.log("Error while tring to get participant ", error);
+    }
+  
+    if (type === 'user') {
+      dispatch(findUserOrClientEmailAction.addUserId(id));
+    } else if (type === 'client') {
+      dispatch(findUserOrClientEmailAction.addClientId(id));
+    }
   };
+  
 
   return RenderBox({
     openCcSearchBox,
@@ -88,7 +116,7 @@ const FindUserOrClientEmail = () => {
           {filteredUsers.map((user, i) => (
             <StyledTypography
               key={i}
-              onClick={() => onClickHandler(`${user.email},`)}
+              onClick={() => onClickHandler(user.email, user.id, 'user')}
             >
               {user.email}
             </StyledTypography>
@@ -105,7 +133,7 @@ const FindUserOrClientEmail = () => {
           </Box>
           {filteredClients.map((client, i) => (
             <StyledTypography
-              onClick={() => onClickHandler(`${client.email},`)}
+              onClick={() => onClickHandler(client.email, client.id, 'client')}
               key={i}
             >
               {client.email}
