@@ -10,6 +10,7 @@ import FindUserOrClientEmail from "./findUserOrClientEmail/FindUserOrClientEmail
 import { findUserOrClientEmailAction } from "../../store/slices/emailSlices/findUserOrClientEmail-slice";
 import TextEditor from "./TextEditor";
 import { AppDispatch, RootState } from "../../store";
+import { sendEmailAction } from "../../store/slices/emailSlices/sendEmail-slice";
 
 const EmailCreator = () => {
   const [error, setError] = useState(false);
@@ -21,7 +22,8 @@ const EmailCreator = () => {
   const toInputValue = useSelector((state:RootState) => state.findUserOrClientEmail.toInputValue);
   const ccInputValue = useSelector((state:RootState) => state.findUserOrClientEmail.ccInputValue);
   const theSameUserInInput = useSelector((state:RootState) => state.findUserOrClientEmail.theSameUserInInput)
-  
+  const sendMessageStatus = useSelector((state:RootState) => state.sendEmail.sendMessageStatus);
+
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false));
   };
@@ -29,14 +31,12 @@ const EmailCreator = () => {
   const handleSendSubtitleValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value
     if(value){
-      dispatch(findUserOrClientEmailAction.setSubtitleValue(value));
+      dispatch(sendEmailAction.setSubtitleValue(value));
     }
   };
   const fieldErrorState = useSelector(
     (state:RootState) => state.findUserOrClientEmail.fieldErrorState
   );
-
-  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     const value = e.target.value;
@@ -70,15 +70,43 @@ const EmailCreator = () => {
     return () => clearTimeout(timer);
   }, [theSameUserInInput]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(sendMessageStatus.status === "success"){
+          handleCloseDialog();
+      }
+      dispatch(sendEmailAction.setSendMessageStatus({
+        status: "",
+        message: "",
+        openAlert: false
+      }))
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [sendMessageStatus, dispatch]);
 
   return (
     <ThemeProvider theme={EmailCreatorTheme}>
-      
       <Dialog open={openDialog}>
         {theSameUserInInput && (
           <Alert severity="warning">
           This user is already added
         </Alert>
+        )}
+        {sendMessageStatus.openAlert && (
+         <Alert
+         severity={(sendMessageStatus.status || "info") as "error" | "warning" | "info" | "success"}
+         onClose={() => {
+           dispatch(sendEmailAction.setSendMessageStatus({
+             status: "",
+             message: "",
+             openAlert: false
+           }));
+         }}
+       >
+         {sendMessageStatus.message}
+       </Alert>
+       
         )}
         <DialogTitle>
           New message

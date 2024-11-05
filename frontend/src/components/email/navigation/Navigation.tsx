@@ -15,6 +15,8 @@ import { emailCreatorAction } from "../../store/slices/emailSlices/emailCreator-
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../store";
+import { NavigationItemProps } from "../../../interfaces/interfaces";
+import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
 
 const Navigation = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -24,6 +26,8 @@ const Navigation = () => {
   const loggedInUserCredentials = useSelector((state: RootState) => state.signIn.loggedInUser);
 
   const handleClick = (index: number) => {
+    dispatch(emailListAction.setPrimaryTabNumber(index));
+
     if (openItems.includes(index)) {
       setOpenItems(openItems.filter((item) => item !== index));
     } else {
@@ -56,16 +60,6 @@ const Navigation = () => {
     }
   }
 
-  interface NavigationItemProps {
-    icon: ReactElement;
-    primary: string;
-    index: number;
-    openItems: number[];
-    activeItem: number;
-    handleClick: (index: number) => void;
-    collapseItems: { index: number; icon: ReactElement; primary: string }[];
-  }
-
   const NavigationItem: React.FC<NavigationItemProps> = ({
     icon,
     primary,
@@ -76,7 +70,7 @@ const Navigation = () => {
     collapseItems,
   }) => {
     return (
-      <div>
+      <Box sx={{width: '300px'}}>
         <ListItemButton
           onClick={() => handleClick(index)}
           sx={{ bgcolor: activeItem === index ? "#625bff" : "" }}
@@ -111,7 +105,7 @@ const Navigation = () => {
             ))}
           </List>
         </Collapse>
-      </div>
+      </Box>
     );
   };
 

@@ -1,6 +1,6 @@
 import { AppDispatch } from "../../../../store";
 import { findUserOrClientEmailAction } from "../../../../store/slices/emailSlices/findUserOrClientEmail-slice";
-import { UserAndClient } from "../../../../../interfaces/UserAndClient";
+import { UserAndClient } from "../../../../../interfaces/interfaces";
 
 
 const filterHelper = (input: string, users: UserAndClient[], clients: UserAndClient[]) => {

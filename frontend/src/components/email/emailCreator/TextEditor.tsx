@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import "../../../style/TextEditor.css";
 import { editTextAction } from "../../store/slices/emailSlices/editText-slice";
-import { selectEditorTextAndStyles } from "./actionBar/SelectEditorTextAndStyles";
+import { sendEmailAction } from "../../store/slices/emailSlices/sendEmail-slice";
 import { RootState } from "../../store";
 
 const TextEditor = () => {
@@ -43,18 +43,15 @@ const TextEditor = () => {
 
       setEditorState(newEditorState);
       dispatch(editTextAction.clearAction());
-     
     }
   }, [action, editorState, dispatch]);
 
   const handleEditorChange = (newEditorState: EditorState) => {
     setEditorState(newEditorState);
-    if (newEditorState) {
-      const styledText = selectEditorTextAndStyles(newEditorState);
-      console.log(styledText);
-    }
+    const contentState = newEditorState.getCurrentContent();
+    const rawContent = convertToRaw(contentState);
+    dispatch(sendEmailAction.setEditorContent(rawContent));
   };
-
 
   return (
     <Box sx={{ height: "59%" }}>

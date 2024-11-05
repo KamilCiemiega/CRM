@@ -9,8 +9,10 @@ import { fetchUserAndClientData } from "../../../store/thunks/fetchUserAndClient
 import { AppDispatch } from "../../../store";
 import RenderBox from "../../../../style/RenderBox";
 import { filterData } from "./helperFunctions/filterData";
-import { UserAndClient } from "../../../../interfaces/UserAndClient";
+import { UserAndClient } from "../../../../interfaces/interfaces";
 import axios from "axios";
+import { MessageRoles } from "../../../../interfaces/interfaces";
+import { sendEmailAction } from "../../../store/slices/emailSlices/sendEmail-slice";
 
 
 const FindUserOrClientEmail = () => {
@@ -23,7 +25,6 @@ const FindUserOrClientEmail = () => {
   const ccInputValueState = useSelector((state: RootState) => state.findUserOrClientEmail.ccInputValue);
   const openCcSearchBox = useSelector((state: RootState) => state.findUserOrClientEmail.openCcSearchBox);
   const openToSearchBox = useSelector((state: RootState) => state.findUserOrClientEmail.openToSearchBox);
-  
 
   const handleFilterData = (inputValue: string) => {
     const { filteredUsers, filteredClients,  matchingValue} = filterData(
@@ -64,10 +65,20 @@ const FindUserOrClientEmail = () => {
   }, [ccInputValueState, users, clients]);
 
   const getParticipiantFromBackend = async (type: string, id: number) => {
-
+    let fieldType = "";
+    if(openToSearchBox){
+      fieldType = "TO"
+    }else {
+      fieldType = "CC"
+    }
       try{
-        const response = await axios.get(`http://localdev:8082/api/message-participant?type=${type.toUpperCase()}&userId=${id}`)
-        console.log(response);
+        const response = await axios.get(`http://localdev:8082/api/message-participant?type=${type.toUpperCase()}&${type}Id=${id}`)
+        const messageRoles: MessageRoles = {
+          "status": fieldType,
+          "participantId": response.data.id
+        }
+        dispatch(sendEmailAction.addMessageRole(messageRoles));
+
       }catch(error: unknown) {
         if (axios.isAxiosError(error)) {
           console.log(error.message);
@@ -88,14 +99,9 @@ const FindUserOrClientEmail = () => {
 
     try {
        await getParticipiantFromBackend(type, id);
+
     }catch (error){
       console.log("Error while tring to get participant ", error);
-    }
-  
-    if (type === 'user') {
-      dispatch(findUserOrClientEmailAction.addUserId(id));
-    } else if (type === 'client') {
-      dispatch(findUserOrClientEmailAction.addClientId(id));
     }
   };
   

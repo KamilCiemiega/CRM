@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserAndClient } from "../../../../interfaces/UserAndClient";
+import { UserAndClient, MessageRoles } from "../../../../interfaces/interfaces";
 import { addCommaToFiltredInputValue } from "../../../email/emailCreator/findUserOrClientEmail/helperFunctions/addCommaToFltredInputValue";
 
 interface ErrorState {
@@ -15,11 +15,8 @@ interface State {
   openCcSearchBox: boolean;
   fieldErrorState: ErrorState;
   theSameUserInInput: boolean;
-  subtitleValue: string;
   users: UserAndClient[];
   clients: UserAndClient[];
-  usersId: number[],
-  clientsId: number[]
 }
 
 const initialState: State = {
@@ -30,11 +27,8 @@ const initialState: State = {
   openCcSearchBox: false,
   fieldErrorState: { to: false, cc: false },
   theSameUserInInput: false,
-  subtitleValue: "",
   users: [],
-  clients: [],
-  usersId: [],
-  clientsId: []
+  clients: []
 };
 
 const findUserOrClientEmailSlice = createSlice({
@@ -78,21 +72,13 @@ const findUserOrClientEmailSlice = createSlice({
     setFieldErrorState(state, action: PayloadAction<Partial<ErrorState>>) {
       state.fieldErrorState = { ...state.fieldErrorState, ...action.payload };
     },
-    setSubtitleValue(state, action: PayloadAction<string>) {
-      state.subtitleValue = action.payload;
-    },
     setUsers(state, action: PayloadAction<UserAndClient[]>) {
       state.users = action.payload;
     },
     setClients(state, action: PayloadAction<UserAndClient[]>) {
       state.clients = action.payload;
     },
-    addUserId(state, action: PayloadAction<number>) {
-      state.usersId.push(action.payload);
-    },
-    addClientId(state, action: PayloadAction<number>) {
-        state.clientsId.push(action.payload);
-    },
+    
   },
 });
 
