@@ -72,7 +72,7 @@ const FindUserOrClientEmail = () => {
       fieldType = "CC"
     }
       try{
-        const response = await axios.get(`http://localdev:8082/api/message-participant?type=${type.toUpperCase()}&${type}Id=${id}`)
+        const response = await axios.get(`http://localdev:8082/api/message-participant/by-type-and-id?type=${type.toUpperCase()}&${type}Id=${id}`)
         const messageRoles: MessageRoles = {
           "status": fieldType,
           "participantId": response.data.id

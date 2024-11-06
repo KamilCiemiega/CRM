@@ -3,11 +3,13 @@ import { Message } from "../../../../interfaces/interfaces";
 
 interface State {
     messages: Message[];
+    filtredMessages: Message[];
     primaryTabNumber: number;
 }
 
 const initialState: State = {
     messages: [],
+    filtredMessages: [],
     primaryTabNumber: 1
 };
 
@@ -20,6 +22,9 @@ const emailListSlice = createSlice({
         },
         setPrimaryTabNumber(state, action: PayloadAction<number>){
             state.primaryTabNumber = action.payload;
+        },
+        setFiltredMessages(state, action: PayloadAction<Message[]>){
+            state.filtredMessages = action.payload;
         }
     }
 });

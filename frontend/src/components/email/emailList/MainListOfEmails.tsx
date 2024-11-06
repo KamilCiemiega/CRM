@@ -1,24 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Paper } from '@mui/material';
 import { fetchAllMessages } from "../../store/thunks/fetchAllMessages";
 import { AppDispatch, RootState } from "../../store";
-
-
-const columns: GridColDef[] = [
-    { field: 'email', headerName: 'Email', width: 350 },
-    { field: 'subject', headerName: 'Subject', width: 700 },
-    { field: 'sendDate', headerName: 'Time', width: 200 },
-    { field: 'size', headerName: 'Size', width: 100 },
-    
-  ];
-  
-  const rows = [
-    {id: 1}
-  ];
-
-  const paginationModel = { page: 0, pageSize: 5 };
+import TableDataComponent from "./TableDataComponent";
+import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
 
 const MainListOfEmails = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -40,25 +26,20 @@ const MainListOfEmails = () => {
     const handleListOfTab = (typeOfTab: number) => {
         const status = statusMap[typeOfTab];
     
-        const filteredListOfMessages = listOfMessages.filter(message => message.status === status);
-        console.log(filteredListOfMessages)
-        return filteredListOfMessages;
+        if(listOfMessages.length > 0) {
+            const filteredListOfMessages = listOfMessages.filter(message => message.status === status);
+            console.log(filteredListOfMessages)
+            dispatch(emailListAction.setFiltredMessages(filteredListOfMessages));
+        }
     };
 
     useEffect(() => {
         handleListOfTab(tabNumber)
-    }, [tabNumber])
+    }, [tabNumber, listOfMessages])
 
     return (
     <Paper sx={{ height: '100vh', width: '100%', ml: '1%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
-      />
+        <TableDataComponent />
     </Paper>
     );
 }
