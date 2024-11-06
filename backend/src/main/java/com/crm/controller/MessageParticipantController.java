@@ -1,7 +1,12 @@
 package com.crm.controller;
 
+import com.crm.controller.dto.ClientDTO;
 import com.crm.controller.dto.MessageParticipantDTO;
+import com.crm.controller.dto.MessageRoleDTO;
+import com.crm.controller.dto.UserDTO;
+import com.crm.entity.Client;
 import com.crm.entity.MessageParticipant;
+import com.crm.entity.User;
 import com.crm.service.MessageParticipantService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +30,7 @@ public class MessageParticipantController {
         this.messageParticipantService = messageParticipantService;
     }
 
-    @GetMapping()
+    @GetMapping("/by-type-and-id")
     public ResponseEntity<MessageParticipantDTO> getParticipantByTypeAndId(
             @RequestParam MessageParticipant.ParticipantType type,
             @RequestParam(required = false) Integer userId,
@@ -36,4 +41,20 @@ public class MessageParticipantController {
 
         return new ResponseEntity<>(messageParticipantDTO, HttpStatus.OK);
     }
+
+    @GetMapping("/by-participant-id")
+    public ResponseEntity<Object> getUserOrClientByParticipantId(@RequestParam Integer participantId) {
+        Object participant = messageParticipantService.findUserOrClientByParticipantId(participantId);
+
+        if (participant instanceof User) {
+            UserDTO userDTO = modelMapper.map(participant, UserDTO.class);
+            return ResponseEntity.ok(userDTO);
+        } else if (participant instanceof Client) {
+            ClientDTO clientDTO = modelMapper.map(participant, ClientDTO.class);
+            return ResponseEntity.ok(clientDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Participant not found");
+        }
+    }
+
 }

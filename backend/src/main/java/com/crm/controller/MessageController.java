@@ -60,7 +60,6 @@ public class MessageController {
         return new ResponseEntity<>(modelMapper.map(savedMessage, MessageDTO.class), HttpStatus.CREATED);
     }
 
-
     @PostMapping("/{message-id}")
     public ResponseEntity<MessageDTO> updateMessage(@PathVariable("message-id") int messageId, @RequestBody MessageDTO messageDTO) {
         Message updatedMessage = messageService.updateMessage(messageId, modelMapper.map(messageDTO, Message.class));
