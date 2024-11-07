@@ -42,7 +42,7 @@ public class MessageParticipantController {
         return new ResponseEntity<>(messageParticipantDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/by-participant-id")
+    @GetMapping("/by-id")
     public ResponseEntity<Object> getUserOrClientByParticipantId(@RequestParam Integer participantId) {
         Object participant = messageParticipantService.findUserOrClientByParticipantId(participantId);
 
