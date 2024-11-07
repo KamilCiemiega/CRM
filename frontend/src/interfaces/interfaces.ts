@@ -32,14 +32,28 @@ export interface NavigationItemProps {
     collapseItems: { index: number; icon: ReactElement; primary: string }[];
   }
 
+  interface MessageRole {
+    id: number;
+    status: "TO" | "CC";
+    participantId: number;
+  }
+
 export interface Message {
-    id: number,
-    subject: string,
-    body: string,
-    sentDate: string,
-    status: string,
-    size: number,
-    attachments: [],
-    messageFolder: [],
-    messageRoles: []
+    id: number;
+    subject: string;
+    body: string;
+    sentDate: string;
+    status: string;
+    size: number;
+    attachments: [];
+    messageFolder: [];
+    messageRoles: MessageRole[];
 }  
+
+export interface Rows {
+    id: number;
+    status: string;
+    subject: string;
+    sendDate: string;
+    size: number;
+  }
