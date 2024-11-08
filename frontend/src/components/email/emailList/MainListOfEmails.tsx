@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../../store";
 import TableDataComponent from "./TableDataComponent";
 import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
 
+
 const MainListOfEmails = () => {
     const dispatch = useDispatch<AppDispatch>();
     const listOfMessages = useSelector((state: RootState) => state.emailList.messages)

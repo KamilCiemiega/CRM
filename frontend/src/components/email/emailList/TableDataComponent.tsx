@@ -3,11 +3,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { RootState } from "../../store";
 import { Rows } from "../../../interfaces/interfaces";
-  
+import { useParticipantsData } from "../../../hooks/useParticipantData";
 
+export interface MessageRole {
+  status: "TO" | "CC";
+  participantId: number;
+}
 
 const TableDataComponent = () => {
     const filtredListOfMessages = useSelector((state: RootState) => state.emailList.filtredMessages);
+    const [selectedMessageRoles, setSelectedMessageRoles] = useState<MessageRole[]>([]);
+
+    const participantData = useParticipantsData(selectedMessageRoles);
 
     const columns: GridColDef[] = [
       { field: 'status', headerName: 'Status', flex: 1 },
@@ -26,26 +33,33 @@ const TableDataComponent = () => {
     };
 
     const rowsFunction = (): Rows[] => {
-      if (filtredListOfMessages.length > 0) {
-       const rows: Rows[] = filtredListOfMessages.map((m, i) => {
-       const date = formatDate(m.sentDate)
-        return{
-          id: i,
-          status: m.status,
-          subject: m.subject,
-          sendDate: date,
-          size: m.size
-        }});
-        return rows;
-      }
-      return [];
-    }
+      return filtredListOfMessages.length > 0
+        ? filtredListOfMessages.map((m, i) => ({
+            id: i,
+            status: m.status,
+            subject: m.subject,
+            sendDate: formatDate(m.sentDate),
+            size: m.size,
+          }))
+        : [];
+    };
 
     const paginationModel = { page: 0, pageSize: 20 };
 
     const handleRowClick = (params: GridRowParams) => {
-      console.log("Clicked row:", params.row);
       
+    const dataToDisplay =  {
+      body: "",
+      attachmentsNumber: 0,
+      participant: []
+    }
+
+      const messageObject = filtredListOfMessages[params.row.id];
+      const body = messageObject.body;
+      const attachmentsNumber = messageObject.attachments.length;
+      setSelectedMessageRoles(messageObject.messageRoles);
+     
+      console.log(participantData);
     };
 
     return (

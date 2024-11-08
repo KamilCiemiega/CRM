@@ -5,6 +5,7 @@ import signInSlice from "./slices/authSlices/signIn-slice";
 import findUserOrClientEmailSlice from "./slices/emailSlices/findUserOrClientEmail-slice";
 import sendEmailSliice from "./slices/emailSlices/sendEmail-slice";
 import emailListSlice from "./slices/emailSlices/emailList-slice";
+import emailPreviewSlice from "./slices/emailSlices/emailPreview-slice";
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     signIn: signInSlice.reducer,
     findUserOrClientEmail: findUserOrClientEmailSlice.reducer,
     sendEmail: sendEmailSliice.reducer,
-    emailList: emailListSlice.reducer
+    emailList: emailListSlice.reducer,
+    emailPreview: emailPreviewSlice.reducer
   },
   devTools: process.env.NODE_ENV !== 'production',
 });

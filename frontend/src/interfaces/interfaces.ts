@@ -56,4 +56,13 @@ export interface Rows {
     subject: string;
     sendDate: string;
     size: number;
-  }
+}
+
+export interface DataToDisplay {
+    body: string,
+    attachmentsNumber: number,
+    participant: {
+      status: string,
+      email: string
+    }
+}
