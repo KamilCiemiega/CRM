@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { RootState } from "../../store";
 import { Rows } from "../../../interfaces/interfaces";
-import { useParticipantsData } from "../../../hooks/useParticipantData";
+import useParticipantsData from "../../../hooks/useParticipantData";
+import { emailPreviewAction } from "../../store/slices/emailSlices/emailPreview-slice";
 
 export interface MessageRole {
   status: "TO" | "CC";
@@ -11,17 +12,15 @@ export interface MessageRole {
 }
 
 const TableDataComponent = () => {
+    const dispatch = useDispatch();
     const filtredListOfMessages = useSelector((state: RootState) => state.emailList.filtredMessages);
-    const [selectedMessageRoles, setSelectedMessageRoles] = useState<MessageRole[]>([]);
-
-    const participantData = useParticipantsData(selectedMessageRoles);
+    const { participantsData, loadingData, error } = useParticipantsData();
 
     const columns: GridColDef[] = [
       { field: 'status', headerName: 'Status', flex: 1 },
       { field: 'subject', headerName: 'Subject', flex: 2 },
       { field: 'sendDate', headerName: 'Time', flex: 1 },
       { field: 'size', headerName: 'Size', flex: 1 },
-      
     ];
 
     const formatDate = (timestamp: string) => {
@@ -47,20 +46,23 @@ const TableDataComponent = () => {
     const paginationModel = { page: 0, pageSize: 20 };
 
     const handleRowClick = (params: GridRowParams) => {
-      
-    const dataToDisplay =  {
-      body: "",
-      attachmentsNumber: 0,
-      participant: []
-    }
-
       const messageObject = filtredListOfMessages[params.row.id];
-      const body = messageObject.body;
-      const attachmentsNumber = messageObject.attachments.length;
-      setSelectedMessageRoles(messageObject.messageRoles);
-     
-      console.log(participantData);
-    };
+      const messageRoles = messageObject.messageRoles;
+  
+      dispatch(emailPreviewAction.setMessageRoles(messageRoles));
+  
+      dispatch(emailPreviewAction.setDataToDisplay({
+          body: messageObject.body,
+          attachmentsNumber: messageObject.attachments.length
+      }));
+  };
+  
+    useEffect(() => {
+      if (participantsData.length > 0) {
+        dispatch(emailPreviewAction.setMessagePreview(true));
+      }
+    }, [loadingData, dispatch]);
+
 
     return (
         <DataGrid

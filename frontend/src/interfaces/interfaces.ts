@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { ParticipantData } from "../hooks/useParticipantData";
 
 export interface UserAndClient {
     id: number;
@@ -61,8 +62,5 @@ export interface Rows {
 export interface DataToDisplay {
     body: string,
     attachmentsNumber: number,
-    participant: {
-      status: string,
-      email: string
-    }
+    participant:ParticipantData[]
 }
