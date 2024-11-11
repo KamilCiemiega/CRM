@@ -33,14 +33,14 @@ const EmailPreviewTextFields = () => {
   
 
     return (
-        <Box sx={{width: '100%', height: '100vh'}}>
+        <Box sx={{width: '100%'}}>
         <Box
         component="div"
         id="emailBox"
         style={{
           display: "flex",
           alignItems: "center",
-          marginLeft: "2%",
+          marginLeft: "3%",
           marginTop: "2%",
         }}
       >
@@ -60,7 +60,7 @@ const EmailPreviewTextFields = () => {
         style={{
           display: "flex",
           alignItems: "center",
-          marginLeft: "2%",
+          marginLeft: "3%",
           marginTop: "1%",
         }}
       >

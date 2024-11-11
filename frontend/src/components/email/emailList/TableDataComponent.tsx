@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import { RootState } from "../../store";
 import { Rows } from "../../../interfaces/interfaces";
 import useParticipantsData from "../../../hooks/useParticipantData";
 import { emailPreviewAction } from "../../store/slices/emailSlices/emailPreview-slice";
+import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
 
 export interface MessageRole {
   status: "TO" | "CC";
@@ -12,9 +13,12 @@ export interface MessageRole {
 }
 
 const TableDataComponent = () => {
-    const dispatch = useDispatch();
     const filtredListOfMessages = useSelector((state: RootState) => state.emailList.filtredMessages);
-    const { participantsData, loadingData, error } = useParticipantsData();
+    const showMessagePreview = useSelector((state: RootState)=> state.emailPreview.showMessagePreview);
+    const participantsData = useSelector((state: RootState) => state.emailPreview.dataToDisplay.participant);
+    const shouldShowPreview = useSelector((state: RootState) => state.emailPreview.shouldShowPreview);
+    const { loadingData } = useParticipantsData();
+    const dispatch = useDispatch();
 
     const columns: GridColDef[] = [
       { field: 'status', headerName: 'Status', flex: 1 },
@@ -46,6 +50,7 @@ const TableDataComponent = () => {
     const paginationModel = { page: 0, pageSize: 20 };
 
     const handleRowClick = (params: GridRowParams) => {
+      console.log(params);
       const messageObject = filtredListOfMessages[params.row.id];
       const messageRoles = messageObject.messageRoles;
   
@@ -53,16 +58,22 @@ const TableDataComponent = () => {
   
       dispatch(emailPreviewAction.setDataToDisplay({
           body: messageObject.body,
+          subtitle: messageObject.subject,
           attachmentsNumber: messageObject.attachments.length
       }));
-  };
+
+      dispatch(emailPreviewAction.setShouldShowPreview(true));
+    };
+
+    const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
+      dispatch(emailListAction.setClickedChecboxes(Array.from(newSelection) as string[]));
+    };
   
     useEffect(() => {
-      if (participantsData.length > 0) {
-        dispatch(emailPreviewAction.setMessagePreview(true));
+      if (participantsData.length > 0 && !showMessagePreview && shouldShowPreview) {
+          dispatch(emailPreviewAction.setMessagePreview(true));
       }
-    }, [loadingData, dispatch]);
-
+  }, [participantsData, dispatch, showMessagePreview, shouldShowPreview]);
 
     return (
         <DataGrid
@@ -71,6 +82,7 @@ const TableDataComponent = () => {
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[10, 20]}
         checkboxSelection
+        onRowSelectionModelChange={(newSelection) => handleSelectionChange(newSelection)}
         onRowClick={handleRowClick}
         sx={{
           border: 0,

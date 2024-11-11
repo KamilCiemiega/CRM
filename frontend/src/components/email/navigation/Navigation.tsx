@@ -26,7 +26,13 @@ const Navigation = () => {
   const loggedInUserCredentials = useSelector((state: RootState) => state.signIn.loggedInUser);
 
   const handleClick = (index: number) => {
-    dispatch(emailListAction.setPrimaryTabNumber(index));
+    const acceptableTableOfIndex = [1,8,12,17,22];
+    if (acceptableTableOfIndex.includes(index)) {
+      dispatch(emailListAction.setPrimaryTabNumber(index));
+    }else {
+      dispatch(emailListAction.setSecondaryTabNumber(index));
+    }
+
 
     if (openItems.includes(index)) {
       setOpenItems(openItems.filter((item) => item !== index));

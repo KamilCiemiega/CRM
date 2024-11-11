@@ -45,6 +45,7 @@ const useParticipantsData = () => {
     };
 
     fetchParticipants();
+
   }, [messageRoles]);
 
   useEffect(() => {

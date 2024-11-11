@@ -18,10 +18,10 @@ const MainListOfEmails = () => {
 
     const statusMap: { [key: number]: string } = {
         1: "NEW",
-        7: "SENT",
-        10: "DRAFT",
-        15: "FOLLOW",
-        20: "TRASH"
+        8: "SENT",
+        12: "DRAFT",
+        17: "FOLLOW",
+        22: "TRASH"
     };
 
     const handleListOfTab = (typeOfTab: number) => {
@@ -29,7 +29,6 @@ const MainListOfEmails = () => {
     
         if(listOfMessages.length > 0) {
             const filteredListOfMessages = listOfMessages.filter(message => message.status === status);
-            console.log(filteredListOfMessages)
             dispatch(emailListAction.setFiltredMessages(filteredListOfMessages));
         }
     };

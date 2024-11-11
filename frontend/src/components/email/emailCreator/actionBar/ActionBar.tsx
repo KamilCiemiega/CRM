@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Button, Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { FormatColorText, AttachFile } from "@mui/icons-material";
@@ -9,25 +9,24 @@ import { RootState } from "../../../store";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { sendEmailAction } from "../../../store/slices/emailSlices/sendEmail-slice";
-import { emailCreatorAction } from "../../../store/slices/emailSlices/emailCreator-slice";
 
-const ActionBar = () => {
+const ActionBar: React.FC<{attachmentsNumber?: number}> = ({attachmentsNumber}) => {
   const navigate = useNavigate(); 
   const [isEditTextBarOpen, setIsEditTextBarOpen] = useState(false);
   const [fileNames, setFileNames] = useState<String[]>([]);
-  const [uploadFileCounter, setUploadFileCounter] = useState<number>(0);
+  const [uploadFileCounter, setUploadFileCounter] = useState<number | any>(0);
   const toInputValue = useSelector((state: RootState) => state.findUserOrClientEmail.toInputValue);
   const ccInputValue = useSelector((state: RootState) => state.findUserOrClientEmail.ccInputValue);
   const subtitle = useSelector((state: RootState) => state.sendEmail.subtitleValue);
   const messageRoles = useSelector((state: RootState) => state.sendEmail.messageRoles);
   const textEditorValue = useSelector((state: RootState) => state.sendEmail.editorContent);
   const fieldsErrorState = useSelector((state: RootState) => state.findUserOrClientEmail.fieldErrorState);
-
   const dispatch = useDispatch();
-  const handleFormatColorTextClick = () => {
-    setIsEditTextBarOpen(!isEditTextBarOpen);
-  };
 
+  useEffect(() => {
+    setUploadFileCounter(attachmentsNumber)
+  }, [attachmentsNumber]);
+  
   const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const fileNames = Array.from(event.target.files).map((file) => file.name);
@@ -87,7 +86,7 @@ const ActionBar = () => {
         status: "SENT",
         messageFolders: [
           {
-            "id": 6
+            "id": 2
           }
         ],
         messageRoles: messageRoles,
@@ -103,19 +102,14 @@ const ActionBar = () => {
       container
       spacing={2}
       alignItems="center"
-      sx={{ ml: 5, mt: 2, width: "80%" }}
+      sx={{ ml: 5, mt: 2, width: "100%"}}
     >
       <Grid item>
         <Button variant="contained" sx={{ mr: 1 }} onClick={handleSendData}>
           Send
         </Button>
       </Grid>
-      <Grid item>
-        <FormatColorText
-          sx={{ cursor: "pointer" }}
-          onClick={handleFormatColorTextClick}
-        />
-      </Grid>
+      <EditTextBar />
       <Grid item>
         <input
           type="file"
@@ -132,7 +126,6 @@ const ActionBar = () => {
         />
         </Badge>
       </Grid>
-      {isEditTextBarOpen && <EditTextBar />}
     </Grid>
   )};
 

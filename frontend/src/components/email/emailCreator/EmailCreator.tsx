@@ -112,7 +112,7 @@ const EmailCreator = () => {
           New message
           <Close onClick={handleCloseDialog} sx={{ cursor: "pointer" }} />
         </DialogTitle>
-        <Box component="form" noValidate style={{ height: "100%" }}>
+        <Box component="form" noValidate style={{ height: "100%",overflow: "hidden" }}>
           <Box
             component="div"
             id="emailBox"
@@ -120,7 +120,7 @@ const EmailCreator = () => {
               display: "flex",
               alignItems: "center",
               marginLeft: "2%",
-              marginTop: "2%",
+              marginTop: "2%"
             }}
           >
             <Typography variant="subtitle1" style={{ marginRight: "1%" }}>

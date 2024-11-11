@@ -61,6 +61,7 @@ export interface Rows {
 
 export interface DataToDisplay {
     body: string,
+    subtitle: string,
     attachmentsNumber: number,
     participant:ParticipantData[]
 }

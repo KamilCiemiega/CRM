@@ -1,0 +1,32 @@
+.msTitleBox{
+    display: flex;
+    align-items: center;
+    width: 92.5%;
+    height: 80px;
+    margin-left: 5%;
+    background: rgb(20 93 168);
+}
+.msTitleBox .MuiTypography-root {
+    color: white;
+    font-weight: bold;
+    margin-left: 1%;
+    transition: background-color 0.3s ease;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    transition: color 0.6s ease;
+}
+
+.backButton:hover{
+    color:  rgb(96, 131, 165);
+}
+
+.backButton:hover .MuiTypography-root {
+    color: rgb(96, 131, 165);
+}

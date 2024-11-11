@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
+import { Editor, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import "../../../style/TextEditor.css";
@@ -10,7 +10,22 @@ import { RootState } from "../../store";
 const TextEditor = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const action = useSelector((state:RootState) => state.editText.action);
+  const fetchedBodyState = useSelector((state: RootState) => state.emailPreview.dataToDisplay.body);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadSavedContent = () => {
+      try{
+        const rawContent: RawDraftContentState = JSON.parse(fetchedBodyState);
+        const contentState = convertFromRaw(rawContent);
+        setEditorState(EditorState.createWithContent(contentState));
+      } catch (error) {
+        console.log("Parsing data error", error)
+      }
+      
+    };
+    loadSavedContent();
+  }, [fetchedBodyState]);
 
   useEffect(() => {
     if (action) {
