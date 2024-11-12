@@ -27,7 +27,7 @@ const emailListSlice = createSlice({
         setPrimaryTabNumber(state, action: PayloadAction<number>){
             state.primaryTabNumber = action.payload;
         },
-        setSecondaryTabNumber(state, action: PayloadAction<number>){
+        setSecondaryTabNumber(state, action: PayloadAction<number | null>){
             state.secondaryTabNumber = action.payload;
         },
         setFiltredMessages(state, action: PayloadAction<Message[]>){

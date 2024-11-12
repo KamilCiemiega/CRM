@@ -50,7 +50,7 @@ const handleBackClik = () => {
             />
           </Box>
           <TextEditor />
-          <ActionBar attachmentsNumber ={dataToDisplay.attachmentsNumber}/>
+          <ActionBar/>
         </Box>
     );
 }

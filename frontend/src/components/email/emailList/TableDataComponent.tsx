@@ -6,6 +6,8 @@ import { Rows } from "../../../interfaces/interfaces";
 import useParticipantsData from "../../../hooks/useParticipantData";
 import { emailPreviewAction } from "../../store/slices/emailSlices/emailPreview-slice";
 import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
+import { Alert } from "@mui/material";
+
 
 export interface MessageRole {
   status: "TO" | "CC";
@@ -13,12 +15,13 @@ export interface MessageRole {
 }
 
 const TableDataComponent = () => {
+    const dispatch = useDispatch();
     const filtredListOfMessages = useSelector((state: RootState) => state.emailList.filtredMessages);
     const showMessagePreview = useSelector((state: RootState)=> state.emailPreview.showMessagePreview);
     const participantsData = useSelector((state: RootState) => state.emailPreview.dataToDisplay.participant);
     const shouldShowPreview = useSelector((state: RootState) => state.emailPreview.shouldShowPreview);
     const { loadingData } = useParticipantsData();
-    const dispatch = useDispatch();
+    const [showAlert, setAlert] = useState(false);
 
     const columns: GridColDef[] = [
       { field: 'status', headerName: 'Status', flex: 1 },
@@ -49,33 +52,49 @@ const TableDataComponent = () => {
 
     const paginationModel = { page: 0, pageSize: 20 };
 
-    const handleRowClick = (params: GridRowParams) => {
-      console.log(params);
-      const messageObject = filtredListOfMessages[params.row.id];
-      const messageRoles = messageObject.messageRoles;
-  
-      dispatch(emailPreviewAction.setMessageRoles(messageRoles));
-  
-      dispatch(emailPreviewAction.setDataToDisplay({
+    const handleDataToDisplay = (rowParam?: number, checkboxParam?: number) => {
+      if (rowParam === undefined && checkboxParam === undefined) return;
+    
+      const index = rowParam ?? checkboxParam;
+      if (index !== undefined && typeof index === "number") {
+        const messageObject = filtredListOfMessages[index];
+        const messageRoles = messageObject.messageRoles;
+    
+        dispatch(emailPreviewAction.setMessageRoles(messageRoles));
+        dispatch(emailPreviewAction.setDataToDisplay({
           body: messageObject.body,
           subtitle: messageObject.subject,
           attachmentsNumber: messageObject.attachments.length
-      }));
+        }));
+      }
+    };
 
+    const handleRowClick = (params: GridRowParams) => {
+      handleDataToDisplay(Number(params.row.id))
       dispatch(emailPreviewAction.setShouldShowPreview(true));
     };
 
     const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
       dispatch(emailListAction.setClickedChecboxes(Array.from(newSelection) as string[]));
+
+      const lengthOfTable = newSelection.length;
+      if(lengthOfTable > 1) {
+        setAlert(true);
+      }
+
+      const selectedId = newSelection[0];
+      handleDataToDisplay(undefined, typeof selectedId === "number" ? selectedId : undefined);
     };
   
     useEffect(() => {
       if (participantsData.length > 0 && !showMessagePreview && shouldShowPreview) {
           dispatch(emailPreviewAction.setMessagePreview(true));
       }
-  }, [participantsData, dispatch, showMessagePreview, shouldShowPreview]);
+    }, [participantsData, dispatch, showMessagePreview, shouldShowPreview]);
 
     return (
+      <>
+      {/* <Alert  severity="warning"></Alert> */}
         <DataGrid
         rows={rowsFunction()}
         columns={columns}
@@ -91,6 +110,7 @@ const TableDataComponent = () => {
           }
         }}
       />
+      </>
     );
 }
 

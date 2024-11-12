@@ -11,11 +11,12 @@ import { findUserOrClientEmailAction } from "../../store/slices/emailSlices/find
 import TextEditor from "./TextEditor";
 import { AppDispatch, RootState } from "../../store";
 import { sendEmailAction } from "../../store/slices/emailSlices/sendEmail-slice";
+import useSubFoldersEmailActions from "../../../hooks/useSubFoldersEmailActions";
+import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
 
 const EmailCreator = () => {
   const [error, setError] = useState(false);
   const dispatch: AppDispatch = useDispatch();
-
   const openDialog = useSelector((state: RootState) => state.emailCreator.openDialog);
   const openToSearchBox = useSelector((state:RootState) => state.findUserOrClientEmail.openToSearchBox);
   const openCcSearchBox = useSelector((state:RootState) => state.findUserOrClientEmail.openCcSearchBox);
@@ -23,9 +24,12 @@ const EmailCreator = () => {
   const ccInputValue = useSelector((state:RootState) => state.findUserOrClientEmail.ccInputValue);
   const theSameUserInInput = useSelector((state:RootState) => state.findUserOrClientEmail.theSameUserInInput)
   const sendMessageStatus = useSelector((state:RootState) => state.sendEmail.sendMessageStatus);
+  const subtitleValue = useSelector((state: RootState) => state.sendEmail.subtitleValue);
+  useSubFoldersEmailActions();
 
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false));
+    dispatch(emailListAction.setSecondaryTabNumber(null))
   };
   
   const handleSendSubtitleValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -42,12 +46,12 @@ const EmailCreator = () => {
     const value = e.target.value;
 
     if (field === "to") {
-      dispatch(findUserOrClientEmailAction.setToInputValue({value, valutType: ''}));
+      dispatch(findUserOrClientEmailAction.setToInputValue({value, valuType: ''}));
       if (value) {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ to: false }));
       }
     } else if (field === "cc") {
-      dispatch(findUserOrClientEmailAction.setCcInputValue({value, valutType: ''}));
+      dispatch(findUserOrClientEmailAction.setCcInputValue({value, valuType: ''}));
       if (value) {
         dispatch(findUserOrClientEmailAction.setFieldErrorState({ cc: false }));
       }
@@ -179,6 +183,7 @@ const EmailCreator = () => {
               variant="outlined"
               style={{ width: "95%" }}
               onChange={(e) => handleSendSubtitleValue(e)}
+              value={subtitleValue}
             />
           </Box>
           <TextEditor />

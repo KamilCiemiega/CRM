@@ -1,18 +1,16 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { FormatColorText, AttachFile } from "@mui/icons-material";
-import EditTextBar from "./EditTextBar";
 import { findUserOrClientEmailAction } from "../../../store/slices/emailSlices/findUserOrClientEmail-slice";
-import {Badge} from "@mui/material";
 import { RootState } from "../../../store";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { sendEmailAction } from "../../../store/slices/emailSlices/sendEmail-slice";
+import ActionBarContent from "./ActionBarContent";
+import { emailPreviewAction } from "../../../store/slices/emailSlices/emailPreview-slice";
 
-const ActionBar: React.FC<{attachmentsNumber?: number}> = ({attachmentsNumber}) => {
+const ActionBar = () => {
   const navigate = useNavigate(); 
-  const [isEditTextBarOpen, setIsEditTextBarOpen] = useState(false);
   const [fileNames, setFileNames] = useState<String[]>([]);
   const [uploadFileCounter, setUploadFileCounter] = useState<number | any>(0);
   const toInputValue = useSelector((state: RootState) => state.findUserOrClientEmail.toInputValue);
@@ -21,11 +19,12 @@ const ActionBar: React.FC<{attachmentsNumber?: number}> = ({attachmentsNumber}) 
   const messageRoles = useSelector((state: RootState) => state.sendEmail.messageRoles);
   const textEditorValue = useSelector((state: RootState) => state.sendEmail.editorContent);
   const fieldsErrorState = useSelector((state: RootState) => state.findUserOrClientEmail.fieldErrorState);
+  const reduxAttachmentsValue = useSelector((state : RootState) => state.emailPreview.dataToDisplay.attachmentsNumber);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setUploadFileCounter(attachmentsNumber)
-  }, [attachmentsNumber]);
+    setUploadFileCounter(reduxAttachmentsValue)
+  }, [reduxAttachmentsValue]);
   
   const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -98,34 +97,12 @@ const ActionBar: React.FC<{attachmentsNumber?: number}> = ({attachmentsNumber}) 
 
 
   return (
-    <Grid
-      container
-      spacing={2}
-      alignItems="center"
-      sx={{ ml: 5, mt: 2, width: "100%"}}
-    >
-      <Grid item>
-        <Button variant="contained" sx={{ mr: 1 }} onClick={handleSendData}>
-          Send
-        </Button>
-      </Grid>
-      <EditTextBar />
-      <Grid item>
-        <input
-          type="file"
-          multiple
-          id="fileInput"
-          style={{ display: "none" }}
-          accept=".pdf,.doc,.docx,.jpg,.png"
-          onChange={onFileChange}
-        />
-        <Badge badgeContent={uploadFileCounter} color="success">
-        <AttachFile
-          sx={{ cursor: "pointer" }}
-          onClick={() => document.getElementById("fileInput")!.click()}
-        />
-        </Badge>
-      </Grid>
+    <Grid container spacing={2} alignItems="center" sx={{ ml: 5, mt: 2, width: "100%"}}>
+      <ActionBarContent
+        handleSendData={handleSendData}
+        onFileChange={onFileChange}
+        uploadFileCounter={uploadFileCounter}
+      />
     </Grid>
   )};
 

@@ -90,10 +90,10 @@ const FindUserOrClientEmail = () => {
 
   const onClickHandler = async (email: string, id: number, type: 'user' | 'client') => {
     if (openToSearchBox) {
-      dispatch(findUserOrClientEmailAction.setToInputValue({ value: email, valutType: "filtredValue" }));
+      dispatch(findUserOrClientEmailAction.setToInputValue({ value: email, valuType: "filtredValue" }));
       dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
     } else if (openCcSearchBox) {
-      dispatch(findUserOrClientEmailAction.setCcInputValue({ value: email, valutType: "filtredValue" }));
+      dispatch(findUserOrClientEmailAction.setCcInputValue({ value: email, valuType: "filtredValue" }));
       dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
     }
 

@@ -50,7 +50,7 @@ const navigationData: NavigationItem[] = [
       index: 8, 
       collapseItems: [
         { icon: <ForwardToInbox />, primary: "Forward", index: 9 },
-        { icon: <Star />, primary: "favorite", index: 10 },
+        { icon: <Star />, primary: "Favorite", index: 10 },
         { icon: <Delete />, primary: "Delete", index: 11 }
       ]
     },

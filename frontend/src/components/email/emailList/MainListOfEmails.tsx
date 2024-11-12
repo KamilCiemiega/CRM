@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { Paper } from '@mui/material';
+import { Alert, Paper } from '@mui/material';
 import { fetchAllMessages } from "../../store/thunks/fetchAllMessages";
 import { AppDispatch, RootState } from "../../store";
 import TableDataComponent from "./TableDataComponent";
@@ -11,10 +11,11 @@ const MainListOfEmails = () => {
     const dispatch = useDispatch<AppDispatch>();
     const listOfMessages = useSelector((state: RootState) => state.emailList.messages)
     const tabNumber = useSelector((state: RootState) => state.emailList.primaryTabNumber);
+    const sendMessageStatus = useSelector((state: RootState) => state.sendEmail.sendMessageStatus);
 
     useEffect(() => {
         dispatch(fetchAllMessages());
-    }, [dispatch])
+    }, [dispatch, sendMessageStatus])
 
     const statusMap: { [key: number]: string } = {
         1: "NEW",

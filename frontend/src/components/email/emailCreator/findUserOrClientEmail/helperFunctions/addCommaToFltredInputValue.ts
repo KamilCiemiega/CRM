@@ -2,7 +2,7 @@ export const addCommaToFiltredInputValue = (inputValue: string, payload: any, tr
     let newValue = inputValue;
     let openSearchBox = false;
   
-    if (payload.valutType === "filtredValue") {
+    if (payload.valuType === "filtredValue") {
       if (!newValue.includes(payload.value)) {
         const lastCommaIndex = newValue.lastIndexOf(",");
         const beforeLastComma = newValue.substring(0, lastCommaIndex + 1);
