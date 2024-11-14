@@ -13,6 +13,7 @@ import { AppDispatch, RootState } from "../../store";
 import { sendEmailAction } from "../../store/slices/emailSlices/sendEmail-slice";
 import useSubFoldersEmailActions from "../../../hooks/useSubFoldersEmailActions";
 import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
+import { handleResetDataToDisplay } from "../../store/thunks/handleResetDataToDisplay";
 
 const EmailCreator = () => {
   const [error, setError] = useState(false);
@@ -30,6 +31,7 @@ const EmailCreator = () => {
   const handleCloseDialog = () => {
     dispatch(emailCreatorAction.setOpenDialog(false));
     dispatch(emailListAction.setSecondaryTabNumber(null))
+    dispatch(handleResetDataToDisplay());
   };
   
   const handleSendSubtitleValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

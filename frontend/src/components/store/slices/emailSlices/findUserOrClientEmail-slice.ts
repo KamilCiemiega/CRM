@@ -78,7 +78,26 @@ const findUserOrClientEmailSlice = createSlice({
     setClients(state, action: PayloadAction<UserAndClient[]>) {
       state.clients = action.payload;
     },
-    
+    batchUpdate(state, action: PayloadAction<{
+      toInputValue?: string;
+      ccInputValue?: string;
+      openToSearchBox?: boolean;
+      openCcSearchBox?: boolean;
+    }>) {
+      const payload = action.payload;
+      if (payload.toInputValue) {
+        state.toInputValue = payload.toInputValue;
+      }
+      if (payload.ccInputValue) {
+        state.ccInputValue = payload.ccInputValue;
+      }
+      if (payload.openToSearchBox !== undefined) {
+        state.openToSearchBox = payload.openToSearchBox;
+      }
+      if (payload.openCcSearchBox !== undefined) {
+        state.openCcSearchBox = payload.openCcSearchBox;
+      }
+    },
   },
 });
 

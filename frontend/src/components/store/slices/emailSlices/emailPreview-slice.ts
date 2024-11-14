@@ -33,15 +33,15 @@ const emailPreviewSlice = createSlice({
                 state.dataToDisplay.body = action.payload.body;
                 state.dataToDisplay.subtitle = action.payload.subtitle;
                 state.dataToDisplay.attachmentsNumber = action.payload.attachmentsNumber;
-                }
-            },
+            }
+        },
         setMessagePreview(state: State, action: PayloadAction<boolean>){
             state.showMessagePreview = action.payload;
         },
-        setShouldShowPreview(state: State, action: PayloadAction<boolean>) { // Dodana nowa akcja
+        setShouldShowPreview(state: State, action: PayloadAction<boolean>) {
             state.shouldShowPreview = action.payload;
         },
-        setMessageRoles(state: State, action: PayloadAction<MessageRole[]>) { // Nowy reducer do ustawienia messageRoles
+        setMessageRoles(state: State, action: PayloadAction<MessageRole[]>) {
             state.messageRoles = action.payload;
         },
     }

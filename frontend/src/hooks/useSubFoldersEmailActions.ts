@@ -38,27 +38,30 @@ const sendRequiredData = () => {
         if(sendType !== undefined){
             switch (sendType) {
                 case "REPLAY":
-                    const firstParticipant = dataToDisplay.participant[0]
-                    if(firstParticipant.status === "TO"){
-                        dispatch(findUserOrClientEmailAction.setToInputValue({value: firstParticipant.email, valuType: ''}));
-                    }else {
-                        dispatch(findUserOrClientEmailAction.setCcInputValue({value: firstParticipant.email, valuType: ''}));
-                    }
+                    const firstParticipant = dataToDisplay.participant[0] 
                     dispatch(emailCreatorAction.setOpenDialog(true));
-                    dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-                    dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
-                    dispatch(sendEmailAction.setSubtitleValue(dataToDisplay.subtitle));
+                    dispatch(sendEmailAction.setSubtitleValue(dataToDisplay.subtitle));                   
+                    dispatch(findUserOrClientEmailAction.batchUpdate({
+                        toInputValue: firstParticipant.status === "TO" 
+                            ? firstParticipant.email: undefined,
+                        ccInputValue: firstParticipant.status === "CC"
+                            ? firstParticipant.email: undefined,
+                        openToSearchBox: false,
+                        openCcSearchBox: false,
+
+                    }));
                     break;
                 case "REPLAYTOALL":
                     const toEmails = getStatusEmails('TO');
                     const ccEmails =  getStatusEmails('CC');
-                    
-                    dispatch(findUserOrClientEmailAction.setToInputValue({value: toEmails, valuType: ''}));
-                    dispatch(findUserOrClientEmailAction.setToInputValue({value: ccEmails, valuType: ''}));
                     dispatch(emailCreatorAction.setOpenDialog(true));
-                    dispatch(findUserOrClientEmailAction.setOpenToSearchBox(false));
-                    dispatch(findUserOrClientEmailAction.setOpenCcSearchBox(false));
                     dispatch(sendEmailAction.setSubtitleValue(dataToDisplay.subtitle));
+                    dispatch(findUserOrClientEmailAction.batchUpdate({
+                        toInputValue: toEmails,
+                        ccInputValue: ccEmails,
+                        openToSearchBox: false,
+                        openCcSearchBox: false,
+                    }));
                     break;
                 case "FORWARD":
                     dispatch(emailCreatorAction.setOpenDialog(true));
@@ -73,6 +76,7 @@ const sendRequiredData = () => {
 }
 
 useEffect(() => {
+    console.log(secondaryTabNumber);
     sendRequiredData();
 }, [secondaryTabNumber])
 
