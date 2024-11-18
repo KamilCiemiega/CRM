@@ -35,6 +35,9 @@ const emailListSlice = createSlice({
         },
         setClickedChecboxes(state, action: PayloadAction<string[]>){
             state.clickedCheckboxes = action.payload;
+        },
+        setResetCheckboxes(state, action: PayloadAction<[]>){
+            state.clickedCheckboxes = action.payload;
         }
     }
 });

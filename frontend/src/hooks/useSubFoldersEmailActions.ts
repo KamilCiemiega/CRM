@@ -6,12 +6,6 @@ import { findUserOrClientEmailAction } from "../components/store/slices/emailSli
 import { sendEmailAction } from "../components/store/slices/emailSlices/sendEmail-slice";
 import { emailPreviewAction } from "../components/store/slices/emailSlices/emailPreview-slice";
 
-const  useSubFoldersEmailActions = () => {
-const dataToDisplay = useSelector((state: RootState) => state.emailPreview.dataToDisplay);
-const clickedCheckBoxes = useSelector((state: RootState) => state.emailList.clickedCheckboxes);
-const secondaryTabNumber = useSelector((state: RootState) => state.emailList.secondaryTabNumber);
-const dispatch = useDispatch();
-
 const chooseSendMessageType: { [key: number]: string } = {
     3: "REPLAY",
     4: "REPLAYTOALL",
@@ -22,6 +16,12 @@ const chooseSendMessageType: { [key: number]: string } = {
     19: "REPLAYTOALL",
     20: "FORWARD"
 };
+
+const  useSubFoldersEmailActions = () => {
+const dataToDisplay = useSelector((state: RootState) => state.emailPreview.dataToDisplay);
+const clickedCheckBoxes = useSelector((state: RootState) => state.emailList.clickedCheckboxes);
+const secondaryTabNumber = useSelector((state: RootState) => state.emailList.secondaryTabNumber);
+const dispatch = useDispatch();
 
 const getStatusEmails = (status: string ) => {
     const statusEmails = dataToDisplay.participant
@@ -76,8 +76,7 @@ const sendRequiredData = () => {
 }
 
 useEffect(() => {
-    console.log(secondaryTabNumber);
-    sendRequiredData();
+        sendRequiredData();
 }, [secondaryTabNumber])
 
 }

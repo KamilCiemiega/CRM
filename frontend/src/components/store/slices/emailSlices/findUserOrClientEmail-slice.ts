@@ -9,9 +9,9 @@ interface ErrorState {
 
 interface State {
   trimValue: string;
-  toInputValue: string;
+  toInputValue: any;
   openToSearchBox: boolean;
-  ccInputValue: string;
+  ccInputValue: any;
   openCcSearchBox: boolean;
   fieldErrorState: ErrorState;
   theSameUserInInput: boolean;
@@ -85,12 +85,9 @@ const findUserOrClientEmailSlice = createSlice({
       openCcSearchBox?: boolean;
     }>) {
       const payload = action.payload;
-      if (payload.toInputValue) {
         state.toInputValue = payload.toInputValue;
-      }
-      if (payload.ccInputValue) {
         state.ccInputValue = payload.ccInputValue;
-      }
+      
       if (payload.openToSearchBox !== undefined) {
         state.openToSearchBox = payload.openToSearchBox;
       }
