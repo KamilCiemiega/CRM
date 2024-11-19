@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DataToDisplay } from "../../../../interfaces/interfaces";
+import { Message, DataToDisplay } from "../../../../interfaces/interfaces";
 import { ParticipantData } from "../../../../hooks/useParticipantData";
-import { MessageRole } from "../../../email/emailList/TableDataComponent";
+import { MessageRole } from "../../../email/emailList/mainEmailFunctions/TableDataComponent";
 
 interface State {
+   clickedMessage: Message; 
    dataToDisplay: DataToDisplay;
    showMessagePreview: boolean;
    shouldShowPreview: boolean;
@@ -11,6 +12,17 @@ interface State {
 }
 
 const initialState: State = {
+    clickedMessage:{
+        id: 0, 
+        subject: "", 
+        body: "",
+        sentDate:"",
+        status: "",
+        size: 0,
+        attachments: [],
+        messageFolder: [],
+        messageRoles: []
+    },
     dataToDisplay: {
         body: "",
         subtitle:"",
@@ -26,6 +38,9 @@ const emailPreviewSlice = createSlice({
     name: "emailPreview",
     initialState,
     reducers: {
+        setClickedMessage(state: State, action: PayloadAction<Message>){
+            state.clickedMessage = action.payload;
+        },
         setDataToDisplay(state: State, action: PayloadAction<ParticipantData[] | {body: string, subtitle: string, attachmentsNumber: number}>) {
             if (Array.isArray(action.payload)) {
                 state.dataToDisplay.participant = action.payload;

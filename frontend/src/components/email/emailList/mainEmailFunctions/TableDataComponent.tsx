@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { DataGrid, GridColDef, GridRowParams, GridRowSelectionModel} from '@mui/x-data-grid';
-import { AppDispatch, RootState } from "../../store";
-import { Rows } from "../../../interfaces/interfaces";
-import useParticipantsData from "../../../hooks/useParticipantData";
-import { emailPreviewAction } from "../../store/slices/emailSlices/emailPreview-slice";
-import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
-import { emailCreatorAction } from "../../store/slices/emailSlices/emailCreator-slice";
+import { AppDispatch, RootState } from "../../../store";
+import { Rows } from "../../../../interfaces/interfaces";
+import useParticipantsData from "../../../../hooks/useParticipantData";
+import { emailPreviewAction } from "../../../store/slices/emailSlices/emailPreview-slice";
+import { emailListAction } from "../../../store/slices/emailSlices/emailList-slice";
+import { emailCreatorAction } from "../../../store/slices/emailSlices/emailCreator-slice";
 import SearchTableData from "./SearchTableData";
 
 
@@ -21,9 +21,7 @@ const TableDataComponent = () => {
     const showMessagePreview = useSelector((state: RootState)=> state.emailPreview.showMessagePreview);
     const participantsData = useSelector((state: RootState) => state.emailPreview.dataToDisplay.participant);
     const shouldShowPreview = useSelector((state: RootState) => state.emailPreview.shouldShowPreview);
-    const secondaryTabNumber = useSelector((state: RootState) => state.emailList.secondaryTabNumber);
     const { loadingData } = useParticipantsData();
-    const [showAlert, setAlert] = useState({message: "", show: false});
     const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([]);
     const [filteredRows, setFilteredRows] = useState<Rows[]>([]);
 
@@ -54,7 +52,7 @@ const TableDataComponent = () => {
         : [];
     };
 
-    const paginationModel = { page: 0, pageSize: 20 };
+    const paginationModel = { page: 2, pageSize: 50 };
 
     const handleDataToDisplay = (rowParam?: number, checkboxParam?: number) => {
       if (rowParam === undefined && checkboxParam === undefined) return;
@@ -63,7 +61,7 @@ const TableDataComponent = () => {
       if (index !== undefined && typeof index === "number") {
         const messageObject = filtredListOfMessages[index];
         const messageRoles = messageObject.messageRoles;
-    
+        dispatch(emailPreviewAction.setClickedMessage(messageObject));
         dispatch(emailPreviewAction.setMessageRoles(messageRoles));
         dispatch(emailPreviewAction.setDataToDisplay({
           body: messageObject.body,
@@ -88,7 +86,6 @@ const TableDataComponent = () => {
       } 
     };
 
-
     useEffect(() => {
       if (participantsData.length > 0 && !showMessagePreview && shouldShowPreview) {
           dispatch(emailPreviewAction.setMessagePreview(true));
@@ -103,7 +100,6 @@ const TableDataComponent = () => {
         rows={filteredRows}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20]}
         checkboxSelection
         rowSelectionModel={selectedRows}
         onRowSelectionModelChange={handleSelectionChange}

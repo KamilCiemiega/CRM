@@ -17,7 +17,7 @@ export const fetchAllMessages = () => {
             }else if(axios.isAxiosError(error)){
               console.log(error.message);
             }
-          }
+        }
       
     }
 }

@@ -1,6 +1,6 @@
 import Navigation from "./navigation/Navigation";
 import EmailCreator from "./emailCreator/EmailCreator";
-import MainListOfEmails from "./emailList/MainListOfEmails";
+import MainListOfEmails from "./emailList/mainEmailFunctions/MainListOfEmails";
 import { CircularProgress, Backdrop } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";

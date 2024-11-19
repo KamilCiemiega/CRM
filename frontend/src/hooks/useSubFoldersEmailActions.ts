@@ -4,7 +4,6 @@ import { RootState } from "../components/store";
 import { emailCreatorAction } from "../components/store/slices/emailSlices/emailCreator-slice";
 import { findUserOrClientEmailAction } from "../components/store/slices/emailSlices/findUserOrClientEmail-slice";
 import { sendEmailAction } from "../components/store/slices/emailSlices/sendEmail-slice";
-import { emailPreviewAction } from "../components/store/slices/emailSlices/emailPreview-slice";
 
 const chooseSendMessageType: { [key: number]: string } = {
     3: "REPLAY",

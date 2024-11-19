@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { Alert, Paper } from '@mui/material';
-import { fetchAllMessages } from "../../store/thunks/fetchAllMessages";
-import { AppDispatch, RootState } from "../../store";
+import { fetchAllMessages } from "../../../store/thunks/fetchAllMessages";
+import { AppDispatch, RootState } from "../../../store";
 import TableDataComponent from "./TableDataComponent";
-import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
+import { emailListAction } from "../../../store/slices/emailSlices/emailList-slice";
 
 
 const MainListOfEmails = () => {

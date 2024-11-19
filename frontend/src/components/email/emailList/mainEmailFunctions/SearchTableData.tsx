@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
-import { Rows } from "../../../interfaces/interfaces";
+import { Rows } from "../../../../interfaces/interfaces";
 
 interface SearchTableDataProps {
     rows: Rows[];
