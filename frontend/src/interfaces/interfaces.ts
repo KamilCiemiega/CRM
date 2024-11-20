@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { ParticipantData } from "../hooks/useParticipantData";
+import { ParticipantData } from "../components/email/emailList/hooks/useParticipantData";
 
 export interface UserAndClient {
     id: number;
@@ -39,6 +39,22 @@ export interface NavigationItemProps {
     participantId: number;
   }
 
+  interface User {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    roleDTO: any;
+  }
+
+  interface MessageFolder {
+    id: number;
+    name: string;
+    parentFolder: any;
+    user: User;
+    folderType: string;
+  }
+
 export interface Message {
     id: number;
     subject: string;
@@ -47,13 +63,12 @@ export interface Message {
     status: string;
     size: number;
     attachments: [];
-    messageFolder: [];
+    messageFolders: MessageFolder[];
     messageRoles: MessageRole[];
 }  
 
 export interface Rows {
     id: number;
-    status: string;
     subject: string;
     sendDate: string;
     size: number;

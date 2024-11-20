@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { emailPreviewAction } from "../components/store/slices/emailSlices/emailPreview-slice";
-import { RootState } from "../components/store";
+import { emailPreviewAction } from "../../../store/slices/emailSlices/emailPreview-slice";
+import { RootState } from "../../../store";
 import axios from "axios";
 
 export interface ParticipantData {

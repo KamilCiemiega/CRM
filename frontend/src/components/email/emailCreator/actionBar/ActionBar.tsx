@@ -3,14 +3,12 @@ import { Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { findUserOrClientEmailAction } from "../../../store/slices/emailSlices/findUserOrClientEmail-slice";
 import { RootState } from "../../../store";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { sendEmailAction } from "../../../store/slices/emailSlices/sendEmail-slice";
 import ActionBarContent from "./ActionBarContent";
-import { emailPreviewAction } from "../../../store/slices/emailSlices/emailPreview-slice";
+import { SendNewMessageRequest } from "./SendNewMessageRequest";
+import { useNavigate } from "react-router-dom";
 
 const ActionBar = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [fileNames, setFileNames] = useState<String[]>([]);
   const [uploadFileCounter, setUploadFileCounter] = useState<number | any>(0);
   const toInputValue = useSelector((state: RootState) => state.findUserOrClientEmail.toInputValue);
@@ -45,34 +43,7 @@ const ActionBar = () => {
       );
     }
   };
-
-  const handleApiRequest = async (payload: {}) => {
-    try{
-      const response = await axios.post("http://localdev:8082/api/messages", payload);
-      if(response.status === 201){
-        navigate('/emailView');
-        dispatch(sendEmailAction.setSendMessageStatus({
-          status: "success",
-          message: "Message send success",
-          openAlert: true
-      }));
-      }
-
-    }catch (error: unknown) {
-      let errorMessage = "An unknown error occurred";
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.message;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      dispatch(sendEmailAction.setSendMessageStatus({
-        status: "error",
-        message: errorMessage,
-        openAlert: true
-    }));
-      
-    } 
-  }
+  
 
   const handleSendData = async () => {
     handleFieldValidation();
@@ -85,13 +56,13 @@ const ActionBar = () => {
         status: "SENT",
         messageFolders: [
           {
-            "id": 2
+            "id": 8
           }
         ],
         messageRoles: messageRoles,
         attachments: fileNames.map((name) => ({ filePath: name }))
       }
-      await handleApiRequest(payload);
+      await SendNewMessageRequest(payload, navigate, dispatch);
     }
   };
 

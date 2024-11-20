@@ -1,12 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Message } from "../../../../interfaces/interfaces";
 
+interface FolderMessageRequestStatus {
+    status: string;
+    message: string;
+}
+
 interface State {
     messages: Message[];
     filtredMessages: Message[];
     primaryTabNumber: number;
     secondaryTabNumber: number | null;
     clickedCheckboxes: string[];
+    changeFolderMessageRequestStatus: FolderMessageRequestStatus
 }
 
 const initialState: State = {
@@ -14,7 +20,8 @@ const initialState: State = {
     filtredMessages: [],
     primaryTabNumber: 1,
     secondaryTabNumber: null,
-    clickedCheckboxes: []
+    clickedCheckboxes: [],
+    changeFolderMessageRequestStatus: {status: "", message: ""}
 };
 
 const emailListSlice = createSlice({
@@ -38,6 +45,9 @@ const emailListSlice = createSlice({
         },
         setResetCheckboxes(state, action: PayloadAction<[]>){
             state.clickedCheckboxes = action.payload;
+        },
+        setFolderMessageRequestStatus(state: State, action: PayloadAction<FolderMessageRequestStatus>){
+            state.changeFolderMessageRequestStatus = action.payload;
         }
     }
 });

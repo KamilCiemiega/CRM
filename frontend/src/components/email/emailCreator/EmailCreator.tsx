@@ -11,7 +11,7 @@ import { findUserOrClientEmailAction } from "../../store/slices/emailSlices/find
 import TextEditor from "./TextEditor";
 import { AppDispatch, RootState } from "../../store";
 import { sendEmailAction } from "../../store/slices/emailSlices/sendEmail-slice";
-import useSubFoldersEmailActions from "../../../hooks/useSubFoldersEmailActions";
+import useSubFoldersEmailActions from "./hooks/useSubFoldersEmailActions";
 import { emailListAction } from "../../store/slices/emailSlices/emailList-slice";
 
 const EmailCreator = () => {

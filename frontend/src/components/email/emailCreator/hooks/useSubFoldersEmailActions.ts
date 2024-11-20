@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { RootState } from "../components/store";
-import { emailCreatorAction } from "../components/store/slices/emailSlices/emailCreator-slice";
-import { findUserOrClientEmailAction } from "../components/store/slices/emailSlices/findUserOrClientEmail-slice";
-import { sendEmailAction } from "../components/store/slices/emailSlices/sendEmail-slice";
+import { RootState } from "../../../store"; 
+import { emailCreatorAction } from "../../../store/slices/emailSlices/emailCreator-slice"; 
+import { findUserOrClientEmailAction } from "../../../store/slices/emailSlices/findUserOrClientEmail-slice";
+import { sendEmailAction } from "../../../store/slices/emailSlices/sendEmail-slice"; 
 
 const chooseSendMessageType: { [key: number]: string } = {
     3: "REPLAY",
@@ -18,7 +18,6 @@ const chooseSendMessageType: { [key: number]: string } = {
 
 const  useSubFoldersEmailActions = () => {
 const dataToDisplay = useSelector((state: RootState) => state.emailPreview.dataToDisplay);
-const clickedCheckBoxes = useSelector((state: RootState) => state.emailList.clickedCheckboxes);
 const secondaryTabNumber = useSelector((state: RootState) => state.emailList.secondaryTabNumber);
 const dispatch = useDispatch();
 

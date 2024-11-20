@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Message, DataToDisplay } from "../../../../interfaces/interfaces";
-import { ParticipantData } from "../../../../hooks/useParticipantData";
+import { ParticipantData } from "../../../email/emailList/hooks/useParticipantData";
 import { MessageRole } from "../../../email/emailList/mainEmailFunctions/TableDataComponent";
 
 interface State {
@@ -20,7 +20,7 @@ const initialState: State = {
         status: "",
         size: 0,
         attachments: [],
-        messageFolder: [],
+        messageFolders: [],
         messageRoles: []
     },
     dataToDisplay: {

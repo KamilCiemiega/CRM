@@ -5,7 +5,7 @@ import { CircularProgress, Backdrop } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import StyledBox from "../../style/EmailMainViewStyle";
-import useParticipantsData from "../../hooks/useParticipantData";
+import useParticipantsData from "./emailList/hooks/useParticipantData";
 import EmailPreviewContainer from "./emailList/emailPreview/EmailPreviewContainer";
 
 const EmailMainView = () => {

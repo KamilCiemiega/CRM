@@ -3,10 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { DataGrid, GridColDef, GridRowParams, GridRowSelectionModel} from '@mui/x-data-grid';
 import { AppDispatch, RootState } from "../../../store";
 import { Rows } from "../../../../interfaces/interfaces";
-import useParticipantsData from "../../../../hooks/useParticipantData";
+import useParticipantsData from "../hooks/useParticipantData";
 import { emailPreviewAction } from "../../../store/slices/emailSlices/emailPreview-slice";
 import { emailListAction } from "../../../store/slices/emailSlices/emailList-slice";
-import { emailCreatorAction } from "../../../store/slices/emailSlices/emailCreator-slice";
 import SearchTableData from "./SearchTableData";
 
 
@@ -26,7 +25,6 @@ const TableDataComponent = () => {
     const [filteredRows, setFilteredRows] = useState<Rows[]>([]);
 
     const columns: GridColDef[] = [
-      { field: 'status', headerName: 'Status', flex: 1 },
       { field: 'subject', headerName: 'Subject', flex: 2 },
       { field: 'sendDate', headerName: 'Time', flex: 1 },
       { field: 'size', headerName: 'Size', flex: 1 },
@@ -44,7 +42,6 @@ const TableDataComponent = () => {
       return filtredListOfMessages.length > 0
         ? filtredListOfMessages.map((m, i) => ({
             id: i,
-            status: m.status,
             subject: m.subject,
             sendDate: formatDate(m.sentDate),
             size: m.size,

@@ -17,7 +17,6 @@ const SearchTableData: React.FC<SearchTableDataProps> = ({ rows, onSearch }) => 
     useEffect(() => {
         const filtered = rows.filter(row => 
             row.subject.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.status.toLowerCase().includes(searchText.toLowerCase()) ||
             row.sendDate.includes(searchText) ||
             row.size.toString().includes(searchText)
         );
