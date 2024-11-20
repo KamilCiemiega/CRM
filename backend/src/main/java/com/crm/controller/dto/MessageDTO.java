@@ -25,7 +25,6 @@ public class MessageDTO {
     @Enumerated(EnumType.STRING)
     private Message.Status status;
     private Long size;
-    private int folderId;
     private List<AttachmentDTO> attachments = new ArrayList<>();
     private List<MessageFolderDTO> messageFolders = new ArrayList<>();
     private List<MessageRoleDTO> messageRoles = new ArrayList<>();

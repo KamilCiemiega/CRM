@@ -79,7 +79,6 @@ MessageFolderServiceImpl implements MessageFolderService {
 
         existingFolder.setName(messageFolder.getName());
 
-        // Sprawdź, czy parentFolder nie jest null przed dostępem do getId()
         if (messageFolder.getParentFolder() != null && messageFolder.getParentFolder().getId() != null) {
             MessageFolder parentFolder = messageFolderRepository.findById(messageFolder.getParentFolder().getId())
                     .orElseThrow(() -> new NoSuchEntityException("Parent folder not found for ID: " + messageFolder.getParentFolder().getId()));

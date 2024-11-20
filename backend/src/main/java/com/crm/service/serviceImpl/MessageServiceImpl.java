@@ -1,10 +1,7 @@
 package com.crm.service.serviceImpl;
 
+import com.crm.dao.*;
 import com.crm.enums.MessageSortType;
-import com.crm.dao.MessageFolderRepository;
-import com.crm.dao.MessageLocationRepository;
-import com.crm.dao.MessageParticipantRepository;
-import com.crm.dao.MessageRepository;
 import com.crm.entity.*;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.MessageService;
@@ -26,13 +23,17 @@ public class MessageServiceImpl implements MessageService {
     private final MessageFolderRepository messageFolderRepository;
     private final MessageLocationRepository messageLocationRepository;
     private final MessageParticipantRepository messageParticipantRepository;
+    private final AttachmentRepository attachmentRepository;
+    private final MessageRoleRepository messageRoleRepository;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageLocationRepository messageLocationRepository, MessageParticipantRepository messageParticipantRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageLocationRepository messageLocationRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository) {
         this.messageRepository = messageRepository;
         this.messageFolderRepository = messageFolderRepository;
         this.messageLocationRepository = messageLocationRepository;
         this.messageParticipantRepository = messageParticipantRepository;
+        this.attachmentRepository = attachmentRepository;
+        this.messageRoleRepository = messageRoleRepository;
     }
 
     @Transactional
@@ -79,6 +80,19 @@ public class MessageServiceImpl implements MessageService {
         existingMessage.setBody(message.getBody());
         existingMessage.setStatus(message.getStatus());
 
+        existingMessage.getAttachments().clear();
+        message.getAttachments().forEach(attachment -> {
+            if (attachment.getId() != null) {
+                Attachment managedAttachment = attachmentRepository.findById(attachment.getId())
+                        .orElseThrow(() -> new NoSuchEntityException("Attachment not found for ID: " + attachment.getId()));
+                managedAttachment.setFilePath(attachment.getFilePath());
+                existingMessage.getAttachments().add(managedAttachment);
+            } else {
+                attachment.setMessage(existingMessage);
+                existingMessage.getAttachments().add(attachment);
+            }
+        });
+
         List<MessageFolder> messageFolders = message.getMessageFolders().stream()
                 .map(folder -> {
                    return messageFolderRepository.findById(folder.getId())
@@ -90,12 +104,27 @@ public class MessageServiceImpl implements MessageService {
 
         existingMessage.getMessageRoles().clear();
         message.getMessageRoles().forEach(role -> {
-            MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
-                    .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
-            role.setParticipant(participant);
-            role.setMessage(existingMessage);
-            existingMessage.getMessageRoles().add(role);
+            if (role.getId() != null) {
+                MessageRole managedRole = messageRoleRepository.findById(role.getId())
+                        .orElseThrow(() -> new NoSuchEntityException("MessageRole not found for ID: " + role.getId()));
+
+                managedRole.setStatus(role.getStatus());
+
+                MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
+                        .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
+                managedRole.setParticipant(participant);
+
+                managedRole.setMessage(existingMessage);
+                existingMessage.getMessageRoles().add(managedRole);
+            } else {
+                MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
+                        .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
+                role.setParticipant(participant);
+                role.setMessage(existingMessage);
+                existingMessage.getMessageRoles().add(role);
+            }
         });
+
 
         List<MessageLocation> existingLocations = messageLocationRepository.findByMessageId(messageId);
                 existingLocations.forEach(messageLocationRepository::delete);

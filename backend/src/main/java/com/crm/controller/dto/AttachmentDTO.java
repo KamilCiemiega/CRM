@@ -11,6 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AttachmentDTO {
     private Integer id;
-    private MessageDTO messageDTO;
     private String filePath;
 }
