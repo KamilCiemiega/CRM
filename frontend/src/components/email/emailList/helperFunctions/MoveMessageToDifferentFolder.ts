@@ -1,15 +1,16 @@
 import { Message } from "../../../../interfaces/interfaces";
 import { AppDispatch } from "../../../store";
 import { updateMessageFolder } from "../../../store/thunks/updateMessageFolder";
+import { deleteMessageFromFolder } from "../../../store/thunks/deleteMessageFromFolder";
 
 export const MoveMessageToDifferentFolder = async (
     secondaryTabNumber: number | null,
     clickedMessage: Message,
     dispatch: AppDispatch
 ) => {
-    const foldersIndexes = [6, 7, 10, 11, 16, 21, 23];
+     const foldersIndexes = [6, 7, 10, 11, 16, 21, 23];
 
-    const statusMap: { [key: number]: { messageFolder?: number; restore?: boolean } } = {
+    const statusMap: { [key: number]: { messageFolder?: number; restore?: boolean } } = {                             
         6: { messageFolder: 17 },
         7: { messageFolder: 22 },
         10: { messageFolder: 17 },
@@ -24,26 +25,32 @@ export const MoveMessageToDifferentFolder = async (
         return;
     }
 
-    const folderType = statusMap[secondaryTabNumber];
+    let folderType = statusMap[secondaryTabNumber];
 
     const getRestoreFolder = (currentFolderName: string) => {
-        return currentFolderName === "INBOX" ? { id: 1 } : { id: 8 };
+        return currentFolderName === "NEW" ? { id: 1 } : { id: 8 };
     };
 
-    const messageFolders =
+    const newFolderId =
         folderType.messageFolder !== undefined
-            ? [...clickedMessage.messageFolders, { id: folderType.messageFolder }]
-            : [...clickedMessage.messageFolders, getRestoreFolder(clickedMessage.messageFolders[0]?.name)];
+            ? folderType.messageFolder
+            : getRestoreFolder(clickedMessage.status).id;
+
+    const updatedMessageFolders = clickedMessage.messageFolders.filter(
+        (folder) => folder.id !== clickedMessage.messageFolders[0].id
+    );
 
     const updatedMessage = {
         ...clickedMessage,
-        messageFolders,
+        messageFolders: [...updatedMessageFolders, { id: newFolderId }],
     };
 
     try {
+        const folderToDelete = clickedMessage.messageFolders[0].id;
+        await dispatch(deleteMessageFromFolder(folderToDelete, clickedMessage.id));
         await dispatch(updateMessageFolder(clickedMessage.id, updatedMessage));
-        console.log("Message moved successfully to folder:", folderType.messageFolder || "restored");
     } catch (error) {
         console.error("Error moving message to a different folder:", error);
     }
 };
+
