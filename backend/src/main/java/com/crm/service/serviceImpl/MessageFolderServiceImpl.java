@@ -3,6 +3,7 @@ package com.crm.service.serviceImpl;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.controller.dto.MessageFolderDTO;
 import com.crm.dao.MessageFolderRepository;
+import com.crm.dao.MessageRepository;
 import com.crm.dao.UserRepository;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
@@ -28,14 +29,14 @@ MessageFolderServiceImpl implements MessageFolderService {
     private final MessageFolderRepository messageFolderRepository;
     private final UserRepository userRepository;
     private final MessageService messageService;
-    private final ModelMapper modelMapper;
+    private final MessageRepository messageRepository;
 
     @Autowired
-    public MessageFolderServiceImpl(MessageFolderRepository messageFolderRepository,MessageService messageService,ModelMapper modelMapper, UserRepository userRepository) {
+    public MessageFolderServiceImpl(MessageFolderRepository messageFolderRepository, MessageService messageService, UserRepository userRepository, MessageRepository messageRepository) {
         this.messageFolderRepository = messageFolderRepository;
         this.messageService = messageService;
-        this.modelMapper = modelMapper;
         this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
     }
 
     @Override
@@ -98,7 +99,6 @@ MessageFolderServiceImpl implements MessageFolderService {
         return messageFolderRepository.save(existingFolder);
     }
 
-
     @Override
     @Transactional
     public MessageFolder deleteFolder(int folderId) {
@@ -112,20 +112,41 @@ MessageFolderServiceImpl implements MessageFolderService {
                         "Cannot delete the default folder or folder not found for ID: " + folderId
                 ));
     }
-
     @Override
-    @Transactional
-    public List<Message> deleteAllMessagesFromFolder(int folderId) {
-        Optional<MessageFolder> folder = messageFolderRepository.findById(folderId);
+    public Message deleteMessageFromFolder(int folderId, int messageId) {
+        MessageFolder folder = messageFolderRepository.findById(folderId)
+                .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folderId));
 
-        return folder.map(presentFolder -> {
-            List<Message> listOfDeletedMessages = new ArrayList<>();
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new NoSuchEntityException("Message not found for ID: " + messageId));
 
-            presentFolder.getMessages().forEach(message -> {
-                Message deletedMessage = messageService.deleteMessage(message.getId());
-                listOfDeletedMessages.add(deletedMessage);
-            });
-            return listOfDeletedMessages;
-        }).orElseThrow(() -> new NoSuchEntityException("Folder doesn't exist " + folderId));
+        if (!folder.getMessages().remove(message)) {
+            throw new IllegalStateException("Message not found in the specified folder");
+        }
+
+        messageFolderRepository.save(folder);
+
+        return message;
     }
+
+    @Transactional
+    @Override
+    public List<Message> deleteAllMessagesFromFolder(int folderId) {
+        MessageFolder folder = messageFolderRepository.findById(folderId)
+                .orElseThrow(() -> new NoSuchEntityException("Folder doesn't exist " + folderId));
+
+        List<Message> messagesToDelete = new ArrayList<>(folder.getMessages());
+        List<Message> listOfDeletedMessages = new ArrayList<>();
+
+        messagesToDelete.forEach(message -> {
+            Message deletedMessage = messageService.deleteMessage(message.getId());
+            listOfDeletedMessages.add(deletedMessage);
+        });
+
+        folder.getMessages().clear();
+        messageFolderRepository.save(folder);
+
+        return listOfDeletedMessages;
+    }
+
 }

@@ -14,4 +14,5 @@ public interface MessageFolderService {
     MessageFolder deleteFolder(int folderId);
     List<Message> deleteAllMessagesFromFolder(int folderId);
     MessageFolder updateMessageFolder(int folderId, MessageFolder messageFolder);
+    Message deleteMessageFromFolder(int folderId, int messageId);
 }

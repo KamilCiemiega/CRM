@@ -60,6 +60,15 @@ public class MessageFolderController {
     }
 
     @Transactional
+    @DeleteMapping("/{folder-id}/messages/{message-id}")
+    public ResponseEntity<MessageDTO> deleteMessageFromFolder(
+            @PathVariable("folder-id") int folderId,
+            @PathVariable("message-id") int messageId) {
+        Message deletedMessage = messageFolderService.deleteMessageFromFolder(folderId, messageId);
+        return  new ResponseEntity<>(modelMapper.map(deletedMessage, MessageDTO.class), HttpStatus.OK);
+    }
+
+    @Transactional
     @DeleteMapping("/{folder-id}/messages")
     public ResponseEntity<List<MessageDTO>> deleteAllMessagesFromFolder(@PathVariable("folder-id") int folderId) {
         List<Message> deletedMessages = messageFolderService.deleteAllMessagesFromFolder(folderId);

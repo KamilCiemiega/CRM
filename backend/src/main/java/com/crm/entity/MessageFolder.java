@@ -41,6 +41,7 @@ public class MessageFolder {
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
+    @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
     @ManyToOne

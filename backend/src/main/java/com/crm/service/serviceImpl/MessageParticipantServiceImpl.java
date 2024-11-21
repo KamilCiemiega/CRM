@@ -1,15 +1,15 @@
-package com.crm.service;
+package com.crm.service.serviceImpl;
 
-import com.crm.controller.dto.MessageParticipantDTO;
 import com.crm.dao.ClientRepository;
 import com.crm.dao.MessageParticipantRepository;
 import com.crm.dao.UserRepository;
 import com.crm.entity.MessageParticipant;
 import com.crm.exception.NoSuchEntityException;
+import com.crm.service.MessageParticipantService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessageParticipantServiceImpl implements MessageParticipantService{
+public class MessageParticipantServiceImpl implements MessageParticipantService {
 
     private final MessageParticipantRepository messageParticipantRepository;
     private final UserRepository userRepository;

@@ -11,26 +11,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
     private final MessageFolderRepository messageFolderRepository;
-    private final MessageLocationRepository messageLocationRepository;
     private final MessageParticipantRepository messageParticipantRepository;
     private final AttachmentRepository attachmentRepository;
     private final MessageRoleRepository messageRoleRepository;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageLocationRepository messageLocationRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository) {
         this.messageRepository = messageRepository;
         this.messageFolderRepository = messageFolderRepository;
-        this.messageLocationRepository = messageLocationRepository;
         this.messageParticipantRepository = messageParticipantRepository;
         this.attachmentRepository = attachmentRepository;
         this.messageRoleRepository = messageRoleRepository;
@@ -48,8 +44,10 @@ public class MessageServiceImpl implements MessageService {
 
         List<MessageFolder> messageFolders = message.getMessageFolders().stream()
                 .map(folder -> {
-                    return messageFolderRepository.findById(folder.getId())
-                            .orElseThrow(() -> new NoSuchEntityException("Folder not found"));
+                    MessageFolder foundFolder = messageFolderRepository.findById(folder.getId())
+                            .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folder.getId()));
+                    foundFolder.getMessages().add(message);
+                    return foundFolder;
                 })
                 .toList();
         message.setMessageFolders(messageFolders);
@@ -64,11 +62,18 @@ public class MessageServiceImpl implements MessageService {
                     role.setParticipant(participant);
                 })
                 .toList();
-
         message.setMessageRoles(messageRoles);
 
         return messageRepository.save(message);
     }
+
+    private void updateRoleAssociations(MessageRole role, Message existingMessage) {
+        MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
+                .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
+        role.setParticipant(participant);
+        role.setMessage(existingMessage);
+    }
+
 
     @Transactional
     @Override
@@ -93,51 +98,32 @@ public class MessageServiceImpl implements MessageService {
             }
         });
 
-        List<MessageFolder> messageFolders = message.getMessageFolders().stream()
-                .map(folder -> {
-                   return messageFolderRepository.findById(folder.getId())
-                            .orElseThrow(() -> new NoSuchEntityException("Folder not found" ));
-                })
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        existingMessage.setMessageFolders(messageFolders);
+        message.getMessageFolders().forEach(folder -> {
+            MessageFolder foundFolder = messageFolderRepository.findById(folder.getId())
+                    .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folder.getId()));
+            if (!existingMessage.getMessageFolders().contains(foundFolder)) {
+                foundFolder.getMessages().add(existingMessage);
+                existingMessage.getMessageFolders().add(foundFolder);
+            }
+        });
 
         existingMessage.getMessageRoles().clear();
         message.getMessageRoles().forEach(role -> {
             if (role.getId() != null) {
                 MessageRole managedRole = messageRoleRepository.findById(role.getId())
                         .orElseThrow(() -> new NoSuchEntityException("MessageRole not found for ID: " + role.getId()));
-
                 managedRole.setStatus(role.getStatus());
-
-                MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
-                        .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
-                managedRole.setParticipant(participant);
-
-                managedRole.setMessage(existingMessage);
+                updateRoleAssociations(managedRole, existingMessage);
                 existingMessage.getMessageRoles().add(managedRole);
             } else {
-                MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
-                        .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
-                role.setParticipant(participant);
-                role.setMessage(existingMessage);
+                updateRoleAssociations(role, existingMessage);
                 existingMessage.getMessageRoles().add(role);
             }
         });
 
-
-        List<MessageLocation> existingLocations = messageLocationRepository.findByMessageId(messageId);
-                existingLocations.forEach(messageLocationRepository::delete);
-
-        messageFolders.forEach(folder -> {
-            MessageLocation newLocation = new MessageLocation();
-            newLocation.setFolderId(folder.getId());
-            newLocation.setMessageId(existingMessage.getId());
-            messageLocationRepository.save(newLocation);
-        });
-
         return messageRepository.save(existingMessage);
     }
+
 
     @Override
     public List<Message> findAllMessage() {
@@ -153,18 +139,16 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     @Override
     public Message deleteMessage(int messageId) {
-        messageLocationRepository.deleteByMessageId(messageId);
-        Optional<Message> message = messageRepository.findById(messageId);
+        Message existingMessage = messageRepository.findById(messageId)
+                .orElseThrow(() -> new NoSuchEntityException("Message not found for ID: " + messageId));
 
-        if (message.isPresent()) {
-            Message deletedMessage = message.get();
-            messageRepository.delete(deletedMessage);
+        existingMessage.getMessageFolders().forEach(folder -> folder.getMessages().remove(existingMessage));
 
-            return deletedMessage;
-        } else {
-            throw new NoSuchEntityException("Can't find message with id " + messageId);
-        }
+        messageRepository.delete(existingMessage);
+
+        return existingMessage;
     }
+
 
     @Override
     public List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType) {

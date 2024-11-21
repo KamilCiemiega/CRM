@@ -1,9 +1,6 @@
 package com.crm.controller;
 
-import com.crm.dao.MessageLocationRepository;
 import com.crm.entity.Message;
-import com.crm.entity.MessageFolder;
-import com.crm.entity.MessageLocation;
 import com.crm.enums.MessageSortType;
 import com.crm.controller.dto.MessageDTO;
 import com.crm.service.MessageService;
@@ -20,13 +17,11 @@ public class MessageController {
 
     private final MessageService messageService;
     private final ModelMapper modelMapper;
-    private final MessageLocationRepository messageLocationRepository;
 
     @Autowired
-    public MessageController(MessageService messageService, ModelMapper modelMapper, MessageLocationRepository messageLocationRepository) {
+    public MessageController(MessageService messageService, ModelMapper modelMapper) {
         this.messageService = messageService;
         this.modelMapper = modelMapper;
-        this.messageLocationRepository = messageLocationRepository;
     }
 
     @GetMapping
@@ -49,14 +44,6 @@ public class MessageController {
         Message message = modelMapper.map(messageDTO, Message.class);
         Message savedMessage = messageService.save(message);
 
-        List<MessageFolder> messageFolders = savedMessage.getMessageFolders();
-        for (MessageFolder folder : messageFolders) {
-            MessageLocation location = new MessageLocation();
-            location.setMessageId(savedMessage.getId());
-            location.setFolderId(folder.getId());
-            messageLocationRepository.save(location);
-        }
-
         return new ResponseEntity<>(modelMapper.map(savedMessage, MessageDTO.class), HttpStatus.CREATED);
     }
 
@@ -68,7 +55,8 @@ public class MessageController {
 
     @DeleteMapping("/{message-id}")
     public ResponseEntity<MessageDTO> deleteMessage(@PathVariable("message-id") int messageId){
-        return new ResponseEntity<>(modelMapper.map(messageService.deleteMessage(messageId), MessageDTO.class), HttpStatus.OK);
+        MessageDTO messageDTO = modelMapper.map(messageService.deleteMessage(messageId), MessageDTO.class);
+        return new ResponseEntity<>(messageDTO, HttpStatus.OK);
     }
 
     @GetMapping("/folders/{folderId}/messages")
