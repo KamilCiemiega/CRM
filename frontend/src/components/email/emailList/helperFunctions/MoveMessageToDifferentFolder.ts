@@ -47,7 +47,7 @@ export const MoveMessageToDifferentFolder = async (
 
     try {
         const folderToDelete = clickedMessage.messageFolders[0].id;
-        await dispatch(deleteMessageFromFolder(folderToDelete, clickedMessage.id));
+        await dispatch(deleteMessageFromFolder({folderId: folderToDelete,messageId: clickedMessage.id}));
         await dispatch(updateMessageFolder(clickedMessage.id, updatedMessage));
     } catch (error) {
         console.error("Error moving message to a different folder:", error);

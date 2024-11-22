@@ -18,7 +18,7 @@ export const deleteMessageFromFolder = ({ folderId, messageId }: DeleteMessagePa
 
             if (response.status === 200) {
                 const successMessage = messageId
-                    ? "Message has been moved to another folder."
+                    ? "Message have been deleted"
                     : "All messages have been deleted from the folder.";
                 dispatch(
                     emailListAction.setFolderMessageRequestStatus({

@@ -13,7 +13,6 @@ const MainListOfEmails = () => {
     const listOfMessages = useSelector((state: RootState) => state.emailList.messages)
     const tabNumber = useSelector((state: RootState) => state.emailList.primaryTabNumber);
     const primaryTabNumber = useSelector((state: RootState) => state.emailList.primaryTabNumber);
-    const moveFolderMessageStatus = useSelector((state: RootState) => state.emailList.changeFolderMessageRequestStatus);
     const updatedMessageFolderStatus = useSelector((state: RootState) => state.emailList.changeFolderMessageRequestStatus);
     useDeleteEmail();
 
@@ -45,17 +44,19 @@ const MainListOfEmails = () => {
     }, [tabNumber, listOfMessages])
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            dispatch(emailListAction.setFolderMessageRequestStatus({status: "", message: ""}));
-        }, 3000);
+        if (updatedMessageFolderStatus.status !== "") {
+            const timer = setTimeout(() => {
+                dispatch(emailListAction.setFolderMessageRequestStatus({ status: "", message: "" }));
+            }, 3000);
     
-        return () => clearTimeout(timer);
-      }, [moveFolderMessageStatus, dispatch]);
+            return () => clearTimeout(timer);
+        }
+    }, [updatedMessageFolderStatus]);    
 
     return (
     <Paper sx={{ height: '100vh', width: '100%', ml: '1%' }}>
-        {moveFolderMessageStatus.status === "success" ?
-            <Alert>{moveFolderMessageStatus.message}</Alert>
+        {updatedMessageFolderStatus.status === "success" ?
+            <Alert>{updatedMessageFolderStatus.message}</Alert>
             : null
         }
         <TableDataComponent />

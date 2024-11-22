@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import { useEffect, useState } from "react";
 import { MoveMessageToDifferentFolder } from "../helperFunctions/MoveMessageToDifferentFolder";
+import { DeleteEmail } from "../helperFunctions/DeleteEmail";
 
 const useMoveMessageToFolder = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -9,18 +10,8 @@ const useMoveMessageToFolder = () => {
     const clickedMessage = useSelector((state :RootState) => state.emailPreview.clickedMessage);
     const secondaryTabNumber = useSelector((state: RootState) => state.emailList.secondaryTabNumber);
 
-    const statusMap: { [key: number]: { messageFolder?: number; restore?: boolean } } = {                             
-        6: { messageFolder: 17 },
-        7: { messageFolder: 22 },
-        10: { messageFolder: 17 },
-        11: { messageFolder: 22 },
-        16: { messageFolder: 22 },
-        21: { restore: true },
-        23: { restore: true },
-    };
-
     const setTabIndexes = () => {
-        const foldersIndexes = [6, 7, 10, 11, 16, 21, 23];
+        const foldersIndexes = [6, 7, 10, 11, 16, 21, 23, 24, 25];
         if (secondaryTabNumber && foldersIndexes.includes(secondaryTabNumber)) {
             setSecondaryTabNumberIndexes(secondaryTabNumber);
         }
@@ -33,9 +24,11 @@ const useMoveMessageToFolder = () => {
     useEffect(() => {
         const moveMessage = async () => {
             await MoveMessageToDifferentFolder(secondaryTabNumber, clickedMessage, dispatch);
+            await DeleteEmail(clickedMessage, secondaryTabNumber, dispatch)
         };
         moveMessage();
-    }, [secondaryTabNumberIndexes, dispatch]);
+
+    }, [secondaryTabNumberIndexes, dispatch]); 
 };
 
 
