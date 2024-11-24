@@ -27,5 +27,8 @@ public class MessageRole {
     @JoinColumn(name = "participant_id")
     private MessageParticipant participant;
 
+    @Column(name = "email")
+    private String email;
+
     public enum RoleStatus {TO, CC}
 }

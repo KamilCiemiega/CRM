@@ -18,4 +18,5 @@ public class MessageRoleDTO {
     @Enumerated(EnumType.STRING)
     private MessageRole.RoleStatus status;
     private Integer participantId;
+    private String email;
 }
