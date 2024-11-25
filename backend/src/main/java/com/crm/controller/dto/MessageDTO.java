@@ -1,5 +1,6 @@
 package com.crm.controller.dto;
 
+import com.crm.entity.Company;
 import com.crm.entity.Message;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -25,7 +26,9 @@ public class MessageDTO {
     @Enumerated(EnumType.STRING)
     private Message.Status status;
     private Long size;
+    private boolean isUnlinked;
     private List<AttachmentDTO> attachments = new ArrayList<>();
     private List<MessageFolderDTO> messageFolders = new ArrayList<>();
     private List<MessageRoleDTO> messageRoles = new ArrayList<>();
+    private Company company;
 }

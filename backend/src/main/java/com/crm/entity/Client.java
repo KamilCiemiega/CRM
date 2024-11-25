@@ -45,6 +45,6 @@ public class Client {
     private List<User> users;
 
     @ManyToOne
-    @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 }

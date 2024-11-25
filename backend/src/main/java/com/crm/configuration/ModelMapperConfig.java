@@ -25,7 +25,6 @@ public class ModelMapperConfig {
         };
 
         modelMapper.addConverter(longToOffsetDateTimeConverter);
-
         return modelMapper;
     }
 }

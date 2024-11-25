@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,14 +23,16 @@ public class MessageServiceImpl implements MessageService {
     private final MessageParticipantRepository messageParticipantRepository;
     private final AttachmentRepository attachmentRepository;
     private final MessageRoleRepository messageRoleRepository;
+    private final CompanyRepository companyRepository;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository, CompanyRepository companyRepository) {
         this.messageRepository = messageRepository;
         this.messageFolderRepository = messageFolderRepository;
         this.messageParticipantRepository = messageParticipantRepository;
         this.attachmentRepository = attachmentRepository;
         this.messageRoleRepository = messageRoleRepository;
+        this.companyRepository = companyRepository;
     }
 
     @Transactional
@@ -53,16 +56,27 @@ public class MessageServiceImpl implements MessageService {
         message.setMessageFolders(messageFolders);
 
         List<MessageRole> messageRoles = message.getMessageRoles().stream()
+                .filter(role -> role.getParticipant() != null)
                 .peek(role -> {
                     role.setMessage(message);
                     role.setStatus(role.getStatus());
 
-                    MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
-                            .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
-                    role.setParticipant(participant);
+                    if(role.getParticipant() != null) {
+                        MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
+                                .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
+                        role.setParticipant(participant);
+                    }
                 })
                 .toList();
         message.setMessageRoles(messageRoles);
+
+        if(message.getCompany() != null){
+           Company company = companyRepository.findById(message.getCompany().getId())
+                   .orElseThrow(() -> new NoSuchEntityException("Company not found"));
+
+            company.getMessages().add(message);
+            message.setCompany(company);
+        }
 
         return messageRepository.save(message);
     }
@@ -109,17 +123,28 @@ public class MessageServiceImpl implements MessageService {
 
         existingMessage.getMessageRoles().clear();
         message.getMessageRoles().forEach(role -> {
-            if (role.getId() != null) {
-                MessageRole managedRole = messageRoleRepository.findById(role.getId())
-                        .orElseThrow(() -> new NoSuchEntityException("MessageRole not found for ID: " + role.getId()));
-                managedRole.setStatus(role.getStatus());
-                updateRoleAssociations(managedRole, existingMessage);
-                existingMessage.getMessageRoles().add(managedRole);
-            } else {
-                updateRoleAssociations(role, existingMessage);
-                existingMessage.getMessageRoles().add(role);
+            if (role.getParticipant() != null) {
+                if (role.getId() != null) {
+                    MessageRole managedRole = messageRoleRepository.findById(role.getId())
+                            .orElseThrow(() -> new NoSuchEntityException("MessageRole not found for ID: " + role.getId()));
+                    managedRole.setStatus(role.getStatus());
+                    updateRoleAssociations(managedRole, existingMessage);
+                    existingMessage.getMessageRoles().add(managedRole);
+                } else {
+                    updateRoleAssociations(role, existingMessage);
+                    existingMessage.getMessageRoles().add(role);
+                }
             }
         });
+
+        if (message.getCompany() != null) {
+            Company newCompany = companyRepository.findById(message.getCompany().getId())
+                    .orElseThrow(() -> new NoSuchEntityException("Company not found for ID: " + message.getCompany().getId()));
+
+            if (!newCompany.equals(existingMessage.getCompany())) {
+                existingMessage.setCompany(newCompany);
+            }
+        }
 
         return messageRepository.save(existingMessage);
     }

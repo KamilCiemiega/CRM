@@ -40,6 +40,6 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "company", orphanRemoval = true)
     private List<Client> clients = new ArrayList<>();
 }

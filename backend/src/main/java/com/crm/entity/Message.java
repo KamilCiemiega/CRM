@@ -51,6 +51,9 @@ public class Message {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
+    @Column(name = "is_unlinked")
+    private boolean isUnlinked;
+
 
     @PrePersist
     @PreUpdate

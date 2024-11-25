@@ -1,5 +1,6 @@
 package com.crm.controller.dto;
 
+import com.crm.entity.Company;
 import com.crm.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,4 +20,5 @@ public class ClientDTO {
     private String phone;
     private String address;
     private List<UserDTO> usersDTO;
+    private Company company;
 }
