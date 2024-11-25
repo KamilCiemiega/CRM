@@ -10,9 +10,7 @@ import { AppDispatch } from "../../../store";
 import RenderBox from "../../../../style/RenderBox";
 import { filterData } from "./helperFunctions/filterData";
 import { UserAndClient } from "../../../../interfaces/interfaces";
-import axios from "axios";
-import { MessageRoles } from "../../../../interfaces/interfaces";
-import { sendEmailAction } from "../../../store/slices/emailSlices/sendEmail-slice";
+import { getParticipant } from "../../../store/thunks/getParticipant";
 
 
 const FindUserOrClientEmail = () => {
@@ -64,29 +62,7 @@ const FindUserOrClientEmail = () => {
 
   }, [ccInputValueState, users, clients]);
 
-  const getParticipiantFromBackend = async (type: string, id: number) => {
-    let fieldType = "";
-    if(openToSearchBox){
-      fieldType = "TO"
-    }else {
-      fieldType = "CC"
-    }
-      try{
-        const response = await axios.get(`http://localdev:8082/api/message-participant/by-type-and-id?type=${type.toUpperCase()}&${type}Id=${id}`)
-        const messageRoles: MessageRoles = {
-          "status": fieldType,
-          "participantId": response.data.id
-        }
-        dispatch(sendEmailAction.addMessageRole(messageRoles));
 
-      }catch(error: unknown) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.message);
-        } else if (error instanceof Error) {
-          console.log(error.message);
-        }
-      }
-  }
 
   const onClickHandler = async (email: string, id: number, type: 'user' | 'client') => {
     if (openToSearchBox) {
@@ -98,7 +74,7 @@ const FindUserOrClientEmail = () => {
     }
 
     try {
-       await getParticipiantFromBackend(type, id);
+       dispatch(getParticipant(type, id, openToSearchBox));
 
     }catch (error){
       console.log("Error while tring to get participant ", error);

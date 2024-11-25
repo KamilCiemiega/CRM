@@ -13,10 +13,10 @@ const DraggableArea = () => {
     ];
 
     return (
-        <Box
+        <Box 
             sx={{
                 width: "100%",
-                height: "100%",
+                height: "100%", 
                 position: "relative",
                 overflow: "hidden",
                 backgroundImage: `url(${image})`,
