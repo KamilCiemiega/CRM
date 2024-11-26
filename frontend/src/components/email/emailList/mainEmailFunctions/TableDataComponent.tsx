@@ -9,10 +9,7 @@ import { emailListAction } from "../../../store/slices/emailSlices/emailList-sli
 import SearchTableData from "./SearchTableData";
 
 
-export interface MessageRole {
-  status: "TO" | "CC";
-  participantId: number;
-}
+
 
 const TableDataComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -51,7 +48,7 @@ const TableDataComponent = () => {
 
     const paginationModel = { page: 2, pageSize: 50 };
 
-    const handleDataToDisplay = (rowParam?: number, checkboxParam?: number) => {
+    const handleDataToDisplay = (rowParam?: number, checkboxParam?: number) => { 
       if (rowParam === undefined && checkboxParam === undefined) return;
     
       const index = rowParam ?? checkboxParam;

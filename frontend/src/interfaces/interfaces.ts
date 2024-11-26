@@ -17,6 +17,13 @@ export interface MessageRoles {
     participantId: number
 }
 
+export interface MessageRole {
+  id: number;
+  status: "TO" | "CC";
+  participantId: number;
+  email: string | null;
+}
+
 export interface SendMessageStatus {
     status:string;
     message: string;
@@ -32,13 +39,7 @@ export interface NavigationItemProps {
     handleClick: (index: number) => void;
     collapseItems: { index: number; icon: ReactElement; primary: string }[];
   }
-
-  interface MessageRole {
-    id: number;
-    status: "TO" | "CC";
-    participantId: number;
-  }
-
+  
   interface User {
     id: number;
     firstName: string;
@@ -65,6 +66,7 @@ export interface Message {
     attachments: [];
     messageFolders: MessageFolder[];
     messageRoles: MessageRole[];
+    unlinked: boolean;
 }  
 
 export interface Rows {

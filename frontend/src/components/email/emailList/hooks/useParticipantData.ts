@@ -6,7 +6,8 @@ import axios from "axios";
 
 export interface ParticipantData {
   status: string;
-  email: string;
+  email?: string;
+  newClientEmail?: string | null;
 }
 
 const useParticipantsData = () => {
@@ -21,15 +22,21 @@ const useParticipantsData = () => {
     if (messageRoles.length === 0) return;
 
     setLoadingData(true);
+const te = {
 
+}
     const fetchParticipants = async () => {
       try {
         const data = await Promise.all(
           messageRoles.map(async (role) => {
-            const response = await axios.get(
-              `http://localdev:8082/api/message-participant/by-id?participantId=${role.participantId}`
-            );
-            return { status: role.status, email: response.data.email };
+            if(role.participantId != null){
+              const response = await axios.get(
+                `http://localdev:8082/api/message-participant/by-id?participantId=${role.participantId}`
+              );
+              return { status: role.status, email: response.data.email };
+            }
+            return { status: role.status, newClientEmail: role.email };
+            
           })
         );
         setParticipantsData(data);

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Message, DataToDisplay } from "../../../../interfaces/interfaces";
 import { ParticipantData } from "../../../email/emailList/hooks/useParticipantData";
-import { MessageRole } from "../../../email/emailList/mainEmailFunctions/TableDataComponent";
+import { MessageRole } from "../../../../interfaces/interfaces";
 
 interface State {
    clickedMessage: Message; 
@@ -16,12 +16,13 @@ const initialState: State = {
         id: 0, 
         subject: "", 
         body: "",
-        sentDate:"",
+        sentDate:"", 
         status: "",
         size: 0,
         attachments: [],
         messageFolders: [],
-        messageRoles: []
+        messageRoles: [],
+        unlinked: true
     },
     dataToDisplay: {
         body: "",

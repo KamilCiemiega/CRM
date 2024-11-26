@@ -10,22 +10,22 @@ const EmailPreviewTextFields = () => {
 
 
     const convertTableDataToString = () => {
-      console.log(dataToDisplay);
       const toEmails = dataToDisplay.participant
-          .filter(participant => participant.status === 'TO')
-          .map(participant => participant.email)
-          .join(",");
-  
+        .filter(participant => participant.status === 'TO')
+        .map(participant => participant.email || participant.newClientEmail) 
+        .filter(email => email)
+        .join(",");
+    
       const ccEmails = dataToDisplay.participant
-          .filter(participant => participant.status === 'CC')
-          .map(participant => participant.email)
-          .join(",");
-  
+        .filter(participant => participant.status === 'CC')
+        .map(participant => participant.email || participant.newClientEmail)
+        .filter(email => email)
+        .join(",");
+    
       setToInputValue(toEmails);
       setCcInputValue(ccEmails);
-
-      console.log(toInputValue, ccInputValue)
-  };
+    };
+    
 
     useEffect(() => {
        convertTableDataToString();
