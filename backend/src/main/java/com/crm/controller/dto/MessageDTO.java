@@ -30,5 +30,4 @@ public class MessageDTO {
     private List<AttachmentDTO> attachments = new ArrayList<>();
     private List<MessageFolderDTO> messageFolders = new ArrayList<>();
     private List<MessageRoleDTO> messageRoles = new ArrayList<>();
-    private Company company;
 }

@@ -22,6 +22,5 @@ public class CompanyDTO {
     private String phoneNumber;
     private String address;
     private Timestamp createdAt;
-    private List<Message> messages = new ArrayList<>();
     private List<Client> clients = new ArrayList<>();
 }

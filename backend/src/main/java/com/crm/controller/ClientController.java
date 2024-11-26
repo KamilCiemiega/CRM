@@ -1,7 +1,9 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.ClientDTO;
+import com.crm.controller.dto.CreateClientRequest;
 import com.crm.entity.Client;
+import com.crm.entity.Company;
 import com.crm.service.ClientService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +36,22 @@ public class ClientController {
         return ResponseEntity.ok(listOfClientsDTOs);
     }
 
-    @PostMapping()
-    public ResponseEntity<ClientDTO> saveClient(@RequestBody ClientDTO clientDTO){
-        Client client = clientService.save(modelMapper.map(clientDTO, Client.class));
-        return new ResponseEntity<>(modelMapper.map(client, ClientDTO.class), HttpStatus.OK);
+    @PostMapping("/messages/{message-id}")
+    public ResponseEntity<ClientDTO> saveNewClient(
+            @PathVariable("message-id") int messageId,
+            @RequestBody CreateClientRequest request) {
+
+        Client client = modelMapper.map(request.getClientDTO(), Client.class);
+        Company company = modelMapper.map(request.getCompanyDTO(), Company.class);
+
+        Client createdClient = clientService.createClient(messageId, company, client);
+
+        return new ResponseEntity<>(modelMapper.map(createdClient, ClientDTO.class), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{clientId}")
-    public ResponseEntity<Client> updateClient(@PathVariable("clientId") int clientId, @RequestBody ClientDTO clientDTO){
+    @PostMapping("/{client-id}")
+    public ResponseEntity<ClientDTO> updateClient(@PathVariable("client-id") int clientId, @RequestBody ClientDTO clientDTO){
         Client updatedClient = clientService.updateClient(clientId, modelMapper.map(clientDTO, Client.class));
-        return ResponseEntity.ok(updatedClient);
+        return new ResponseEntity<>(modelMapper.map(updatedClient, ClientDTO.class), HttpStatus.OK);
     }
 }

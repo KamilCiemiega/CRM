@@ -7,6 +7,7 @@ import com.crm.entity.MessageParticipant;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.MessageParticipantService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MessageParticipantServiceImpl implements MessageParticipantService {
@@ -19,6 +20,11 @@ public class MessageParticipantServiceImpl implements MessageParticipantService 
         this.messageParticipantRepository = messageParticipantRepository;
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
+    }
+    @Transactional
+    @Override
+    public MessageParticipant save(MessageParticipant messageParticipant) {
+        return messageParticipantRepository.save(messageParticipant);
     }
 
     @Override

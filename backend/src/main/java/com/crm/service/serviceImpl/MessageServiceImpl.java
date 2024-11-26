@@ -23,16 +23,14 @@ public class MessageServiceImpl implements MessageService {
     private final MessageParticipantRepository messageParticipantRepository;
     private final AttachmentRepository attachmentRepository;
     private final MessageRoleRepository messageRoleRepository;
-    private final CompanyRepository companyRepository;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository, CompanyRepository companyRepository) {
+    public MessageServiceImpl(MessageRepository messageRepository, ModelMapper modelMapper, MessageFolderRepository messageFolderRepository, MessageParticipantRepository messageParticipantRepository, AttachmentRepository attachmentRepository, MessageRoleRepository messageRoleRepository) {
         this.messageRepository = messageRepository;
         this.messageFolderRepository = messageFolderRepository;
         this.messageParticipantRepository = messageParticipantRepository;
         this.attachmentRepository = attachmentRepository;
         this.messageRoleRepository = messageRoleRepository;
-        this.companyRepository = companyRepository;
     }
 
     @Transactional
@@ -56,7 +54,6 @@ public class MessageServiceImpl implements MessageService {
         message.setMessageFolders(messageFolders);
 
         List<MessageRole> messageRoles = message.getMessageRoles().stream()
-                .filter(role -> role.getParticipant() != null)
                 .peek(role -> {
                     role.setMessage(message);
                     role.setStatus(role.getStatus());
@@ -69,14 +66,6 @@ public class MessageServiceImpl implements MessageService {
                 })
                 .toList();
         message.setMessageRoles(messageRoles);
-
-        if(message.getCompany() != null){
-           Company company = companyRepository.findById(message.getCompany().getId())
-                   .orElseThrow(() -> new NoSuchEntityException("Company not found"));
-
-            company.getMessages().add(message);
-            message.setCompany(company);
-        }
 
         return messageRepository.save(message);
     }
@@ -123,7 +112,6 @@ public class MessageServiceImpl implements MessageService {
 
         existingMessage.getMessageRoles().clear();
         message.getMessageRoles().forEach(role -> {
-            if (role.getParticipant() != null) {
                 if (role.getId() != null) {
                     MessageRole managedRole = messageRoleRepository.findById(role.getId())
                             .orElseThrow(() -> new NoSuchEntityException("MessageRole not found for ID: " + role.getId()));
@@ -134,17 +122,7 @@ public class MessageServiceImpl implements MessageService {
                     updateRoleAssociations(role, existingMessage);
                     existingMessage.getMessageRoles().add(role);
                 }
-            }
         });
-
-        if (message.getCompany() != null) {
-            Company newCompany = companyRepository.findById(message.getCompany().getId())
-                    .orElseThrow(() -> new NoSuchEntityException("Company not found for ID: " + message.getCompany().getId()));
-
-            if (!newCompany.equals(existingMessage.getCompany())) {
-                existingMessage.setCompany(newCompany);
-            }
-        }
 
         return messageRepository.save(existingMessage);
     }

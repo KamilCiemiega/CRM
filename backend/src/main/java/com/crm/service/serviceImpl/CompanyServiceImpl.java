@@ -11,17 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
-    private final ClientRepository clientRepository;
 
     @Autowired
-    public  CompanyServiceImpl(CompanyRepository companyRepository, ClientRepository clientRepository) {
+    public  CompanyServiceImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
-        this.clientRepository = clientRepository;
     }
 
     @Override
@@ -48,6 +47,11 @@ public class CompanyServiceImpl implements CompanyService {
         existingCompany.setCreatedAt(updatedCompany.getCreatedAt());
 
         return companyRepository.save(existingCompany);
+    }
+
+    @Override
+    public Optional<Company> findById(int companyId) {
+        return companyRepository.findById(companyId);
     }
 
 }
