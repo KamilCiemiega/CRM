@@ -5,6 +5,7 @@ import SignUp from './components/registration/SignUp';
 import ForgotPassword from './components/registration/ForgotPassword';
 import EmailMainView from './components/email/EmailMainView';
 import CrmPanelMainView from './components/crmPanel/CrmPanelMainView';
+import ClientMainView from './components/clientsSection/ClientMainView';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
       <Route path="/forgetpassword" element={<ForgotPassword />} />
       <Route path="/emailView" element={<EmailMainView />} />
       <Route path="/cmrPanel" element={<CrmPanelMainView />} />
+      <Route path="/clientView" element={<ClientMainView />} />
     </Routes>
   </Router>
   );

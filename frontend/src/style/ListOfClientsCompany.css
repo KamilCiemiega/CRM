@@ -1,0 +1,9 @@
+.listOfClientsImage {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

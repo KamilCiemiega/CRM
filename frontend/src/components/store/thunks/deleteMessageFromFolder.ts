@@ -1,6 +1,7 @@
 import axios from "axios";
 import { AppDispatch } from "..";
 import { emailListAction } from "../slices/emailSlices/emailList-slice";
+import { handleError } from "./helperFunctions/handleError";
 
 type DeleteMessageParams = {
     folderId: number;
@@ -30,16 +31,10 @@ export const deleteMessageFromFolder = ({ folderId, messageId }: DeleteMessagePa
                 console.warn(`Unexpected response status: ${response.status}`);
             }
         } catch (error) {
-            const errorMessage = axios.isAxiosError(error)
-                ? `Axios error: ${error.message}`
-                : error instanceof Error
-                ? `General error: ${error.message}`
-                : "Unknown error occurred";
-
             dispatch(
                 emailListAction.setFolderMessageRequestStatus({
                     status: "error",
-                    message: errorMessage,
+                    message: handleError(error),
                 })
             );
         }

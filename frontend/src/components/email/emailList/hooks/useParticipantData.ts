@@ -22,9 +22,6 @@ const useParticipantsData = () => {
     if (messageRoles.length === 0) return;
 
     setLoadingData(true);
-const te = {
-
-}
     const fetchParticipants = async () => {
       try {
         const data = await Promise.all(

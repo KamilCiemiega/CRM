@@ -1,6 +1,7 @@
 import axios from "axios";
 import { AppDispatch } from "..";
 import { emailListAction } from "../slices/emailSlices/emailList-slice";
+import { handleError } from "./helperFunctions/handleError";
 
 export const fetchAllMessages = () => {
     return async (dispatch: AppDispatch) => {
@@ -11,12 +12,8 @@ export const fetchAllMessages = () => {
         try{
             const allMessages = await fetchData();
             dispatch(emailListAction.setAllMessages(allMessages))
-        }catch (error: unknown) {
-            if (error instanceof Error) {
-              console.error(error.message);
-            }else if(axios.isAxiosError(error)){
-              console.log(error.message);
-            }
+        }catch (error) {
+            console.log(handleError(error));
         }
       
     }

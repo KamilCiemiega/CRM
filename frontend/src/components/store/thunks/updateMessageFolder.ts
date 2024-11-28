@@ -8,7 +8,6 @@ export const updateMessageFolder = (messageId: number, payload: any) => {
         try{
             const response = await axios.post(`http://localdev:8082/api/messages/${messageId}`, payload);
             if (response.status === 200) {
-                console.log("moved")
                 dispatch(emailListAction.setFolderMessageRequestStatus({status: "success", message: "Message has been moved to another folder."}))
             } else {
                 console.warn(`Unexpected response status: ${response.status}`);

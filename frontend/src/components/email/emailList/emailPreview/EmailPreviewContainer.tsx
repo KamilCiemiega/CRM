@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
 import { TextField, Box, Typography } from "@mui/material";
@@ -15,10 +15,10 @@ const EmailPreviewContainer = () => {
 const dataToDisplay = useSelector((state: RootState) => state.emailPreview.dataToDisplay);
 const dispatch = useDispatch();
 
-const handleBackClik = () => {
-    dispatch(emailPreviewAction.setMessagePreview(false))
-    dispatch(emailPreviewAction.setShouldShowPreview(false));
-}
+const handleBackClik = useCallback(() => {
+  dispatch(emailPreviewAction.setMessagePreview(false));
+  dispatch(emailPreviewAction.setShouldShowPreview(false));
+}, [dispatch]);
 
     return (
         <Box component="div" sx={{width: '100%', height: '100vh'}}>

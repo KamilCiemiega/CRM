@@ -1,9 +1,8 @@
-import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "..";
+import { AppDispatch } from "..";
 import { sendEmailAction } from "../slices/emailSlices/sendEmail-slice";
 import axios from "axios";
 import { MessageRoles } from "../../../interfaces/interfaces";
-
+import { handleError } from "./helperFunctions/handleError";
 
 export const getParticipant = (type: string, id: number, openToSearchBox: boolean) => {
   return async (dispatch: AppDispatch) => {
@@ -17,12 +16,8 @@ export const getParticipant = (type: string, id: number, openToSearchBox: boolea
         }
         dispatch(sendEmailAction.addMessageRole(messageRoles));
 
-      }catch(error: unknown) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.message);
-        } else if (error instanceof Error) {
-          console.log(error.message);
-        }
+      }catch(error) {
+        console.log(handleError(error));
       }
     }
   }

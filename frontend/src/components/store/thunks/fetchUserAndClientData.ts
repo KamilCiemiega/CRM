@@ -1,6 +1,7 @@
 import axios from "axios";
 import { findUserOrClientEmailAction } from "../slices/emailSlices/findUserOrClientEmail-slice";
 import { AppDispatch } from "..";
+import { handleError } from "./helperFunctions/handleError";
 
 export const fetchUserAndClientData = () => {
     return async (dispatch: AppDispatch) => {
@@ -23,13 +24,8 @@ export const fetchUserAndClientData = () => {
             dispatch(findUserOrClientEmailAction.setUsers(userAndClientData.users));
             dispatch(findUserOrClientEmailAction.setClients(userAndClientData.clients));
             
-          } catch (error: unknown) {
-            if (error instanceof Error) {
-              console.error(error.message);
-            }else if(axios.isAxiosError(error)){
-              console.log(error.message);
-            }
-            
+          } catch (error) {
+            console.log(handleError(error));
           }
     }
 }
