@@ -1,27 +1,29 @@
-import BusinessIcon from '@mui/icons-material/Business';
+import image1 from "../../../../../images/2.png";
+import image2 from "../../../../../images/3.png";
+import image3 from "../../../../../images/4.png";
+import image4 from "../../../../../images/5.png";
+import image5 from "../../../../../images/6.png";
+import image6 from "../../../../../images/7.png";
+import image7 from "../../../../../images/8.png";
+import image8 from "../../../../../images/10.png";
+import image9 from "../../../../../images/11.png";
+import companyImage1 from "../../../../../images/9.png";
 
-export const clientCompanyimages = () => {
-
-const images = [
+export const clientCompanyImages = [
     {
         clientImage: [
-            {1: "../../../../images/2.png"},
-            {2: "../../../../images/3.png"},
-            {3: "../../../../images/4.png"},
-            {4: "../../../../images/5.png"},
-            {5: "../../../../images/6.png"},
-            {6: "../../../../images/7.png"},
-            {7: "../../../../images/8.png"},
-            {7: "../../../../images/10.png"},
-            {7: "../../../../images/11.png"}
+            {1: image1},
+            {2: image2},
+            {3: image3},
+            {4: image4},
+            {5: image5},
+            {6: image6},
+            {7: image7},
+            {8: image8},
+            {9: image9}
         ],
         companyImage: [
-            {1: "../../../../images/9.png"}
+            {1: companyImage1}
         ]
     }
-] 
-return images;
-
-}
-
- 
+];

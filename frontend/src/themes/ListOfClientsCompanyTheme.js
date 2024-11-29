@@ -11,6 +11,8 @@ const ListOfClientsTheme = createTheme({
                     boxShadow: "3px 4px 1px -1px rgba(0, 0, 0, 0.2)",
                     width: "300px",
                     height: "100px",
+                    marginLeft: '15px',
+                    marginTop: '30px',
                     display: "flex",
                     alignItems: "center",
                     transition: "all 0.3s ease",

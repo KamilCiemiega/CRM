@@ -3,18 +3,26 @@ import { Box, SpeedDial, SpeedDialAction } from "@mui/material";
 import { clientViewAction } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 import { AppDispatch } from "../../store";
 import { useDispatch } from "react-redux";
+import SearchBox from "./SearchBox";
+
 
 const TopPanel = () => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const actions = [
-        { icon: <Business />, name: 'Companies view', path: 'companies'},
-        { icon: <AccountBox />, name: 'Clients view', path: 'clients'},
-        { icon: <Add />, name: 'Add new', path: 'add'},
+    const actions: { icon: JSX.Element; name: string; path: 'clients' | 'companies' }[] = [
+        { icon: <Business />, name: 'Companies view', path: 'companies' },
+        { icon: <AccountBox />, name: 'Clients view', path: 'clients' },
+        { icon: <Add />, name: 'Add new', path: 'clients' },
     ];
 
     return(
-        <Box sx={{width: '100%',height: '100px',backgroundColor: '#363636'}}>
+        <Box sx={{
+            width: '100%',
+            height: '100px',
+            backgroundColor: '#363636',
+            display: 'flex',
+            justifyContent: 'center', 
+            alignItems: 'center'}}>
               <SpeedDial
                 ariaLabel="SpeedDial basic example"
                 sx={{ position: 'absolute', top: 20, left: 16 }}
@@ -30,6 +38,7 @@ const TopPanel = () => {
                     />
                 ))}
             </SpeedDial>
+            <SearchBox />
         </Box>
     );
 }
