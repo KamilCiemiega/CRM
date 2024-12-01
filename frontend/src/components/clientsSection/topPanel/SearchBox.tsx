@@ -5,6 +5,7 @@ import { AppDispatch } from "../../store";
 import { useDispatch } from "react-redux";
 import { clientViewAction } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 
+
 const SearchBox = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [searchValue, setSearchValue] = useState("");

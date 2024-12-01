@@ -1,5 +1,5 @@
 import { Business, AccountBox, Add, Visibility } from "@mui/icons-material";
-import { Box, SpeedDial, SpeedDialAction } from "@mui/material";
+import { Box, Button, SpeedDial, SpeedDialAction } from "@mui/material";
 import { clientViewAction } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 import { AppDispatch } from "../../store";
 import { useDispatch } from "react-redux";
@@ -11,8 +11,7 @@ const TopPanel = () => {
 
     const actions: { icon: JSX.Element; name: string; path: 'clients' | 'companies' }[] = [
         { icon: <Business />, name: 'Companies view', path: 'companies' },
-        { icon: <AccountBox />, name: 'Clients view', path: 'clients' },
-        { icon: <Add />, name: 'Add new', path: 'clients' },
+        { icon: <AccountBox />, name: 'Clients view', path: 'clients' }
     ];
 
     return(
@@ -39,6 +38,14 @@ const TopPanel = () => {
                 ))}
             </SpeedDial>
             <SearchBox />
+            <Button 
+            variant="contained" 
+            sx={{position: 'absolute', 
+            right: '16px'}}
+            onClick={() => dispatch(clientViewAction.setOpenNewEntityDialog(true))}
+            >
+                Add new
+            </Button>
         </Box>
     );
 }

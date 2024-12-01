@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ExpandedClient } from "../../../../clientsSection/topPanel/listOfClientsCompany/helperfunctions/initializeData";
+import { ExpandedCompany } from "../../../../clientsSection/topPanel/listOfClientsCompany/helperfunctions/initializeData";
 
 export type Company = {
     id: number;
@@ -20,21 +22,22 @@ export type Client = {
     company: null | Company;
 };
 
-type FilteredEntity = {
-    name: string;
-    image: string;
-};
-
 type ActionType = {
     viewType: 'clients' | 'companies';
     clientsData: Client[];
     searchValue: string;
+    clickedEntity: ExpandedClient | ExpandedCompany | null;
+    openNewEntityDialog: boolean;
+    expandedCompanyData: ExpandedCompany[];
 };
 
 const initialState: ActionType = {
     viewType: "clients",
     clientsData: [],
-    searchValue: ''
+    searchValue: '',
+    clickedEntity: null,
+    openNewEntityDialog: true,
+    expandedCompanyData: []
 };
 
 const clientViewSlice = createSlice({
@@ -49,6 +52,15 @@ const clientViewSlice = createSlice({
         },
         setSearchValue(state, action: PayloadAction<string>){
           state.searchValue = action.payload
+        },
+        setClickedEntity(state, action: PayloadAction<ExpandedClient | ExpandedCompany>){
+          state.clickedEntity = action.payload;
+        },
+        setOpenNewEntityDialog(state, action: PayloadAction<boolean>){
+          state.openNewEntityDialog = action.payload;
+        },
+        setExpandedCompanyData(state, action: PayloadAction<ExpandedCompany[]>){
+          state.expandedCompanyData = action.payload;
         }
     },
 });

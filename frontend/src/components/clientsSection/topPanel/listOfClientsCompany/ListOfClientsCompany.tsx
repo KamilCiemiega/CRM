@@ -5,58 +5,32 @@ import { AppDispatch, RootState } from "../../../store";
 import "../../../../style/ListOfClientsCompany.css";
 import { ThemeProvider } from "@emotion/react";
 import ListOfClientsTheme from "../../../../themes/ListOfClientsCompanyTheme";
-import { clientCompanyImages } from "./helperfunctions/clientCompanyImages";
-import { filterData } from "../../../email/emailCreator/findUserOrClientEmail/helperFunctions/filterData";
-
-type FilteredEntity = {
-    name: string;
-    image: string;
-};
+import { initializeData } from "./helperfunctions/initializeData";
+import { ExpandedCompany } from "./helperfunctions/initializeData";
+import { ExpandedClient } from "./helperfunctions/initializeData";
+import { clientViewAction } from "../../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 
 const ListOfClientsCompany = () => {
-    const [client, setClient] = useState<{name: string, image: string}[]>([]);
-    const [company, setCompany] = useState<{name: string, image: string}[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const [filteredView, setFilteredView] = useState<any[]>([]);
+    const [clientsData, setClientsData] = useState<ExpandedClient[]>([]);
+    const [companiesData, setCompaniesData] = useState<ExpandedCompany[]>([]);
     const clientCompanydata = useSelector((state: RootState) => state.clientView.clientsData);
     const typeOfView = useSelector((state: RootState) => state.clientView.viewType);
     const searchValue = useSelector((state: RootState) => state.clientView.searchValue);
-
-    const initializeData = () => {
-        const images = clientCompanyImages[0].clientImage.map(img => Object.values(img)[0]);
-
-        const clientsData = clientCompanydata.map((c, index) => {
-            const image = images[index % images.length];
-            return { name: `${c.name} ${c.surname}`, image };
-        });
-
-        const imagePath = Object.values(clientCompanyImages[0].companyImage[0])[0];
-        const companyData = clientCompanydata
-            .map(com => {
-                if (!com.company) return null;
-                return { name: com.company.name, image: imagePath };
-            })
-            .filter((entry): entry is { name: string; image: string } => entry !== null);
-
-        setClient(clientsData);
-        setCompany(companyData);
-    };
-
-    const filtredData = ({clients, companies }: { clients: FilteredEntity[], companies: FilteredEntity[]}) => {
-        const filteredViewType = typeOfView === 'clients'
-        ? clients.filter(client =>
-            client.name.toLowerCase().includes(searchValue.toLowerCase())
-        )
-        : companies.filter(company =>
-            company.name.toLowerCase().includes(searchValue.toLowerCase())
-        );
-
-        return filteredViewType;
-    }
     
     useEffect(() => {
-        initializeData();
+        const { filtredView, clientsData, companiesData } = initializeData({ clientCompanydata, typeOfView, searchValue });
+
+        setFilteredView(filtredView);
+        setClientsData(clientsData);
+        setCompaniesData(companiesData);
+        dispatch(clientViewAction.setExpandedCompanyData(companiesData));
     }, [clientCompanydata, typeOfView, searchValue]);
 
-    const filteredView = filtredData({ clients: client, companies: company });
+    const handleEntityClick = (entity: ExpandedClient | ExpandedCompany) => {
+        dispatch(clientViewAction.setClickedEntity(entity));
+    }
 
     return (
         <Box
@@ -66,11 +40,10 @@ const ListOfClientsCompany = () => {
                 mt: '15px',                    
                 width: "100%",                        
             }}
-        >
-            
+        >  
                 {filteredView.map((entity, index) => (
                     <ThemeProvider theme={ListOfClientsTheme} key={index}>
-                        <Paper>
+                        <Paper onClick={() => handleEntityClick(entity)}>
                             <Box
                                 className="listOfClientsImage"
                                 sx={{
