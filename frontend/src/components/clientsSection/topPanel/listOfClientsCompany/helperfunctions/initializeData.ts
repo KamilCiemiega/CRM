@@ -28,14 +28,19 @@ export const initializeData = ({clientCompanydata, typeOfView, searchValue}: Ini
     });
 
     const imagePath = Object.values(clientCompanyImages[0].companyImage[0])[0];
+    const set = new Set<number>();
     const companiesData = clientCompanydata
-        .map(client => {
-            if (!client.company) return null;
-            return { ...client.company, image: imagePath };
-        })
-        .filter((entry): entry is ExpandedCompany => entry !== null);
-
-        console.log(companiesData)
+    .map(client => {
+        if (!client.company) return null;
+        return { ...client.company, image: imagePath };
+    })
+    .filter((entry): entry is ExpandedCompany => {
+        if (entry && !set.has(entry.id)) {
+            set.add(entry.id);
+            return true;
+        }
+        return false;
+    });
 
     const filtredView = filtredData({ clients: clientsData, companies: companiesData, typeOfView, searchValue });
 

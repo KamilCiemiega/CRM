@@ -10,12 +10,9 @@ const NewEntityDialog = () => {
     const addNewEntityStatus = useSelector((state: RootState) => state.clientView.openNewEntityDialog);
     const viewType = useSelector((state: RootState) => state.clientView.viewType);
 
-
-
-
     return (
         <Dialog
-            open={addNewEntityStatus} 
+            open={addNewEntityStatus}
             onClose={() => dispatch(clientViewAction.setOpenNewEntityDialog(false))}>
             <DialogTitle sx={{
                 display: 'flex', 
