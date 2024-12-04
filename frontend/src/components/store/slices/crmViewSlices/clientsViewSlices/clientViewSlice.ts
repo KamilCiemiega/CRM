@@ -29,6 +29,7 @@ type ActionType = {
     clickedEntity: ExpandedClient | ExpandedCompany | null;
     openNewEntityDialog: boolean;
     expandedCompanyData: ExpandedCompany[];
+    apiRequestStatus: {status: string, message: string}
 };
 
 const initialState: ActionType = {
@@ -37,7 +38,8 @@ const initialState: ActionType = {
     searchValue: '',
     clickedEntity: null,
     openNewEntityDialog: true,
-    expandedCompanyData: []
+    expandedCompanyData: [],
+    apiRequestStatus: {status: "", message: ""}
 };
 
 const clientViewSlice = createSlice({
@@ -61,6 +63,9 @@ const clientViewSlice = createSlice({
         },
         setExpandedCompanyData(state, action: PayloadAction<ExpandedCompany[]>){
           state.expandedCompanyData = action.payload;
+        },
+        setApiRequestStatus(state, action: PayloadAction<{status: string, message: string}>){
+          state.apiRequestStatus = action.payload;
         }
     },
 });

@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { 
-    Box, 
-    TextField, 
-    Select, 
-    MenuItem, 
-    Chip, 
-    OutlinedInput, 
-    Typography, 
-    Button, 
-    SelectChangeEvent 
+import {
+    Box,
+    TextField,
+    Select,
+    MenuItem,
+    Chip,
+    OutlinedInput,
+    Typography,
+    Button,
+    SelectChangeEvent,
+    Alert,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import useValidateFormsValues from "../hooks/useValidateFormsValues";
 import { Company } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
+import useSendEntity from "../hooks/useSendEntity";
+import { NewClientEntity } from "../hooks/useSendEntity";
+
 
 const ClientTextFields = () => {
     const [formValues, setFormValues] = useState({
@@ -25,9 +29,24 @@ const ClientTextFields = () => {
         selectedOptions: [] as Company[],
     });
     const [isFormsValid, setIsFormsValid] = useState(false);
-
-    const { validateFields, errors} = useValidateFormsValues();
+    const [valueToSend, setValueToSend] = useState<NewClientEntity>();
+    const { validateFields, errors } = useValidateFormsValues();
+    const { sendData } = useSendEntity();
     const expandedCompanyData = useSelector((state: RootState) => state.clientView.expandedCompanyData);
+
+    type TextFieldValue = {
+        name: keyof typeof formValues;
+        label: string;
+        required: boolean;
+    };
+
+    const mapTextFieldsValues: TextFieldValue[] = [
+        { name: "name", label: "Name", required: true },
+        { name: "surname", label: "Surname", required: true },
+        { name: "email", label: "Email", required: true },
+        { name: "phone", label: "Phone number", required: false },
+        { name: "address", label: "Address", required: false },
+    ];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -36,26 +55,46 @@ const ClientTextFields = () => {
 
     const handleSelectChange = (event: SelectChangeEvent<string[]>) => {
         const selectedIds = event.target.value as string[];
-        const selectedCompanies = expandedCompanyData.filter(company =>
+        const selectedCompanies = expandedCompanyData.filter((company) =>
             selectedIds.includes(company.id.toString())
         );
-        setFormValues((prev) => ({ ...prev, selectedOptions: selectedCompanies }));
+        setFormValues((prev) => ({
+            ...prev,
+            selectedOptions: selectedCompanies,
+        }));
     };
 
     const handleSaveClick = () => {
-        const isValid = validateFields(formValues, {validateSelect: true, validateSurname: true} ); 
-        isValid && setIsFormsValid(true);
+        const isValid = validateFields(formValues, {
+            validateSelect: true,
+            validateSurname: true,
+        });
 
-        console.log("Form is valid:", formValues);       
+        if (isValid) {
+            const valueToSend = {
+                clientDTO: {
+                    name: formValues.name,
+                    surname: formValues.surname,
+                    email: formValues.email,
+                    phone: formValues.phone,
+                    address: formValues.address
+                },
+                companyDTO: {id: formValues.selectedOptions[0].id}
+            } 
+            setValueToSend(valueToSend);
+            setIsFormsValid(true);
+            console.log("Formularz jest poprawny:", formValues);
+        } else {
+            console.log("Formularz zawiera błędy:", errors);
+        }
     };
 
     useEffect(() => {
-        const endpoint = "http://localdev:8082/api/clients/messages/31";
-        if(isFormsValid){
-            
+        const endpoint = "http://localdev:8082/api/clients/messages";
+        if (isFormsValid && valueToSend) {
+            sendData({url: endpoint, value: valueToSend});
         }
-        
-    }, [isFormsValid])
+    }, [isFormsValid, valueToSend]);
 
     return (
         <Box
@@ -68,92 +107,76 @@ const ClientTextFields = () => {
                 justifyContent: "center",
             }}
         >
-            <TextField
-                name="name"
-                value={formValues.name}
-                onChange={handleInputChange}
-                error={!!errors.name}
-                helperText={errors.name}
-                sx={{ mt: "4%" }}
-                required
-                label="Name"
-            />
-            <TextField
-                name="surname"
-                value={formValues.surname}
-                onChange={handleInputChange}
-                error={!!errors.surname}
-                helperText={errors.surname}
-                sx={{ mt: "4%" }}
-                required
-                label="Surname"
-            />
-            <TextField
-                name="email"
-                value={formValues.email}
-                onChange={handleInputChange}
-                error={!!errors.email}
-                helperText={errors.email}
-                sx={{ mt: "4%" }}
-                required
-                label="Email"
-            />
-            <TextField
-                name="phone"
-                value={formValues.phone}
-                onChange={handleInputChange}
-                error={!!errors.phone}
-                helperText={errors.phone}
-                sx={{ mt: "4%" }}
-                label="Phone number"
-            />
-            <TextField
-                name="address"
-                value={formValues.address}
-                onChange={handleInputChange}
-                error={!!errors.address}
-                helperText={errors.address}
-                sx={{ mt: "4%" }}
-                label="Address"
-            />
+            {mapTextFieldsValues.map((field) => (
+                <TextField
+                    key={field.name}
+                    name={field.name}
+                    value={formValues[field.name as keyof typeof formValues]}
+                    onChange={handleInputChange}
+                    error={!!errors[field.name]}
+                    helperText={errors[field.name]}
+                    required={field.required}
+                    label={field.label}
+                    sx={{ mt: "4%" }}
+                />
+            ))}
 
-            <Typography sx={{ mt: "20%", width: '500px' }}>Please choose one company</Typography>
+            <Typography sx={{ mt: "20%", width: "500px" }}>
+                Please choose one company
+            </Typography>
             <Select
-    multiple
-    value={formValues.selectedOptions.map(option => option.id.toString())}
-    onChange={handleSelectChange}
-    input={<OutlinedInput label="Select Options" />}
-    renderValue={(selected) => (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-            {selected.map((id) => {
-                const company = expandedCompanyData.find(company => company.id.toString() === id);
-                return <Chip key={id} label={company?.name || "Unknown"} />;
-            })}
-        </Box>
-    )}
-    sx={{ mt: "4%" }}
-    error={!!errors.selectedOptions}
->
-    {expandedCompanyData.map((company, index) => (
-        <MenuItem key={index} value={company.id.toString()}>
-            <Box
-                className="listOfClientsImage"
-                sx={{
-                    backgroundImage: `url(${company.image})`,
-                    width: "40px",
-                    height: "40px",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    borderRadius: "8px",
-                }}
-            />
-            <Typography sx={{ ml: "20px" }}>{company.name}</Typography>
-        </MenuItem>
-    ))}
-</Select>
+                multiple
+                value={formValues.selectedOptions.map((option) =>
+                    option.id.toString()
+                )}
+                onChange={handleSelectChange}
+                input={<OutlinedInput label="Select Options" />}
+                renderValue={(selected) => (
+                    <Box
+                        sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
+                    >
+                        {selected.map((id) => {
+                            const company = expandedCompanyData.find(
+                                (company) =>
+                                    company.id.toString() === id
+                            );
+                            return (
+                                <Chip
+                                    key={id}
+                                    label={company?.name || "Unknown"}
+                                />
+                            );
+                        })}
+                    </Box>
+                )}
+                sx={{ mt: "4%" }}
+                error={!!errors.selectedOptions}
+            >
+                {expandedCompanyData.map((company, index) => (
+                    <MenuItem key={index} value={company.id.toString()}>
+                        <Box
+                            className="listOfClientsImage"
+                            sx={{
+                                backgroundImage: `url(${company.image})`,
+                                width: "40px",
+                                height: "40px",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                borderRadius: "8px",
+                            }}
+                        />
+                        <Typography sx={{ ml: "20px" }}>
+                            {company.name}
+                        </Typography>
+                    </MenuItem>
+                ))}
+            </Select>
 
             {errors.selectedOptions && (
-                <Typography color="error" sx={{ mt: "8px", fontSize: "0.8rem" }}>
+                <Typography
+                    color="error"
+                    sx={{ mt: "8px", fontSize: "0.8rem" }}
+                >
                     {errors.selectedOptions}
                 </Typography>
             )}
@@ -161,7 +184,7 @@ const ClientTextFields = () => {
                 type="button"
                 variant="contained"
                 onClick={handleSaveClick}
-                sx={{ mt: "15px", width: '30px' }}
+                sx={{ mt: "15px", width: "30px" }}
             >
                 SAVE
             </Button>

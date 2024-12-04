@@ -54,7 +54,7 @@ const MainListOfEmails = () => {
     }, [updatedMessageFolderStatus]);    
 
     return (
-    <Paper sx={{ height: '100vh', width: '100%', ml: '1%' }}>
+    <Paper sx={{ height: '100vh', width: '100%', ml: '1%'}}>
         {updatedMessageFolderStatus.status === "success" ?
             <Alert>{updatedMessageFolderStatus.message}</Alert>
             : null
