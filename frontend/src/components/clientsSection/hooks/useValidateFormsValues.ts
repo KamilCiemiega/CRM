@@ -27,6 +27,7 @@ const useValidateFormsValues = () => {
         const newErrors: ValidationErrors = {};
 
         if (!values.name.trim()) newErrors.name = "Name is required.";
+        
         if(additionalFields.validateSurname && !values.surname?.trim()){
             newErrors.surname = "Surname is required.";
         }

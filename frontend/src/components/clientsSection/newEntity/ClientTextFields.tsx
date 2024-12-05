@@ -33,6 +33,7 @@ const ClientTextFields = () => {
     const { validateFields, errors } = useValidateFormsValues();
     const { sendData } = useSendEntity();
     const expandedCompanyData = useSelector((state: RootState) => state.clientView.expandedCompanyData);
+    const newClientData = useSelector((state: RootState) => state.clientView.selectedNewClient);
 
     type TextFieldValue = {
         name: keyof typeof formValues;
@@ -83,18 +84,25 @@ const ClientTextFields = () => {
             } 
             setValueToSend(valueToSend);
             setIsFormsValid(true);
-            console.log("Formularz jest poprawny:", formValues);
-        } else {
-            console.log("Formularz zawiera błędy:", errors);
-        }
+        } 
     };
 
+
     useEffect(() => {
-        const endpoint = "http://localdev:8082/api/clients/messages";
-        if (isFormsValid && valueToSend) {
-            sendData({url: endpoint, value: valueToSend});
+        let endpoint = "";
+        if(newClientData.email.length > 0){
+            setFormValues((prev) => ({ ...prev, email: newClientData.email}));
+            endpoint = `http://localdev:8082/api/clients/messages?message-id=${newClientData.messageId}`;
+            if (isFormsValid && valueToSend) {
+                sendData({url: endpoint, value: valueToSend});
+            }
+        }else {
+            if (isFormsValid && valueToSend) {
+                endpoint = "http://localdev:8082/api/clients/messages";
+                sendData({url: endpoint, value: valueToSend});
+            }
         }
-    }, [isFormsValid, valueToSend]);
+    }, [isFormsValid, valueToSend, newClientData]);
 
     return (
         <Box
@@ -125,7 +133,6 @@ const ClientTextFields = () => {
                 Please choose one company
             </Typography>
             <Select
-                multiple
                 value={formValues.selectedOptions.map((option) =>
                     option.id.toString()
                 )}

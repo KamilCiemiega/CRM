@@ -13,23 +13,22 @@ import { clientViewAction } from "../../../store/slices/crmViewSlices/clientsVie
 const ListOfClientsCompany = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [filteredView, setFilteredView] = useState<any[]>([]);
-    const [clientsData, setClientsData] = useState<ExpandedClient[]>([]);
-    const [companiesData, setCompaniesData] = useState<ExpandedCompany[]>([]);
-    const clientCompanydata = useSelector((state: RootState) => state.clientView.clientsData);
+    const clientData = useSelector((state: RootState) => state.clientView.clientsData);
+    const companyData = useSelector((state: RootState) => state.clientView.companyData);
     const typeOfView = useSelector((state: RootState) => state.clientView.viewType);
     const searchValue = useSelector((state: RootState) => state.clientView.searchValue);
     
     useEffect(() => {
-        const { filtredView, clientsData, companiesData } = initializeData({ clientCompanydata, typeOfView, searchValue });
+        const { filtredView, companiesData } = initializeData({ clientData,companyData, typeOfView, searchValue });
 
         setFilteredView(filtredView);
-        setClientsData(clientsData);
-        setCompaniesData(companiesData);
+        console.log(companiesData);
         dispatch(clientViewAction.setExpandedCompanyData(companiesData));
-    }, [clientCompanydata, typeOfView, searchValue]);
+    }, [clientData, typeOfView, searchValue]);
 
     const handleEntityClick = (entity: ExpandedClient | ExpandedCompany) => {
         dispatch(clientViewAction.setClickedEntity(entity));
+        dispatch(clientViewAction.setOpenEditEntityDialog(true));
     }
 
     return (
@@ -55,7 +54,11 @@ const ListOfClientsCompany = () => {
                                     borderRadius: "8px",
                                 }}
                             />
-                            <Typography sx={{ ml: "20px" }}>{entity.name}</Typography>
+                            {typeOfView === 'clients' ?
+                                <Typography sx={{ ml: "20px" }}>{`${entity.name} ${entity.surname}`}</Typography> :
+                                <Typography sx={{ ml: "20px" }}>{`${entity.name}`}</Typography>
+                            }
+                            
                         </Paper>
                     </ThemeProvider>
                 ))}

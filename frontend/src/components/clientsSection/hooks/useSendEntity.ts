@@ -17,9 +17,18 @@ export type NewClientEntity = {
     }
 }
 
+export type NewCompanyEntity = {
+    name: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    createdAt: string;
+} 
+
+
 type PropsValues = {
     url: string;
-    value: NewClientEntity
+    value: NewClientEntity | NewCompanyEntity
 }
 
 
@@ -30,7 +39,7 @@ const sendData = async ({url, value}: PropsValues) => {
     try{
         const response = await axios.post(url, value);
 
-        if(response.status === 201){
+        if(response.status === 201 || response.status === 200){
             dispatch(clientViewAction.setApiRequestStatus({status: "success", message: "Save succesfully !"}))
         }
 
