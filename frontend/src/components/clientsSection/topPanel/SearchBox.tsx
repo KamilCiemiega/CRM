@@ -12,7 +12,6 @@ const SearchBox = () => {
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value);
-        console.log('value' + event.target.value);
         dispatch(clientViewAction.setSearchValue(event.target.value));
     };
  

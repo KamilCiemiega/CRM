@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ExpandedClient } from "../../../../clientsSection/topPanel/listOfClientsCompany/helperfunctions/initializeData";
 import { ExpandedCompany } from "../../../../clientsSection/topPanel/listOfClientsCompany/helperfunctions/initializeData";
-import { act } from "react";
 
 export type Company = {
     id: number;
@@ -10,6 +9,7 @@ export type Company = {
     phoneNumber: string;
     address: string;
     createdAt: number;
+    clients: null | Client[];
 };
 
 export type Client = {
@@ -33,7 +33,7 @@ type ActionType = {
     expandedCompanyData: ExpandedCompany[];
     apiRequestStatus: {status: string, message: string};
     selectedNewClient: { messageId: number,email: string};
-    openEditEntityDialog: boolean;
+    openEditEntityView: boolean;
 };
 
 const initialState: ActionType = {
@@ -46,7 +46,7 @@ const initialState: ActionType = {
     expandedCompanyData: [],
     apiRequestStatus: {status: "", message: ""},
     selectedNewClient: {messageId: 0, email: "" },
-    openEditEntityDialog: true
+    openEditEntityView: false
 };
 
 const clientViewSlice = createSlice({
@@ -80,8 +80,8 @@ const clientViewSlice = createSlice({
         setSelectedNewClient(state, action: PayloadAction<{messageId: number, email: string}>){
           state.selectedNewClient = action.payload;
         },
-        setOpenEditEntityDialog(state, action: PayloadAction<boolean>){
-          state.openEditEntityDialog = action.payload;
+        setOpenEditEntityview(state, action: PayloadAction<boolean>){
+          state.openEditEntityView = action.payload;
         }
     },
 });

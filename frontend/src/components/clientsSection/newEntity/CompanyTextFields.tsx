@@ -19,7 +19,7 @@ const CompanyTextFields = () => {
     const { validateFields, errors } = useValidateFormsValues();
     const { sendData } = useSendEntity();
     const viewType = useSelector((state: RootState) => state.clientView.viewType);
-    const openDialog = useSelector((state: RootState) => state.clientView.openEditEntityDialog);
+    const openEditView = useSelector((state: RootState) => state.clientView.openEditEntityView);
     const clickedEntityData = useSelector((state: RootState) => state.clientView.clickedEntity);
 
     type TextFieldValue = {
@@ -60,7 +60,7 @@ const CompanyTextFields = () => {
     }
 
     useEffect(() => {
-        if(viewType === 'companies' && openDialog){
+        if(viewType === 'companies' && openEditView){
             if(clickedEntityData != null){
                 setFormValues({
                     name: clickedEntityData.name,
@@ -73,7 +73,7 @@ const CompanyTextFields = () => {
             console.log(clickedEntityData)
         }
 
-    }, [viewType, openDialog])
+    }, [viewType, openEditView])
 
     useEffect(() => {
         if(isFormsValid && valueToSend){
@@ -88,8 +88,7 @@ const CompanyTextFields = () => {
         component="form"
         noValidate
         sx={{
-            width: "100%",
-            height: '450px',
+            height: '500px',
             display: "flex",
             flexDirection: "column"
         }}
@@ -104,10 +103,10 @@ const CompanyTextFields = () => {
                 helperText={errors[field.name]}
                 required={field.required}
                 label={field.label}
-                sx={{ mt: "6%", width: '500px' }}
+                sx={{ mt: "30px", width: '500px', padding: '5px' }}
             />
         ))}
-        {!openDialog &&
+        {!openEditView &&
             <Button
             type="button"
             variant="contained"

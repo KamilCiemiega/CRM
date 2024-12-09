@@ -22,13 +22,12 @@ const ListOfClientsCompany = () => {
         const { filtredView, companiesData } = initializeData({ clientData,companyData, typeOfView, searchValue });
 
         setFilteredView(filtredView);
-        console.log(companiesData);
         dispatch(clientViewAction.setExpandedCompanyData(companiesData));
     }, [clientData, typeOfView, searchValue]);
 
     const handleEntityClick = (entity: ExpandedClient | ExpandedCompany) => {
         dispatch(clientViewAction.setClickedEntity(entity));
-        dispatch(clientViewAction.setOpenEditEntityDialog(true));
+        dispatch(clientViewAction.setOpenEditEntityview(true));
     }
 
     return (

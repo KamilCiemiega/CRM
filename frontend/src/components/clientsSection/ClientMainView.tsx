@@ -7,10 +7,12 @@ import { fetchCompanies } from "../store/thunks/fetchCompanies";
 import { AppDispatch, RootState } from "../store";
 import ListOfClientsCompany from "./topPanel/listOfClientsCompany/ListOfClientsCompany";
 import NewEntityDialog from "./newEntity/NewEntityDialog"; 
-import EditEntityDialog from "./editEntity/EditEntityDialog";
+import EditCompanyContainer from "./editEntity/editCompany/EditCompanyContainer";
 
 const ClientMainView = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const viewType = useSelector((state: RootState) => state.clientView.viewType);
+    const editEntityView = useSelector((state: RootState) => state.clientView.openEditEntityView);
 
     useEffect(() => {
         dispatch(fetchClients());
@@ -20,9 +22,10 @@ const ClientMainView = () => {
     return (
         <Box sx={{width: '100%', height: '100vh', backgroundColor: '#ffffff'}}>
             <TopPanel />
-                <ListOfClientsCompany />
+                {viewType === 'companies' && editEntityView ?
+                    <EditCompanyContainer /> : <ListOfClientsCompany />  
+                }
             <NewEntityDialog />
-            <EditEntityDialog /> 
         </Box>
     );
 }
