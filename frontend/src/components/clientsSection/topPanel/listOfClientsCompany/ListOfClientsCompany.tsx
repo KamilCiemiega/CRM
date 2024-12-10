@@ -25,9 +25,17 @@ const ListOfClientsCompany = () => {
         dispatch(clientViewAction.setExpandedCompanyData(companiesData));
     }, [clientData, typeOfView, searchValue]);
 
+    const isExpandedClient = (entity: ExpandedClient | ExpandedCompany): entity is ExpandedClient => {
+        return (entity as ExpandedClient).surname !== undefined;
+    };
+
     const handleEntityClick = (entity: ExpandedClient | ExpandedCompany) => {
         dispatch(clientViewAction.setClickedEntity(entity));
-        dispatch(clientViewAction.setOpenEditEntityview(true));
+        if(isExpandedClient(entity)){
+            dispatch(clientViewAction.setEditEntityViewType("clients"));
+        }else {
+            dispatch(clientViewAction.setEditEntityViewType("companies"));
+        }
     }
 
     return (

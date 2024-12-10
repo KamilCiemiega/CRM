@@ -14,7 +14,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import useValidateFormsValues from "../hooks/useValidateFormsValues";
-import { Company } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
+import { clientViewAction, Company } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 import useSendEntity from "../hooks/useSendEntity";
 import { NewClientEntity } from "../hooks/useSendEntity";
 
@@ -34,6 +34,7 @@ const ClientTextFields = () => {
     const { sendData } = useSendEntity();
     const expandedCompanyData = useSelector((state: RootState) => state.clientView.expandedCompanyData);
     const newClientData = useSelector((state: RootState) => state.clientView.selectedNewClient);
+    const clinetPreviewData = useSelector((state: RootState) => state.clientView.clientPreviewData);
 
     type TextFieldValue = {
         name: keyof typeof formValues;
@@ -87,6 +88,24 @@ const ClientTextFields = () => {
         } 
     };
 
+    useEffect(() => {
+        if (clinetPreviewData.length > 0) {
+            const clientData = clinetPreviewData[0];
+    
+            const selectedOptions = clientData.company ? 
+                [clientData.company] 
+                : [];
+    
+            setFormValues({
+                name: clientData.name || "",
+                surname: clientData.surname || "",
+                email: clientData.email || "",
+                phone: clientData.phone || "",
+                address: clientData.address || "",
+                selectedOptions
+            });
+        }
+    }, [clinetPreviewData]);
 
     useEffect(() => {
         let endpoint = "";
@@ -119,6 +138,7 @@ const ClientTextFields = () => {
                 <TextField
                     key={field.name}
                     name={field.name}
+                    disabled={clinetPreviewData.length > 0}
                     value={formValues[field.name as keyof typeof formValues]}
                     onChange={handleInputChange}
                     error={!!errors[field.name]}
@@ -136,6 +156,7 @@ const ClientTextFields = () => {
                 value={formValues.selectedOptions.map((option) =>
                     option.id.toString()
                 )}
+                disabled={clinetPreviewData.length > 0}
                 onChange={handleSelectChange}
                 input={<OutlinedInput label="Select Options" />}
                 renderValue={(selected) => (
@@ -187,7 +208,8 @@ const ClientTextFields = () => {
                     {errors.selectedOptions}
                 </Typography>
             )}
-            <Button
+            {clinetPreviewData.length === 0 &&
+                <Button
                 type="button"
                 variant="contained"
                 onClick={handleSaveClick}
@@ -195,6 +217,8 @@ const ClientTextFields = () => {
             >
                 SAVE
             </Button>
+            }
+            
         </Box>
     );
 };

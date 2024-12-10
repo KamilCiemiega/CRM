@@ -3,23 +3,28 @@ import { useEffect, useState } from "react";
 import useValidateFormsValues from "../hooks/useValidateFormsValues";
 import { NewCompanyEntity } from "../hooks/useSendEntity";
 import useSendEntity from "../hooks/useSendEntity";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
+import { clientViewAction } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 
+interface CompanyTextFieldsProps {
+    validateFields: (values: any, options: any) => boolean;
+    errors: { [key: string]: string };
+}
 
-const CompanyTextFields = () => {
+const CompanyTextFields: React.FC<CompanyTextFieldsProps> = ({ validateFields, errors }) => {
+    const dispatch = useDispatch();
     const [formValues, setFormValues] = useState({
         name: "",
         email: "",
         phone: "",
-        address: "",
+        address: ""
     });
     const [valueToSend, setValueToSend] = useState<NewCompanyEntity>();
     const [isFormsValid, setIsFormsValid] = useState(false);
-    const { validateFields, errors } = useValidateFormsValues();
     const { sendData } = useSendEntity();
     const viewType = useSelector((state: RootState) => state.clientView.viewType);
-    const openEditView = useSelector((state: RootState) => state.clientView.openEditEntityView);
+    const openEditView = useSelector((state: RootState) => state.clientView.editEntityViewType);
     const clickedEntityData = useSelector((state: RootState) => state.clientView.clickedEntity);
 
     type TextFieldValue = {
@@ -60,7 +65,7 @@ const CompanyTextFields = () => {
     }
 
     useEffect(() => {
-        if(viewType === 'companies' && openEditView){
+        if(viewType === 'companies' && openEditView === 'companies'){
             if(clickedEntityData != null){
                 setFormValues({
                     name: clickedEntityData.name,
@@ -74,6 +79,10 @@ const CompanyTextFields = () => {
         }
 
     }, [viewType, openEditView])
+
+    useEffect(() => {
+        dispatch(clientViewAction.setCompanyTextFieldsValues(formValues));
+    }, [formValues, setFormValues])
 
     useEffect(() => {
         if(isFormsValid && valueToSend){
@@ -103,7 +112,7 @@ const CompanyTextFields = () => {
                 helperText={errors[field.name]}
                 required={field.required}
                 label={field.label}
-                sx={{ mt: "30px", width: '500px', padding: '5px' }}
+                sx={{ mt: "20px", width: '500px', padding: '5px' }}
             />
         ))}
         {!openEditView &&

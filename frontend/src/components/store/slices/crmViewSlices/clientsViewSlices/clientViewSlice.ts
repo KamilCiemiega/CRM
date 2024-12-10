@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ExpandedClient } from "../../../../clientsSection/topPanel/listOfClientsCompany/helperfunctions/initializeData";
 import { ExpandedCompany } from "../../../../clientsSection/topPanel/listOfClientsCompany/helperfunctions/initializeData";
+import { EntityFields } from "../../../../clientsSection/hooks/useValidateFormsValues";
 
 export type Company = {
     id: number;
@@ -33,7 +34,10 @@ type ActionType = {
     expandedCompanyData: ExpandedCompany[];
     apiRequestStatus: {status: string, message: string};
     selectedNewClient: { messageId: number,email: string};
-    openEditEntityView: boolean;
+    editEntityViewType: 'clients' | 'companies' | ""
+    clientPreviewData: Client[];
+    companyClientsData: Client[];
+    companyTextFieldsValues:EntityFields;
 };
 
 const initialState: ActionType = {
@@ -46,7 +50,10 @@ const initialState: ActionType = {
     expandedCompanyData: [],
     apiRequestStatus: {status: "", message: ""},
     selectedNewClient: {messageId: 0, email: "" },
-    openEditEntityView: false
+    editEntityViewType: "",
+    clientPreviewData: [],
+    companyClientsData: [],
+    companyTextFieldsValues: {name: "",email: "", phone: "",address: ""}
 };
 
 const clientViewSlice = createSlice({
@@ -80,8 +87,23 @@ const clientViewSlice = createSlice({
         setSelectedNewClient(state, action: PayloadAction<{messageId: number, email: string}>){
           state.selectedNewClient = action.payload;
         },
-        setOpenEditEntityview(state, action: PayloadAction<boolean>){
-          state.openEditEntityView = action.payload;
+        setEditEntityViewType(state, action: PayloadAction<"clients" | "companies">){
+          state.editEntityViewType = action.payload;
+        },
+        setClientPreviewData(state, action: PayloadAction<Client[]>){
+          state.clientPreviewData = action.payload;
+        },
+        setClientPreviewDialogState(state, action){
+          const { clientPreviewData, viewType, openDialog } = action.payload;
+          state.clientPreviewData = clientPreviewData;
+          state.viewType = viewType;
+          state.openNewEntityDialog = openDialog;
+        },
+        setCompanyClientsData(state, action: PayloadAction<Client[]>){
+          state.companyClientsData = action.payload;
+        },
+        setCompanyTextFieldsValues(state, action: PayloadAction<EntityFields>){
+          state.companyTextFieldsValues = action.payload;
         }
     },
 });

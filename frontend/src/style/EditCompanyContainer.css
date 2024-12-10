@@ -24,3 +24,19 @@
     height: 98%;
     margin-top: 2%;
 }
+
+.emailsContainer {
+    background-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 87%;
+    padding: 2%;
+    margin-top: 4%;
+    height: 35%;
+}
+
+.buttonContainer {
+    width: 87%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2%;
+}

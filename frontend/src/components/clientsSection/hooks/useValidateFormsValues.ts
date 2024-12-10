@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { handleError } from "../../store/thunks/helperFunctions/handleError";
 import { Company } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 
-type EntityFields = {
+export type EntityFields = {
     name: string;
     surname?: string;
     email: string;

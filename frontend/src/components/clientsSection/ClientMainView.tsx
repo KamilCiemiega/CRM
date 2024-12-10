@@ -12,7 +12,7 @@ import EditCompanyContainer from "./editEntity/editCompany/EditCompanyContainer"
 const ClientMainView = () => {
     const dispatch = useDispatch<AppDispatch>();
     const viewType = useSelector((state: RootState) => state.clientView.viewType);
-    const editEntityView = useSelector((state: RootState) => state.clientView.openEditEntityView);
+    const editEntityView = useSelector((state: RootState) => state.clientView.editEntityViewType);
 
     useEffect(() => {
         dispatch(fetchClients());
@@ -22,7 +22,7 @@ const ClientMainView = () => {
     return (
         <Box sx={{width: '100%', height: '100vh', backgroundColor: '#ffffff'}}>
             <TopPanel />
-                {viewType === 'companies' && editEntityView ?
+                {editEntityView === 'companies' ?
                     <EditCompanyContainer /> : <ListOfClientsCompany />  
                 }
             <NewEntityDialog />

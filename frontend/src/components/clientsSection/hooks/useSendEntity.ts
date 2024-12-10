@@ -3,6 +3,8 @@ import { handleError } from "../../store/thunks/helperFunctions/handleError";
 import { useDispatch } from "react-redux";
 import { clientViewAction } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 import { AppDispatch } from "../../store";
+import { useState } from "react";
+import { Message } from "../../../interfaces/interfaces";
 
 export type NewClientEntity = {
     clientDTO: {
@@ -28,18 +30,23 @@ export type NewCompanyEntity = {
 
 type PropsValues = {
     url: string;
-    value: NewClientEntity | NewCompanyEntity
+    value: NewClientEntity | NewCompanyEntity | number[];
+    getData?: boolean;
 }
 
 
 const useSendEntity = () => {
 const dispatch = useDispatch<AppDispatch>();
+const [ clientMessages, setClientMessages ] = useState<Message[]>([])
 
-const sendData = async ({url, value}: PropsValues) => { 
+const sendData = async ({url, value, getData}: PropsValues) => { 
     try{
         const response = await axios.post(url, value);
 
         if(response.status === 201 || response.status === 200){
+            getData?
+            setClientMessages(response.data)
+            :
             dispatch(clientViewAction.setApiRequestStatus({status: "success", message: "Save succesfully !"}))
         }
 
@@ -49,7 +56,8 @@ const sendData = async ({url, value}: PropsValues) => {
 }
 
 return ({
-    sendData
+    sendData,
+    clientMessages
 });
 
 }
