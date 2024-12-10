@@ -73,4 +73,14 @@ public class MessageController {
 
         return new ResponseEntity<>(messageDTOs, HttpStatus.OK);
     }
+
+    @PostMapping("/clients/messages")
+    public ResponseEntity<List<MessageDTO>> getMessagesByClientIds(@RequestBody List<Integer> clientIds) {
+        List<Message> messages = messageService.findMessagesByClientIds(clientIds);
+        List<MessageDTO> messageDTOs = messages.stream()
+                .map(message -> modelMapper.map(message, MessageDTO.class))
+                .toList();
+
+        return new ResponseEntity<>(messageDTOs, HttpStatus.OK);
+    }
 }

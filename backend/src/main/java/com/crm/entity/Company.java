@@ -38,7 +38,7 @@ public class Company {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @OneToMany(mappedBy = "company", orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     private List<Client> clients = new ArrayList<>();
 }

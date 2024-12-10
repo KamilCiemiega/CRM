@@ -9,7 +9,8 @@ spring:
       password: $2a$12$zrAuUOa7Eezs7ucJFFyJ9OCPz.i8xG.2ED0oHcNjGxlmDCHpVGgLS
   logging:
     level:
-      org.springframework: DEBUG
+      root: INFO
+      com.crm: DEBUG
   jpa:
     show-sql: true
     properties:

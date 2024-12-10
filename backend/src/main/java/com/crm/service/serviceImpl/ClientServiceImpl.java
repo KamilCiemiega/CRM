@@ -1,34 +1,41 @@
 package com.crm.service.serviceImpl;
 
-import com.crm.dao.ClientRepository;
-import com.crm.dao.CompanyRepository;
+import com.crm.dao.*;
 import com.crm.entity.*;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.*;
-import com.crm.utils.PatchUtils;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ClientServiceImpl implements ClientService {
+    private static final Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
     private final ClientRepository clientRepository;
-    private final CompanyService companyService;
-    private final MessageService messageService;
-    private final MessageParticipantService messageParticipantService;
-    private final MessageRoleService messageRoleService;
+    private final CompanyRepository companyRepository;
+    private final MessageRepository messageRepository;
+    private final MessageParticipantRepository messageParticipantRepository;
+    private final MessageRoleRepository messageRoleRepository;
 
     @Autowired
-    public ClientServiceImpl(ClientRepository clientRepository, CompanyRepository companyRepository, CompanyService companyService, MessageService messageService, MessageParticipantService messageParticipantService, MessageRoleService messageRoleService) {
+    public ClientServiceImpl(ClientRepository clientRepository, CompanyRepository companyRepository, MessageRepository messageRepository, MessageParticipantRepository messageParticipantRepository, MessageRoleRepository messageRoleRepository) {
         this.clientRepository = clientRepository;
-        this.companyService = companyService;
-        this.messageService = messageService;
-        this.messageParticipantService = messageParticipantService;
-        this.messageRoleService = messageRoleService;
+
+        this.companyRepository = companyRepository;
+        this.messageRepository = messageRepository;
+        this.messageParticipantRepository = messageParticipantRepository;
+        this.messageRoleRepository = messageRoleRepository;
+    }
+
+    @Override
+    public Optional<Client> findById(int clientId) {
+        return clientRepository.findById(clientId);
     }
 
     @Override
@@ -38,37 +45,41 @@ public class ClientServiceImpl implements ClientService {
 
     private Company findOrCreateCompany(Company company) {
         if (company.getId() != null) {
-            return companyService.findById(company.getId())
+            return companyRepository.findById(company.getId())
                     .orElseThrow(() -> new NoSuchEntityException("Company not found with ID: " + company.getId()));
         } else {
-            return companyService.save(company);
+            return companyRepository.save(company);
         }
     }
 
     private void linkClientToMessage(int messageId, Client client) {
-        Message message = messageService.getMessageById(messageId);
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new NoSuchEntityException("Can't find message with id " + messageId));
 
         MessageParticipant participant = new MessageParticipant();
         participant.setClient(client);
         participant.setType(MessageParticipant.ParticipantType.CLIENT);
-        messageParticipantService.save(participant);
+        messageParticipantRepository.save(participant);
 
-        MessageRole messageRole = new MessageRole();
-        messageRole.setParticipant(participant);
-        messageRole.setMessage(message);
-        messageRole.setStatus(MessageRole.RoleStatus.TO);
-        messageRoleService.save(messageRole);
+        message.getMessageRoles().stream()
+                .filter(role -> Objects.equals(role.getEmail(), client.getEmail()))
+                .forEach(role -> {
+                    role.setEmail(null);
+                    role.setParticipant(participant);
+                });
     }
 
     @Transactional
     @Override
-    public Client createClient(int messageId, Company company, Client client) {
+    public Client createClient(Integer messageId, Company company, Client client) {
         Company finalCompany = findOrCreateCompany(company);
 
         client.setCompany(finalCompany);
         clientRepository.save(client);
 
-        linkClientToMessage(messageId, client);
+        if(messageId != null){
+            linkClientToMessage(messageId, client);
+        }
 
         return client;
     }
@@ -79,24 +90,14 @@ public class ClientServiceImpl implements ClientService {
         Client existingClient = clientRepository.findById(clientId)
                 .orElseThrow(() -> new NoSuchEntityException("Client not found with id: " + clientId));
 
-        if (client.getEmail() != null) {
-            existingClient.setEmail(client.getEmail());
-        }
-        if (client.getName() != null) {
-            existingClient.setName(client.getName());
-        }
-        if (client.getSurname() != null) {
-            existingClient.setSurname(client.getSurname());
-        }
-        if (client.getPhone() != null) {
-            existingClient.setPhone(client.getPhone());
-        }
-        if (client.getAddress() != null) {
-            existingClient.setAddress(client.getAddress());
-        }
+        if (client.getEmail() != null) existingClient.setEmail(client.getEmail());
+        if (client.getName() != null) existingClient.setName(client.getName());
+        if (client.getSurname() != null) existingClient.setSurname(client.getSurname());
+        if (client.getPhone() != null) existingClient.setPhone(client.getPhone());
+        if (client.getAddress() != null) existingClient.setAddress(client.getAddress());
 
         if (client.getCompany() != null && client.getCompany().getId() != null) {
-            Company newCompany = companyService.findById(client.getCompany().getId())
+            Company newCompany = companyRepository.findById(client.getCompany().getId())
                     .orElseThrow(() -> new NoSuchEntityException("Company not found with id: " + client.getCompany().getId()));
             existingClient.setCompany(newCompany);
         }
@@ -104,5 +105,15 @@ public class ClientServiceImpl implements ClientService {
         return clientRepository.save(existingClient);
     }
 
+    @Transactional
+    @Override
+    public Client delete(int clientId) {
+        Client clientToDelete = clientRepository.findById(clientId)
+                .orElseThrow(() -> new NoSuchEntityException("Client not found for ID: " + clientId));
+
+        clientRepository.delete(clientToDelete);
+
+        return  clientToDelete;
+    }
 }
 

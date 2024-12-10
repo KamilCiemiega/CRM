@@ -14,4 +14,5 @@ public interface MessageService {
     Message deleteMessage(int messageId);
     List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType);
     Message getMessageById(int messageId);
+    List<Message> findMessagesByClientIds(List<Integer> clientIds);
 }

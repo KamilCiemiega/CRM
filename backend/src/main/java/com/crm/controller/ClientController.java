@@ -36,9 +36,9 @@ public class ClientController {
         return ResponseEntity.ok(listOfClientsDTOs);
     }
 
-    @PostMapping("/messages/{message-id}")
+    @PostMapping("/messages")
     public ResponseEntity<ClientDTO> saveNewClient(
-            @PathVariable("message-id") int messageId,
+            @RequestParam(value = "message-id", required = false) Integer messageId,
             @RequestBody CreateClientRequest request) {
 
         Client client = modelMapper.map(request.getClientDTO(), Client.class);
@@ -53,5 +53,12 @@ public class ClientController {
     public ResponseEntity<ClientDTO> updateClient(@PathVariable("client-id") int clientId, @RequestBody ClientDTO clientDTO){
         Client updatedClient = clientService.updateClient(clientId, modelMapper.map(clientDTO, Client.class));
         return new ResponseEntity<>(modelMapper.map(updatedClient, ClientDTO.class), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/client-id")
+    public ResponseEntity<ClientDTO> deleteClient(@PathVariable("client-id") int clientId){
+        Client deletedClient = clientService.delete(clientId);
+
+        return new ResponseEntity<>(modelMapper.map(deletedClient, ClientDTO.class), HttpStatus.OK);
     }
 }

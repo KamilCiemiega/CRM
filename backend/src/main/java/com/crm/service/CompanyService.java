@@ -9,5 +9,5 @@ public interface CompanyService {
     List<Company> getAllCompanies();
     Company save(Company company);
     Company update(int companyId, Company company);
-    Optional<Company> findById(int companyId);
+    Company delete(int companyId);
 }

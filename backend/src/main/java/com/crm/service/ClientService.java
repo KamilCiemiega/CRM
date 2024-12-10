@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface ClientService {
     List<Client> findAllClients();
-    Client createClient(int messageId, Company company, Client client);
+    Client createClient(Integer messageId, Company company, Client client);
     Client updateClient(Integer clientId, Client client);
+    Optional<Client> findById(int clientId);
+    Client delete(int clientId);
 }
 

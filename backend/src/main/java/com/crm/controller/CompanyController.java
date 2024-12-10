@@ -47,4 +47,11 @@ public class CompanyController {
         Company updatedCompany = companyService.update(companyId, modelMapper.map(companyDTO, Company.class));
         return new ResponseEntity<>(modelMapper.map(updatedCompany, CompanyDTO.class), HttpStatus.OK);
     }
+
+    @DeleteMapping("/company-id")
+    public ResponseEntity<CompanyDTO> deleteCompany(@PathVariable("company-id") int companyId){
+        Company deletedCompany = companyService.delete(companyId);
+
+        return new ResponseEntity<>(modelMapper.map(deletedCompany, CompanyDTO.class), HttpStatus.OK);
+    }
 }
