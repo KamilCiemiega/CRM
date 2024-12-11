@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useSendEntity from "../../hooks/useSendEntity";
 import { RootState } from "../../../store";
-import { Message } from "../../../../interfaces/interfaces";
+import { ExpandedClient } from "../../topPanel/listOfClientsCompany/helperfunctions/initializeData";
 
 export type FiltredMessage = {
     id: number;
@@ -18,12 +18,18 @@ interface SearchMessagesTableProps {
 
 const SearchEmails: React.FC<SearchMessagesTableProps> = ({onSearch}) => {
     const [searchText, setSearchText] = useState("");
+    const clickedClient = useSelector((state: RootState) => state.clientView.clickedEntity);
     const clientsDate = useSelector((state: RootState) => state.clientView.companyClientsData);
     const { sendData, clientMessages } = useSendEntity();
     
     const getClientsIds = () => {
         return clientsDate.map(client => client.id);
     }
+
+    const isExpandedClient = (data: any): data is ExpandedClient => {
+        return data && "surname" in data;
+    };
+    
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchText(event.target.value);
@@ -66,13 +72,15 @@ const SearchEmails: React.FC<SearchMessagesTableProps> = ({onSearch}) => {
 
     
     useEffect(() => {
-        if(clientsDate.length > 0){
-            const clientsIds = getClientsIds();
-            const endpoint = "http://localdev:8082/api/messages/clients/messages";
-            sendData({url: endpoint, value: clientsIds, getData: true})
-        }
+        let clientsIds;
+        const isClient = isExpandedClient(clickedClient);
+        isClient? clientsIds = [clickedClient.id] : clientsIds = getClientsIds();
 
-    }, [clientsDate])
+        
+        const endpoint = "http://localdev:8082/api/messages/clients/messages";
+        sendData({url: endpoint, value: clientsIds, getData: true})
+
+    }, [clientsDate, clickedClient])
 
     return (
         <TextField

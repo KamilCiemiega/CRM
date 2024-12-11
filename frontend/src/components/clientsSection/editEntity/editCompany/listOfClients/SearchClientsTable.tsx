@@ -11,7 +11,6 @@ interface SearchClientsTableProps {
 
 
 const SearchClientsTable: React.FC<SearchClientsTableProps> = ({onSearch}) => {
-    const dispatch = useDispatch();
     const [searchText, setSearchText] = useState("");
     const clickedEntityData = useSelector((state: RootState) => state.clientView.clickedEntity);
 
@@ -34,7 +33,6 @@ const SearchClientsTable: React.FC<SearchClientsTableProps> = ({onSearch}) => {
     
     useEffect(() => {
         if (hasClients(clickedEntityData)) {
-            dispatch(clientViewAction.setCompanyClientsData(clickedEntityData.clients));
             const filteredClients = filterClients(clickedEntityData.clients, searchText);
             onSearch(filteredClients);
         }

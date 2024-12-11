@@ -8,18 +8,24 @@ import {
     OutlinedInput,
     Typography,
     Button,
-    SelectChangeEvent,
-    Alert,
+    SelectChangeEvent
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import useValidateFormsValues from "../hooks/useValidateFormsValues";
 import { clientViewAction, Company } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
 import useSendEntity from "../hooks/useSendEntity";
 import { NewClientEntity } from "../hooks/useSendEntity";
+import { ExpandedClient } from "../topPanel/listOfClientsCompany/helperfunctions/initializeData";
 
 
-const ClientTextFields = () => {
+interface ClientTextFieldsProps {
+    validateFields: (values: any, options: any) => boolean;
+    errors: { [key: string]: string };
+}
+
+const ClientTextFields: React.FC<ClientTextFieldsProps> = ({ validateFields, errors}) => {
+    const dispatch = useDispatch();
     const [formValues, setFormValues] = useState({
         name: "",
         surname: "",
@@ -30,11 +36,13 @@ const ClientTextFields = () => {
     });
     const [isFormsValid, setIsFormsValid] = useState(false);
     const [valueToSend, setValueToSend] = useState<NewClientEntity>();
-    const { validateFields, errors } = useValidateFormsValues();
     const { sendData } = useSendEntity();
     const expandedCompanyData = useSelector((state: RootState) => state.clientView.expandedCompanyData);
     const newClientData = useSelector((state: RootState) => state.clientView.selectedNewClient);
     const clinetPreviewData = useSelector((state: RootState) => state.clientView.clientPreviewData);
+    const openEditView = useSelector((state: RootState) => state.clientView.editEntityViewType);
+    const viewType = useSelector((state: RootState) => state.clientView.viewType);
+    const clickedEntityData = useSelector((state: RootState) => state.clientView.clickedEntity);
 
     type TextFieldValue = {
         name: keyof typeof formValues;
@@ -88,6 +96,31 @@ const ClientTextFields = () => {
         } 
     };
 
+    const hasClients = (data: any): data is ExpandedClient => {
+        return data && (data.company || data.company === null);
+    };
+    useEffect(() => {
+        if(viewType === 'clients' && openEditView === 'clients'){
+            const itsExtandetClientData = hasClients(clickedEntityData);
+            console.log(itsExtandetClientData)
+
+            if(clickedEntityData != null && itsExtandetClientData){
+                setFormValues({
+                   name: clickedEntityData.name,
+                   surname: clickedEntityData.surname,
+                   email: clickedEntityData.email,
+                   phone: clickedEntityData.phone,
+                   address: clickedEntityData.address,
+                   selectedOptions: clickedEntityData.company ? [clickedEntityData.company] : []
+                })
+                console.log(clickedEntityData)
+            }
+            
+           
+        }
+
+    }, [viewType, openEditView])
+
     useEffect(() => {
         if (clinetPreviewData.length > 0) {
             const clientData = clinetPreviewData[0];
@@ -123,12 +156,15 @@ const ClientTextFields = () => {
         }
     }, [isFormsValid, valueToSend, newClientData]);
 
+    useEffect(() => {
+        dispatch(clientViewAction.setClientTextFieldsValues(formValues));
+    }, [formValues, setFormValues])
+
     return (
         <Box
             component="form"
             noValidate
             sx={{
-                width: "100%",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -208,7 +244,7 @@ const ClientTextFields = () => {
                     {errors.selectedOptions}
                 </Typography>
             )}
-            {clinetPreviewData.length === 0 &&
+            {clinetPreviewData.length === 0 || !openEditView &&
                 <Button
                 type="button"
                 variant="contained"

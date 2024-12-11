@@ -14,27 +14,28 @@ const NewEntityDialog = () => {
     const viewType = useSelector((state: RootState) => state.clientView.viewType);
     const sendRequestStatus = useSelector((state: RootState) => state.clientView.apiRequestStatus);
     const clinetPreviewData = useSelector((state: RootState) => state.clientView.clientPreviewData);
-    const isFirstRender = useRef(true);
+    const editEntityViewType = useSelector((state: RootState) => state.clientView.editEntityViewType);
     const { validateFields, errors } = useValidateFormsValues();
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
+        if(sendRequestStatus.status === 'success' || sendRequestStatus.status === 'error'){
+            const timer = setTimeout(() => {
+                dispatch(clientViewAction.setApiRequestStatus({status: "", message: ""}));
+                dispatch(clientViewAction.setOpenNewEntityDialog(false));
+                if(editEntityViewType === "clients" || editEntityViewType === "companies"){
+                    dispatch(clientViewAction.setEditEntityViewType(""))
+                }
+            }, 3000);
+    
+            return () => clearTimeout(timer);
         }
-        const timer = setTimeout(() => {
-            dispatch(clientViewAction.setApiRequestStatus({status: "", message: ""}));
-            dispatch(clientViewAction.setOpenNewEntityDialog(false));
-        }, 3000);
-
-        return () => clearTimeout(timer);
         
     }, [sendRequestStatus])
 
-    const closeDailogAction = () => {
+    const closeDialogAction = () => {
         dispatch(clientViewAction.setClientPreviewDialogState({
             clientPreviewData: [],
-            viewType: 'clients',
+            viewType,
             openDialog: false
         }))
     }
@@ -59,11 +60,11 @@ const NewEntityDialog = () => {
             <Typography>
                 {clinetPreviewData.length > 0 ? "Client Preview" : `ADD NEW ${viewType.toUpperCase()}`}
             </Typography>
-             <Close sx={{cursor: 'pointer'}} onClick={closeDailogAction}/>   
+             <Close sx={{cursor: 'pointer'}} onClick={closeDialogAction}/>   
             </DialogTitle>
             <DialogContent>
     {viewType === "clients" ? (
-        <ClientsTextFields />
+        <ClientsTextFields validateFields={validateFields} errors={errors}/>
     ) : (
         <CompanyTextFields validateFields={validateFields} errors={errors} />
     )}

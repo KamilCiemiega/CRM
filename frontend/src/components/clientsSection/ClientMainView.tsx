@@ -8,22 +8,27 @@ import { AppDispatch, RootState } from "../store";
 import ListOfClientsCompany from "./topPanel/listOfClientsCompany/ListOfClientsCompany";
 import NewEntityDialog from "./newEntity/NewEntityDialog"; 
 import EditCompanyContainer from "./editEntity/editCompany/EditCompanyContainer";
+import EditClientContainer from "./editEntity/editClient/EditClientContainer";
 
 const ClientMainView = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const viewType = useSelector((state: RootState) => state.clientView.viewType);
+    const apiRequest = useSelector((state: RootState) => state.clientView.apiRequestStatus);
     const editEntityView = useSelector((state: RootState) => state.clientView.editEntityViewType);
 
     useEffect(() => {
         dispatch(fetchClients());
         dispatch(fetchCompanies());
-    }, [dispatch])
+    }, [dispatch, apiRequest])
 
     return (
         <Box sx={{width: '100%', height: '100vh', backgroundColor: '#ffffff'}}>
             <TopPanel />
                 {editEntityView === 'companies' ?
-                    <EditCompanyContainer /> : <ListOfClientsCompany />  
+                    <EditCompanyContainer /> 
+                : editEntityView === "clients" ?
+                    <EditClientContainer /> 
+                :    
+                    <ListOfClientsCompany />  
                 }
             <NewEntityDialog />
         </Box>

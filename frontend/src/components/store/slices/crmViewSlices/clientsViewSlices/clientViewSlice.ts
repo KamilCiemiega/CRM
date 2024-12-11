@@ -20,7 +20,7 @@ export type Client = {
     email: string;
     phone: string;
     address: string;
-    usersDTO: null | Record<string, unknown>;
+    usersDTO?: null | Record<string, unknown>;
     company: null | Company;
 };
 
@@ -38,6 +38,7 @@ type ActionType = {
     clientPreviewData: Client[];
     companyClientsData: Client[];
     companyTextFieldsValues:EntityFields;
+    clientTextFieldsValues: EntityFields;
 };
 
 const initialState: ActionType = {
@@ -53,7 +54,8 @@ const initialState: ActionType = {
     editEntityViewType: "",
     clientPreviewData: [],
     companyClientsData: [],
-    companyTextFieldsValues: {name: "",email: "", phone: "",address: ""}
+    companyTextFieldsValues: {name: "",email: "", phone: "",address: ""},
+    clientTextFieldsValues: {name: "", surname: "", email: "", phone: "", address: "", selectedOptions: []}
 };
 
 const clientViewSlice = createSlice({
@@ -87,7 +89,7 @@ const clientViewSlice = createSlice({
         setSelectedNewClient(state, action: PayloadAction<{messageId: number, email: string}>){
           state.selectedNewClient = action.payload;
         },
-        setEditEntityViewType(state, action: PayloadAction<"clients" | "companies">){
+        setEditEntityViewType(state, action: PayloadAction<"clients" | "companies"| "">){
           state.editEntityViewType = action.payload;
         },
         setClientPreviewData(state, action: PayloadAction<Client[]>){
@@ -104,6 +106,9 @@ const clientViewSlice = createSlice({
         },
         setCompanyTextFieldsValues(state, action: PayloadAction<EntityFields>){
           state.companyTextFieldsValues = action.payload;
+        },
+        setClientTextFieldsValues(state, action: PayloadAction<EntityFields>) {
+          state.clientTextFieldsValues = action.payload;
         }
     },
 });

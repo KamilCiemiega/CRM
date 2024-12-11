@@ -1,6 +1,5 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import useValidateFormsValues from "../hooks/useValidateFormsValues";
 import { NewCompanyEntity } from "../hooks/useSendEntity";
 import useSendEntity from "../hooks/useSendEntity";
 import { useDispatch, useSelector } from "react-redux";
@@ -70,12 +69,10 @@ const CompanyTextFields: React.FC<CompanyTextFieldsProps> = ({ validateFields, e
                 setFormValues({
                     name: clickedEntityData.name,
                     email: clickedEntityData.email,
-                    phone: 'phone' in clickedEntityData ? clickedEntityData.phone : clickedEntityData.phoneNumber,
+                    phone: 'phoneNumber' in clickedEntityData ? clickedEntityData.phoneNumber : clickedEntityData.phone,
                     address: clickedEntityData.address
                 })
             }
-            
-            console.log(clickedEntityData)
         }
 
     }, [viewType, openEditView])
@@ -112,7 +109,7 @@ const CompanyTextFields: React.FC<CompanyTextFieldsProps> = ({ validateFields, e
                 helperText={errors[field.name]}
                 required={field.required}
                 label={field.label}
-                sx={{ mt: "20px", width: '500px', padding: '5px' }}
+                sx={{ mt: "px", width: '500px', padding: '5px' }}
             />
         ))}
         {!openEditView &&

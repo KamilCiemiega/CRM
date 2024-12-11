@@ -70,6 +70,11 @@ const ListOfClients = () => {
 
     }, [filteredRows, setRowsData])
 
+    useEffect(() => {
+        dispatch(clientViewAction.setCompanyClientsData(filteredRows));
+
+    }, [filteredRows,setFilteredRows])
+
 
     return(
         <Box className="container">

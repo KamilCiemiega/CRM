@@ -1,18 +1,25 @@
 import { Business, AccountBox, Add, Visibility } from "@mui/icons-material";
 import { Box, Button, SpeedDial, SpeedDialAction } from "@mui/material";
 import { clientViewAction } from "../../store/slices/crmViewSlices/clientsViewSlices/clientViewSlice";
-import { AppDispatch } from "../../store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
 import SearchBox from "./SearchBox";
 
 
 const TopPanel = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const editViewStatus = useSelector((state: RootState) => state.clientView.editEntityViewType);
 
     const actions: { icon: JSX.Element; name: string; path: 'clients' | 'companies' }[] = [
         { icon: <Business />, name: 'Companies view', path: 'companies' },
         { icon: <AccountBox />, name: 'Clients view', path: 'clients' }
     ];
+
+    const handleButtonClick = () => {
+        editViewStatus === "" ?
+        dispatch(clientViewAction.setOpenNewEntityDialog(true)):
+        dispatch(clientViewAction.setEditEntityViewType(""));
+    }
 
     return(
         <Box sx={{
@@ -40,12 +47,25 @@ const TopPanel = () => {
             <SearchBox />
             <Button 
             variant="contained" 
-            sx={{position: 'absolute', 
-            right: '16px'}}
-            onClick={() => dispatch(clientViewAction.setOpenNewEntityDialog(true))}
+            sx={{position: 'absolute', right: '16px'}}
+            onClick={handleButtonClick}
             >
-                Add new
+                {editViewStatus === "" ? "ADD NEW" : "BACK"}
             </Button>
+            {editViewStatus === "" &&
+                <Button
+                variant="contained" 
+                sx={{ 
+                    position: 'absolute', 
+                    right: '130px', 
+                    backgroundColor: 'red',
+                    '&:hover': {
+                    backgroundColor: 'rgba(255, 0, 0, 0.8)'
+                }}}>
+                DELETE
+                </Button>
+            }
+            
         </Box>
     );
 }

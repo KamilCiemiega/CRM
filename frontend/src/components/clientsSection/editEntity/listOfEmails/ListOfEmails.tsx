@@ -18,9 +18,6 @@ const ListOfEmails = () => {
         setSelectedRows(newSelection);
     };
 
-    const handleRowClick = (params: GridRowParams) => {
-        
-    };
 
 
      return (
@@ -32,7 +29,6 @@ const ListOfEmails = () => {
             rowSelectionModel={selectedRows}
             checkboxSelection
             onRowSelectionModelChange={handleSelectionChange}
-            onRowClick={handleRowClick}
         />
         </Box>
      );
