@@ -36,14 +36,6 @@ public class Client {
     @Column(name="address")
     private String address;
 
-    @ManyToMany
-    @JoinTable(
-            name = "userclient",
-            joinColumns = @JoinColumn(name = "client_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users;
-
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;

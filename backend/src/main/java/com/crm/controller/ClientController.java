@@ -7,11 +7,11 @@ import com.crm.entity.Company;
 import com.crm.service.ClientService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/clients")
@@ -33,7 +33,7 @@ public class ClientController {
                 .map(client -> modelMapper.map(client, ClientDTO.class))
                 .toList();
 
-        return ResponseEntity.ok(listOfClientsDTOs);
+        return ok(listOfClientsDTOs);
     }
 
     @PostMapping("/messages")
@@ -46,19 +46,22 @@ public class ClientController {
 
         Client createdClient = clientService.createClient(messageId, company, client);
 
-        return new ResponseEntity<>(modelMapper.map(createdClient, ClientDTO.class), HttpStatus.CREATED);
+        return ok(modelMapper.map(createdClient, ClientDTO.class));
     }
 
     @PostMapping("/{client-id}")
     public ResponseEntity<ClientDTO> updateClient(@PathVariable("client-id") int clientId, @RequestBody ClientDTO clientDTO){
-        Client updatedClient = clientService.updateClient(clientId, modelMapper.map(clientDTO, Client.class));
-        return new ResponseEntity<>(modelMapper.map(updatedClient, ClientDTO.class), HttpStatus.OK);
+        Client updatedClient = clientService.updateClient(clientId, modelMapper
+                .map(clientDTO, Client.class));
+        return ok(modelMapper.map(updatedClient, ClientDTO.class));
     }
 
     @DeleteMapping("/client-id")
     public ResponseEntity<ClientDTO> deleteClient(@PathVariable("client-id") int clientId){
         Client deletedClient = clientService.delete(clientId);
 
-        return new ResponseEntity<>(modelMapper.map(deletedClient, ClientDTO.class), HttpStatus.OK);
+       return ok(modelMapper.map(deletedClient, ClientDTO.class));
     }
+
+
 }

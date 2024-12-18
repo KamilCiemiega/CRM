@@ -5,11 +5,11 @@ import com.crm.entity.Company;
 import com.crm.service.CompanyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/company")
@@ -30,8 +30,7 @@ public class CompanyController {
                 .stream()
                 .map(c -> modelMapper.map(c, CompanyDTO.class))
                 .toList();
-
-        return new ResponseEntity<>(listOfCompanies, HttpStatus.OK);
+    return ok(listOfCompanies);
     }
 
     @PostMapping
@@ -39,19 +38,20 @@ public class CompanyController {
         Company company = modelMapper.map(companyDTO, Company.class);
         Company savedCompany = companyService.save(company);
 
-        return new ResponseEntity<>(modelMapper.map(savedCompany, CompanyDTO.class), HttpStatus.OK);
+        return ok(modelMapper.map(savedCompany, CompanyDTO.class));
     }
 
     @PostMapping("/{company-id}")
     public ResponseEntity<CompanyDTO> updateCompany(@PathVariable("company-id") int companyId, @RequestBody CompanyDTO companyDTO){
         Company updatedCompany = companyService.update(companyId, modelMapper.map(companyDTO, Company.class));
-        return new ResponseEntity<>(modelMapper.map(updatedCompany, CompanyDTO.class), HttpStatus.OK);
+
+       return ok(modelMapper.map(updatedCompany, CompanyDTO.class));
     }
 
     @DeleteMapping("/company-id")
     public ResponseEntity<CompanyDTO> deleteCompany(@PathVariable("company-id") int companyId){
         Company deletedCompany = companyService.delete(companyId);
 
-        return new ResponseEntity<>(modelMapper.map(deletedCompany, CompanyDTO.class), HttpStatus.OK);
+        return ok(modelMapper.map(deletedCompany, CompanyDTO.class));
     }
 }

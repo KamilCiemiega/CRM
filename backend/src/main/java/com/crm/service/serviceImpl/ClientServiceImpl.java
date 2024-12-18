@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+
 @Service
 public class ClientServiceImpl implements ClientService {
     private static final Logger logger = LoggerFactory.getLogger(ClientServiceImpl.class);
@@ -90,11 +92,8 @@ public class ClientServiceImpl implements ClientService {
         Client existingClient = clientRepository.findById(clientId)
                 .orElseThrow(() -> new NoSuchEntityException("Client not found with id: " + clientId));
 
-        if (client.getEmail() != null) existingClient.setEmail(client.getEmail());
-        if (client.getName() != null) existingClient.setName(client.getName());
-        if (client.getSurname() != null) existingClient.setSurname(client.getSurname());
-        if (client.getPhone() != null) existingClient.setPhone(client.getPhone());
-        if (client.getAddress() != null) existingClient.setAddress(client.getAddress());
+        ofNullable(client.getEmail()).ifPresent(existingClient::setEmail);
+        ofNullable(client.getName()).ifPresent(existingClient::setEmail);
 
         if (client.getCompany() != null && client.getCompany().getId() != null) {
             Company newCompany = companyRepository.findById(client.getCompany().getId())

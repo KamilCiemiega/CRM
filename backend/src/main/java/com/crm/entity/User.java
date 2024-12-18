@@ -38,20 +38,7 @@ public class User {
     @JsonIgnore
     private Role role;
 
-    @ManyToMany(mappedBy = "users")
-    @JsonIgnore
-    private List<Client> clients;
-
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<MessageFolder> messageFolders;
-
-    // Constructor used in testing
-    public User(String firstName, String lastName, String password, String email, Role role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
 }
