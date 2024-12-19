@@ -2,6 +2,7 @@ package com.crm.controller.dto;
 
 import com.crm.entity.Company;
 import com.crm.entity.Message;
+import com.crm.entity.Reporting;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -30,4 +31,5 @@ public class MessageDTO {
     private List<AttachmentDTO> attachments = new ArrayList<>();
     private List<MessageFolderDTO> messageFolders = new ArrayList<>();
     private List<MessageRoleDTO> messageRoles = new ArrayList<>();
+    private List<Reporting> reportings = new ArrayList<>();
 }

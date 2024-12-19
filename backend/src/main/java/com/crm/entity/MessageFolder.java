@@ -33,7 +33,7 @@ public class MessageFolder {
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<MessageFolder> subFolders;
+    private List<MessageFolder> subFolders = new ArrayList<>();
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(

@@ -50,6 +50,9 @@ public class Message {
     @Column(name = "is_unlinked")
     private boolean isUnlinked;
 
+    @ManyToMany(mappedBy = "messages")
+    @JsonIgnore
+    private List<Reporting> reportings = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

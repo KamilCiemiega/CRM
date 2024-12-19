@@ -41,4 +41,9 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     private List<Client> clients = new ArrayList<>();
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Reporting> reportings = new ArrayList<>();
+
 }
