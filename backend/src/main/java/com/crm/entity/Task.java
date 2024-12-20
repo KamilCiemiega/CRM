@@ -60,5 +60,13 @@ public class Task {
     @JsonIgnore
     private List<Task> subTasks = new ArrayList<>();
 
+    @OneToMany(mappedBy = "taskNotification", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserNotification> userNotifications = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "reporting_id")
+    private Reporting reporting;
+
     public enum TaskStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
 }

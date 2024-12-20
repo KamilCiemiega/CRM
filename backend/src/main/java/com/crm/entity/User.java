@@ -17,6 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
+    public User(Integer userId){
+        this.id = userId;
+    }
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
@@ -39,9 +43,9 @@ public class User {
     @JsonIgnore
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<MessageFolder> messageFolders;
+    private List<MessageFolder> messageFolders = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -52,15 +56,7 @@ public class User {
 
     @OneToOne(mappedBy = "userTaskWorker", cascade = CascadeType.ALL, orphanRemoval = true)
     private Task taskWorker;
-    
-    @OneToMany(mappedBy = "userReportingNotification", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<UserNotification> reportingNotifications = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "userTaskNotification", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<UserNotification> taskNotifications = new ArrayList<>();
-    
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserNotification userNotification;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserNotification> userNotification = new ArrayList<>();
 }

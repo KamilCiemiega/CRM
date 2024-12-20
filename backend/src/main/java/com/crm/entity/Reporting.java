@@ -60,6 +60,14 @@ public class Reporting {
     @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reportingNotification", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserNotification> userNotifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Task> tasks = new ArrayList<>();
+
     public enum ReportingStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
 
 }

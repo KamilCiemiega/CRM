@@ -11,5 +11,5 @@ public class TaskDTO {
     private Integer userCreatorId;
     private Integer userWorkerId;
     private Integer parentTaskId;
-    private List<Task> subTasks;
+    private List<TaskDetailsDTO> subTasksDTOs;
 }
