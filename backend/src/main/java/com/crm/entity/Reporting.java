@@ -53,7 +53,7 @@ public class Reporting {
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
-            name="reportingmessage",
+            name="reporting_message",
             joinColumns = @JoinColumn(name = "reporting_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )

@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Entity
-@Table(name = "passwordresettoken")
+@Table(name = "password_reset_token")
 @Getter
 @Setter
 @NoArgsConstructor

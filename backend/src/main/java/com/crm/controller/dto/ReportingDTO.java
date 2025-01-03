@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -19,7 +18,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ReportingDTO {
     private String topic;
-    @Enumerated(EnumType.STRING)
     private Reporting.ReportingStatus reportingStatus;
     private String description;
     private Integer companyId;

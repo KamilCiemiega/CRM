@@ -23,11 +23,11 @@ public class UserNotification {
 
     @ManyToOne
     @JoinColumn(name = "reporting_id")
-    private User reportingNotification;
+    private Reporting reportingNotification;
 
     @ManyToOne
     @JoinColumn(name = "task_id")
-    private User taskNotification;
+    private Task taskNotification;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

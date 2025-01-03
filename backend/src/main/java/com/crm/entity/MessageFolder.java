@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(
-        name = "messagefolder",
+        name = "message_folder",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "owner_user_id"})}
 )
 @Getter
@@ -37,7 +37,7 @@ public class MessageFolder {
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "messagelocation",
+            name = "message_location",
             joinColumns = @JoinColumn(name = "folder_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )

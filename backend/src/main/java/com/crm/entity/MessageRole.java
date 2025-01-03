@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name="messagerole")
+@Table(name="message_role")
 @Getter
 @Setter
 @NoArgsConstructor

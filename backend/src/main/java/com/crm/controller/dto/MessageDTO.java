@@ -24,12 +24,11 @@ public class MessageDTO {
     private String subject;
     private String body;
     private Timestamp sentDate;
-    @Enumerated(EnumType.STRING)
     private Message.Status status;
     private Long size;
     private boolean isUnlinked;
-    private List<AttachmentDTO> attachments = new ArrayList<>();
-    private List<MessageFolderDTO> messageFolders = new ArrayList<>();
-    private List<MessageRoleDTO> messageRoles = new ArrayList<>();
-    private List<Reporting> reportings = new ArrayList<>();
+    private List<AttachmentDTO> attachmentDTOs = new ArrayList<>();
+    private List<MessageFolderDTO> messageFolderDTOs = new ArrayList<>();
+    private List<MessageRoleDTO> messageRoleDTOs = new ArrayList<>();
+    private List<ReportingDTO> reportingDTOs = new ArrayList<>();
 }

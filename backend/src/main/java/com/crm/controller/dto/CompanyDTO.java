@@ -1,7 +1,5 @@
 package com.crm.controller.dto;
 
-import com.crm.entity.Client;
-import com.crm.entity.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +20,5 @@ public class CompanyDTO {
     private String phoneNumber;
     private String address;
     private Timestamp createdAt;
-    private List<Client> clients = new ArrayList<>();
+    private List<ClientDTO> clientDTOs = new ArrayList<>();
 }
