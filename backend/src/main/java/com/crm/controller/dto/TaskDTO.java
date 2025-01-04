@@ -18,10 +18,10 @@ public class TaskDTO {
     private String topic;
     private Task.TaskStatus status;
     private String description;
-    private Integer userCreatorId;
-    private Integer userWorkerId;
-    private Integer parentTaskId;
-    private List<TaskDetailsDTO> subTasksDTOs = new ArrayList<>();
-    private List<UserNotificationDTO> userNotificationDTOs = new ArrayList<>();
-    private Integer reportingId;
+    private UserDetailsDTO userTaskCreator;
+    private UserDetailsDTO userTaskWorker;
+    private TaskDetailsDTO parentTask;
+    private List<TaskDetailsDTO> subTasks = new ArrayList<>();
+    private List<UserNotificationDTO> userNotifications = new ArrayList<>();
+    private ReportingDetailsDTO reporting;
 }

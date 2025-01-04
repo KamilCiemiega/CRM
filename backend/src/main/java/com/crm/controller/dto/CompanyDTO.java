@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,6 @@ public class CompanyDTO {
     private String email;
     private String phoneNumber;
     private String address;
-    private Timestamp createdAt;
+    private OffsetDateTime createdAt;
     private List<ClientDTO> clientDTOs = new ArrayList<>();
 }

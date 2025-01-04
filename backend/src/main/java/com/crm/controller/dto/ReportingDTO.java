@@ -20,9 +20,9 @@ public class ReportingDTO {
     private String topic;
     private Reporting.ReportingStatus reportingStatus;
     private String description;
-    private Integer companyId;
-    private Integer assignedUserId;
-    private List<UserNotificationDTO> userNotificationDTOs = new ArrayList<>();
-    private List<MessageDTO> messageDTOs = new ArrayList<>();
-    private List<TaskDTO> taskDTOs = new ArrayList<>();
+    private CompanyDTO company;
+    private UserDetailsDTO user;
+    private List<UserNotificationDTO> userNotifications = new ArrayList<>();
+    private List<MessageDTO> messages = new ArrayList<>();
+    private List<TaskDetailsDTO> tasks = new ArrayList<>();
 }
