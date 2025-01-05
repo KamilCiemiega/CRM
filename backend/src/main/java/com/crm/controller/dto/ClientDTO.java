@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class ClientDTO {
     private String email;
     private String phone;
     private String address;
-    private List<UserDTO> usersDTO;
-    private Company company;
+    private CompanyDTO company;
+    private List<MessageParticipantDTO> messageParticipants = new ArrayList<>();
+    private List<ReportingDetailsDTO> reportings = new ArrayList<>();
 }

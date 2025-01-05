@@ -8,7 +8,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "message")
@@ -41,22 +43,23 @@ public class Message {
     @Column(name = "size")
     private Long size;
 
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MessageRole> messageRoles = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "messages")
     @JsonIgnore
-    private List<MessageFolder> messageFolders = new ArrayList<>();
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MessageRole> messageRoles = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "messages")
+    private Set<MessageFolder> messageFolders = new HashSet<>();
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Attachment> attachments = new ArrayList<>();
+    private Set<Attachment> attachments = new HashSet<>();
 
     @Column(name = "is_unlinked")
     private boolean isUnlinked;
 
-    @ManyToMany(mappedBy = "messages")
     @JsonIgnore
-    private List<Reporting> reportings = new ArrayList<>();
+    @ManyToMany(mappedBy = "messages")
+    private Set<Reporting> reportings = new HashSet<>();
 
     @PrePersist
     @PreUpdate

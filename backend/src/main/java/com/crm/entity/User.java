@@ -21,6 +21,7 @@ public class User {
     public User(Integer userId){
         this.id = userId;
     }
+
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
@@ -40,7 +41,6 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id")
-    @JsonIgnore
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -58,5 +58,10 @@ public class User {
     private Task taskWorker;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserNotification> userNotification = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<MessageParticipant> messageParticipants = new ArrayList<>();
 }

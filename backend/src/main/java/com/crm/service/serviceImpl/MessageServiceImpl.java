@@ -11,7 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -36,23 +39,23 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message save(Message message) {
         if (!message.getAttachments().isEmpty()) {
-            List<Attachment> attachments = message.getAttachments().stream()
+            Set<Attachment> attachments = message.getAttachments().stream()
                     .peek(attachment -> attachment.setMessage(message))
-                    .toList();
+                    .collect(Collectors.toSet());
             message.setAttachments(attachments);
         }
 
-        List<MessageFolder> messageFolders = message.getMessageFolders().stream()
+        Set<MessageFolder> messageFolders = message.getMessageFolders().stream()
                 .map(folder -> {
                     MessageFolder foundFolder = messageFolderRepository.findById(folder.getId())
                             .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folder.getId()));
                     foundFolder.getMessages().add(message);
                     return foundFolder;
                 })
-                .toList();
+                .collect(Collectors.toSet());
         message.setMessageFolders(messageFolders);
 
-        List<MessageRole> messageRoles = message.getMessageRoles().stream()
+        Set<MessageRole> messageRoles = message.getMessageRoles().stream()
                 .peek(role -> {
                     role.setMessage(message);
                     role.setStatus(role.getStatus());
@@ -63,7 +66,7 @@ public class MessageServiceImpl implements MessageService {
                         role.setParticipant(participant);
                     }
                 })
-                .toList();
+                .collect(Collectors.toSet());
         message.setMessageRoles(messageRoles);
 
         return messageRepository.save(message);
@@ -130,6 +133,11 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> findAllMessage() {
        return messageRepository.findAll();
+    }
+
+    @Override
+    public List<Message> findAllWithRelations() {
+        return  messageRepository.findAllWithRelations();
     }
 
     @Override

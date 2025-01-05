@@ -13,7 +13,9 @@ import lombok.Setter;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,8 +29,8 @@ public class MessageDTO {
     private Message.Status status;
     private Long size;
     private boolean isUnlinked;
-    private List<AttachmentDTO> attachments = new ArrayList<>();
-    private List<MessageFolderDTO> messageFolders = new ArrayList<>();
-    private List<MessageRoleDTO> messageRoles = new ArrayList<>();
-    private List<ReportingDTO> reportings = new ArrayList<>();
+    private Set<AttachmentDTO> attachments = new HashSet<>();
+    private Set<MessageFolderDTO> messageFolders = new HashSet<>();
+    private Set<MessageRoleDTO> messageRoles = new HashSet<>();
+    private Set<ReportingDetailsDTO> reportings = new HashSet<>();
 }

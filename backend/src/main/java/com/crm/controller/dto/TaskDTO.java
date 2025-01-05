@@ -1,4 +1,5 @@
 package com.crm.controller.dto;
+import com.crm.entity.Attachment;
 import com.crm.entity.Task;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,4 +25,5 @@ public class TaskDTO {
     private List<TaskDetailsDTO> subTasks = new ArrayList<>();
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
     private ReportingDetailsDTO reporting;
+    private List<AttachmentDTO> attachments = new ArrayList<>();
 }

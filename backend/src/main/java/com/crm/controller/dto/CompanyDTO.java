@@ -21,5 +21,5 @@ public class CompanyDTO {
     private String phoneNumber;
     private String address;
     private OffsetDateTime createdAt;
-    private List<ClientDTO> clientDTOs = new ArrayList<>();
+    private List<ClientDTO> clients = new ArrayList<>();
 }

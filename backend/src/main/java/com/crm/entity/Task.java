@@ -68,5 +68,10 @@ public class Task {
     @JoinColumn(name = "reporting_id")
     private Reporting reporting;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Attachment> attachments = new ArrayList<>();
+
+
     public enum TaskStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
 }

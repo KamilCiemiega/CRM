@@ -1,9 +1,7 @@
 package com.crm.controller.dto;
 
-import com.crm.entity.Message;
 import com.crm.entity.Reporting;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +15,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportingDTO {
+    @NotNull
     private String topic;
-    private Reporting.ReportingStatus reportingStatus;
+    @NotNull
+    private Reporting.ReportingStatus status;
+    @NotNull
+    private Reporting.ReportingType type;
     private String description;
-    private CompanyDTO company;
+    @NotNull
+    private ClientDTO client;
+    @NotNull
     private UserDetailsDTO user;
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
     private List<MessageDTO> messages = new ArrayList<>();
     private List<TaskDetailsDTO> tasks = new ArrayList<>();
+    private List<AttachmentDTO> attachments = new ArrayList<>();
 }

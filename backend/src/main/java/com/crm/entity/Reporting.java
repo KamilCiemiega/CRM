@@ -32,6 +32,9 @@ public class Reporting {
     @Enumerated(EnumType.STRING)
     private ReportingStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private ReportingType type;
+
     @Column(name="description")
     private String description;
 
@@ -44,8 +47,8 @@ public class Reporting {
     private Timestamp updated_at;
 
     @ManyToOne
-    @JoinColumn(name="company_id")
-    private Company company;
+    @JoinColumn(name="client_id")
+    private Client client;
 
     @ManyToOne
     @JoinColumn(name="assigned_user_id")
@@ -60,14 +63,18 @@ public class Reporting {
     @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reportingNotification", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OneToMany(mappedBy = "reportingNotification", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserNotification> userNotifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
-    public enum ReportingStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
+    @JsonIgnore
+    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments = new ArrayList<>();
 
+    public enum ReportingStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
+    public enum ReportingType {MESSAGE, PHONE, MEETING, OTHER}
 }

@@ -44,10 +44,12 @@ public class CompanyServiceImpl implements CompanyService {
         Company existingCompany = companyRepository.findById(companyId)
                 .orElseThrow(() -> new NoSuchEntityException("Company not found for ID: " + companyId));
 
-        if (updatedCompany.getName() != null) existingCompany.setName(updatedCompany.getName());
-        if (updatedCompany.getEmail() != null) existingCompany.setEmail(updatedCompany.getEmail());
-        if (updatedCompany.getPhoneNumber() != null) existingCompany.setPhoneNumber(updatedCompany.getPhoneNumber());
-        if (updatedCompany.getAddress() != null) existingCompany.setAddress(updatedCompany.getAddress());
+        Optional.ofNullable(updatedCompany.getName())
+                .ifPresent(existingCompany::setName);
+        Optional.ofNullable(updatedCompany.getEmail())
+                .ifPresent(existingCompany::setEmail);
+        existingCompany.setPhoneNumber(updatedCompany.getPhoneNumber());
+        existingCompany.setAddress(updatedCompany.getAddress());
 
         if (updatedCompany.getClients() != null) {
             List<Client> newListOfClients = new ArrayList<>();
