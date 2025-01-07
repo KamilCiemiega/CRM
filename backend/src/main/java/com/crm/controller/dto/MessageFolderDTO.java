@@ -18,10 +18,9 @@ import java.util.List;
 public class MessageFolderDTO {
     private Integer id;
     private String name;
-    private MessageFolderDTO parentFolderDTO;
-    private List<MessageFolderDTO> subFoldersDTOs = new ArrayList<>();
-    private List<MessageDTO> messagesDTOs = new ArrayList<>();
-    private UserDTO userDTO;
-    @Enumerated(EnumType.STRING)
+    private MessageFolderDTO parentFolder;
+    private List<MessageFolderDTO> subFolders = new ArrayList<>();
+    private List<MessageDTO> messages = new ArrayList<>();
+    private UserDTO user;
     private MessageFolder.FolderType folderType;
 }

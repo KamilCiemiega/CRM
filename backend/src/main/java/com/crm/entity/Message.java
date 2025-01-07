@@ -8,9 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "message")
@@ -20,7 +18,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
-    //Zaktualizowac aktualne entity oraz dodac mowa kolumne
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -45,21 +42,21 @@ public class Message {
 
     @JsonIgnore
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MessageRole> messageRoles = new HashSet<>();
+    private List<MessageRole> messageRoles = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "messages")
-    private Set<MessageFolder> messageFolders = new HashSet<>();
+    private List<MessageFolder> messageFolders = new ArrayList<>();
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Attachment> attachments = new HashSet<>();
+    private List<Attachment> attachments = new ArrayList<>();
 
     @Column(name = "is_unlinked")
     private boolean isUnlinked;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "messages")
-    private Set<Reporting> reportings = new HashSet<>();
+    private List<Reporting> reportings = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

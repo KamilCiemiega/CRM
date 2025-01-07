@@ -1,9 +1,12 @@
 package com.crm.controller.dto;
 
+import com.crm.entity.MessageParticipant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 
 @Getter
@@ -12,7 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MessageParticipantDTO {
     private Integer id;
-    private Integer messageId;
-    private Integer userId;
-    private String role;
+    private MessageParticipant.ParticipantType type;
+    private ClientDTO client;
+    private UserDetailsDTO user;
+    private List<MessageRoleDTO> messageRole;
 }

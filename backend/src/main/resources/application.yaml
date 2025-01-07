@@ -15,13 +15,12 @@ spring:
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   jpa:
     show-sql: true
-    open-in-view: false
     properties:
       hibernate:
         globally_quoted_identifiers: true
         format_sql: true
         use_sql_comments: true
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         ddl-auto: update
 server:
   port: 8082

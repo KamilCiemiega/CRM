@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -17,5 +19,5 @@ import java.util.Set;
 public class RoleDTO {
     private Integer id;
     private Role.RoleType roleType;
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 }

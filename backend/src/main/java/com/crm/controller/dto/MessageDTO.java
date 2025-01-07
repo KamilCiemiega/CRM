@@ -29,8 +29,8 @@ public class MessageDTO {
     private Message.Status status;
     private Long size;
     private boolean isUnlinked;
-    private Set<AttachmentDTO> attachments = new HashSet<>();
-    private Set<MessageFolderDTO> messageFolders = new HashSet<>();
-    private Set<MessageRoleDTO> messageRoles = new HashSet<>();
-    private Set<ReportingDetailsDTO> reportings = new HashSet<>();
+    private List<AttachmentDTO> attachments = new ArrayList<>();
+    private List<MessageFolderDTO> messageFolders = new ArrayList<>();
+    private List<MessageRoleDTO> messageRoles = new ArrayList<>();
+    private List<ReportingDetailsDTO> reportings = new ArrayList<>();
 }

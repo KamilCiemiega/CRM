@@ -1,12 +1,15 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,7 +28,8 @@ public class Role {
     private RoleType roleType;
 
     @OneToMany(mappedBy = "role")
-    private Set<User> users = new HashSet<>();
+    @JsonIgnore
+    private List<User> users = new ArrayList<>();
 
     public enum RoleType { ADMIN, USER}
 }

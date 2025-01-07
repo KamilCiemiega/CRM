@@ -10,7 +10,6 @@ import java.util.Optional;
 public interface MessageService {
     Message save(Message message);
     List<Message> findAllMessage();
-    List<Message> findAllWithRelations();
     Message updateMessage(int messageId, Message message);
     Message deleteMessage(int messageId);
     List<Message> getSortedMessages(int folderId, MessageSortType sortType, String orderType);

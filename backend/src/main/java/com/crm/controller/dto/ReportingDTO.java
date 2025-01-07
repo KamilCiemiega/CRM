@@ -1,6 +1,7 @@
 package com.crm.controller.dto;
 
 import com.crm.entity.Reporting;
+import com.crm.entity.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class ReportingDTO {
     @NotNull
     private ClientDTO client;
     @NotNull
-    private UserDetailsDTO user;
+    private UserDTO user;
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
     private List<MessageDTO> messages = new ArrayList<>();
     private List<TaskDetailsDTO> tasks = new ArrayList<>();

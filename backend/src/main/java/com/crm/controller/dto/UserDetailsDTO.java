@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDetailsDTO extends UserDTO{
+    private RoleDTO role;
     private List<MessageFolderDTO> messageFolders = new ArrayList<>();
     private List<ReportingDetailsDTO> reportings = new ArrayList<>();
     private TaskDetailsDTO taskCreator;

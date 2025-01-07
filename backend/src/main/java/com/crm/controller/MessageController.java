@@ -26,7 +26,7 @@ public class MessageController {
 
     @GetMapping
     public ResponseEntity<List<MessageDTO>> getAllMessages() {
-        List<MessageDTO> listOfMessage = messageService.findAllWithRelations()
+        List<MessageDTO> listOfMessage = messageService.findAllMessage()
                 .stream()
                 .map(m -> modelMapper.map(m, MessageDTO.class))
                 .toList();

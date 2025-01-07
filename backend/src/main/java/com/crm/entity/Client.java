@@ -1,5 +1,6 @@
 package com.crm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class Client {
 
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
+    @JsonBackReference
     private Company company;
 
     @JsonIgnore

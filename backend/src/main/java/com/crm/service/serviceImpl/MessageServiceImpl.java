@@ -39,23 +39,23 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message save(Message message) {
         if (!message.getAttachments().isEmpty()) {
-            Set<Attachment> attachments = message.getAttachments().stream()
+            List<Attachment> attachments = message.getAttachments().stream()
                     .peek(attachment -> attachment.setMessage(message))
-                    .collect(Collectors.toSet());
+                    .toList();
             message.setAttachments(attachments);
         }
 
-        Set<MessageFolder> messageFolders = message.getMessageFolders().stream()
+        List<MessageFolder> messageFolders = message.getMessageFolders().stream()
                 .map(folder -> {
                     MessageFolder foundFolder = messageFolderRepository.findById(folder.getId())
                             .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folder.getId()));
                     foundFolder.getMessages().add(message);
                     return foundFolder;
                 })
-                .collect(Collectors.toSet());
+                .toList();
         message.setMessageFolders(messageFolders);
 
-        Set<MessageRole> messageRoles = message.getMessageRoles().stream()
+        List<MessageRole> messageRoles = message.getMessageRoles().stream()
                 .peek(role -> {
                     role.setMessage(message);
                     role.setStatus(role.getStatus());
@@ -66,7 +66,7 @@ public class MessageServiceImpl implements MessageService {
                         role.setParticipant(participant);
                     }
                 })
-                .collect(Collectors.toSet());
+                .toList();
         message.setMessageRoles(messageRoles);
 
         return messageRepository.save(message);
@@ -133,11 +133,6 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> findAllMessage() {
        return messageRepository.findAll();
-    }
-
-    @Override
-    public List<Message> findAllWithRelations() {
-        return  messageRepository.findAllWithRelations();
     }
 
     @Override

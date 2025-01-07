@@ -1,6 +1,7 @@
 package com.crm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,6 +40,6 @@ public class Company {
     private Timestamp createdAt;
 
     @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonIgnore
+    @JsonManagedReference
     private List<Client> clients = new ArrayList<>();
 }
