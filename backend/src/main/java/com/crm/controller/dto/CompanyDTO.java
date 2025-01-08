@@ -22,6 +22,9 @@ public class CompanyDTO {
     private String phoneNumber;
     private String address;
     private Timestamp createdAt;
+<<<<<<< HEAD
     @JsonIgnore
+=======
+>>>>>>> 9421af8 (mostly working on TicketService save method)
     private List<ClientDTO> clients = new ArrayList<>();
 }

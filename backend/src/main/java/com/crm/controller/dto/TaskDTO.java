@@ -17,7 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 public class TaskDTO {
     private String topic;
+<<<<<<< HEAD
     private Task.TaskStatus status;
+=======
+    private String status;
+>>>>>>> 9421af8 (mostly working on TicketService save method)
     private String description;
     private UserDetailsDTO userTaskCreator;
     private UserDetailsDTO userTaskWorker;
@@ -26,4 +30,8 @@ public class TaskDTO {
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
     private ReportingDetailsDTO reporting;
     private List<AttachmentDTO> attachments = new ArrayList<>();
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9421af8 (mostly working on TicketService save method)

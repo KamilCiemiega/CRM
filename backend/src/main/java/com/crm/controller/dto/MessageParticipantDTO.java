@@ -15,8 +15,14 @@ import java.util.List;
 @AllArgsConstructor
 public class MessageParticipantDTO {
     private Integer id;
+<<<<<<< HEAD
     private MessageParticipant.ParticipantType type;
     private ClientDTO client;
     private UserDetailsDTO user;
     private List<MessageRoleDTO> messageRole;
+=======
+    private Integer userId;
+    private Integer clientId;
+    private MessageParticipant.ParticipantType type;
+>>>>>>> 9421af8 (mostly working on TicketService save method)
 }

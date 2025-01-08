@@ -15,8 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MessageRoleDTO {
     private Integer id;
-    @Enumerated(EnumType.STRING)
     private MessageRole.RoleStatus status;
     private Integer participantId;
     private String email;
+    private MessageParticipantDTO messageParticipant;
 }

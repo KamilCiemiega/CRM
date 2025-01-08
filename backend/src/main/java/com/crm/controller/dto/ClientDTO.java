@@ -20,7 +20,12 @@ public class ClientDTO {
     private String email;
     private String phone;
     private String address;
+<<<<<<< HEAD
     private CompanyDTO company;
     private List<MessageParticipantDTO> messageParticipants = new ArrayList<>();
     private List<ReportingDetailsDTO> reportings = new ArrayList<>();
+=======
+    private Company company;
+    private List<TicketDTO> ticket = new ArrayList<>();
+>>>>>>> 9421af8 (mostly working on TicketService save method)
 }

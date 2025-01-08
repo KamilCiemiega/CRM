@@ -24,6 +24,19 @@ public class ModelMapperConfig {
         modelMapper.addConverter(timestampToOffsetDateTimeConverter());
         modelMapper.addConverter(offsetDateTimeToTimestampConverter());
 
+<<<<<<< HEAD
+=======
+        Converter<Enum<?>, String> enumToStringConverter = new Converter<Enum<?>, String>() {
+            @Override
+            public String convert(MappingContext<Enum<?>, String> context) {
+                return context.getSource() != null ? context.getSource().name() : null;
+            }
+        };
+
+        modelMapper.addConverter(enumToStringConverter);
+        modelMapper.addConverter(longToOffsetDateTimeConverter);
+
+>>>>>>> 9421af8 (mostly working on TicketService save method)
         return modelMapper;
     }
 
