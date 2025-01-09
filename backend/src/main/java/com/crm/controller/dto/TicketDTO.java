@@ -33,5 +33,5 @@ public class TicketDTO {
     private List<AttachmentDTO> attachments = new ArrayList<>();
     private List<MessageDTO> messages = new ArrayList<>();
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
-//    private List<TaskDetailsDTO> tasks = new ArrayList<>();
+    private List<TaskDTO> tasks = new ArrayList<>();
 }

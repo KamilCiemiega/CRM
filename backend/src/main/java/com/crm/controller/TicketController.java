@@ -38,12 +38,16 @@ public class TicketController {
     }
 
     @PostMapping()
-    public ResponseEntity<TicketDTO> saveNewReport(@RequestBody TicketDTO ticketDTO){
+    public ResponseEntity<TicketDTO> saveNewTicket(@RequestBody TicketDTO ticketDTO){
         Ticket ticket = modelMapper.map(ticketDTO, Ticket.class);
         Ticket savedTicket = ticketService.save(ticket);
 
-        logger.debug(savedTicket.toString());
-
         return ok(modelMapper.map(savedTicket, TicketDTO.class));
+    }
+
+    @PostMapping("/{ticket-id}")
+    public ResponseEntity<TicketDTO> updateTicket(@PathVariable("ticket-id") int ticketId, @RequestBody TicketDTO ticketDTO){
+        Ticket updatedTicket = ticketService.updateTicket(ticketId, modelMapper.map(ticketDTO, Ticket.class));
+        return ok(modelMapper.map(updatedTicket, TicketDTO.class));
     }
 }

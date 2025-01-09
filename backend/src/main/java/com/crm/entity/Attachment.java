@@ -32,10 +32,10 @@ public class Attachment {
     @ManyToOne
     @JoinColumn(name="ticket_id")
     private Ticket ticket;
-//
-//    @ManyToOne
-//    @JoinColumn(name="task_id")
-//    private Task task;
+
+    @ManyToOne
+    @JoinColumn(name="task_id")
+    private Task task;
 
     public enum Type {MESSAGE, TICKET, TASK}
 }

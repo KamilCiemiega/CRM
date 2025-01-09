@@ -40,6 +40,6 @@ public class Company {
     private Timestamp createdAt;
 
     @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonManagedReference
+    @JsonIgnore
     private List<Client> clients = new ArrayList<>();
 }

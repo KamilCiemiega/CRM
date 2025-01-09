@@ -1,5 +1,6 @@
 package com.crm.controller.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AttachmentDTO {
     private Integer id;
+    @NotNull
     private String type;
+    @NotNull
     private String filePath;
+    private Integer messageId;
     private Integer ticketId;
-//    private TaskDetailsDTO task;
+    private Integer taskId;
 }

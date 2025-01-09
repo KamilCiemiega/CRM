@@ -20,15 +20,17 @@ public class TicketServiceImpl implements TicketService {
     private final UserRepository userRepository;
     private final UserNotificationRepository userNotificationRepository;
     private final AttachmentRepository attachmentRepository;
+    private final TaskRepository taskRepository;
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TicketServiceImpl.class);
 
-    public TicketServiceImpl(TicketRepository ticketRepository, MessageRepository messageRepository, ClientRepository clientRepository, UserRepository userRepository, UserNotificationRepository userNotificationRepository, AttachmentRepository attachmentRepository) {
+    public TicketServiceImpl(TicketRepository ticketRepository, MessageRepository messageRepository, ClientRepository clientRepository, UserRepository userRepository, UserNotificationRepository userNotificationRepository, AttachmentRepository attachmentRepository, TaskRepository taskRepository) {
         this.ticketRepository = ticketRepository;
         this.messageRepository = messageRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
         this.userNotificationRepository = userNotificationRepository;
         this.attachmentRepository = attachmentRepository;
+        this.taskRepository = taskRepository;
     }
 
     private <T> T findEntity(JpaRepository<T, Integer> repository, int entityId, String entityName){
@@ -86,6 +88,20 @@ public class TicketServiceImpl implements TicketService {
                     .forEach(notification -> notification.setTicketNotification(ticket));
         }
 
+//        if (!ticket.getTasks().isEmpty()){
+//           List<Task> taskList = ticket.getTasks().stream()
+//                    .peek(task -> {
+//                       User taskCreator = findEntity(userRepository,task.getUserTaskCreator().getId(), "Task creator");
+//                       task.setUserTaskCreator(taskCreator);
+//                       User taskWorker = findEntity(userRepository,task.getUserTaskWorker().getId(), "Task worker");
+//                       task.setUserTaskWorker(taskWorker);
+//                       task.setTicket(ticket);
+//                    })
+//                    .toList();
+//           ticket.getTasks().clear();
+//           ticket.setTasks(taskList);
+//        }
+
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");
         ticket.setClient(existingClient);
 
@@ -93,6 +109,12 @@ public class TicketServiceImpl implements TicketService {
         ticket.setUser(existingUser);
 
         return ticketRepository.save(ticket);
+    }
+
+    @Transactional
+    @Override
+    public Ticket updateTicket(int ticketId, Ticket ticket) {
+        return null;
     }
 
 }
