@@ -21,6 +21,5 @@ public class ClientDTO {
     private String phone;
     private String address;
     private CompanyDTO company;
-    private List<MessageParticipantDTO> messageParticipants = new ArrayList<>();
-    private List<ReportingDetailsDTO> reportings = new ArrayList<>();
+    private List<TicketDTO> ticket = new ArrayList<>();
 }

@@ -22,17 +22,16 @@ public class UserNotification {
     private NotificationType type;
 
     @ManyToOne
-    @JoinColumn(name = "reporting_id")
-    private Reporting reportingNotification;
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticketNotification;
 
-    @ManyToOne
-    @JoinColumn(name = "task_id")
-    private Task taskNotification;
+//    @ManyToOne
+//    @JoinColumn(name = "task_id")
+//    private Task taskNotification;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    public enum NotificationType {TASK, REPORTING}
+    public enum NotificationType {TASK, TICKET}
 
 }

@@ -1,7 +1,5 @@
 package com.crm.service;
 
-import com.crm.controller.dto.NewUserDTO;
-import com.crm.controller.dto.UserDTO;
 import com.crm.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;

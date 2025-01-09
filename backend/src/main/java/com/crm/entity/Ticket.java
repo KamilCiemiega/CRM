@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="reporting")
+@Table(name="ticket")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reporting {
+public class Ticket {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
@@ -30,10 +30,10 @@ public class Reporting {
     private String topic;
 
     @Enumerated(EnumType.STRING)
-    private ReportingStatus status;
+    private TicketStatus status;
 
     @Enumerated(EnumType.STRING)
-    private ReportingType type;
+    private TicketType type;
 
     @Column(name="description")
     private String description;
@@ -56,25 +56,24 @@ public class Reporting {
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
-            name="reporting_message",
-            joinColumns = @JoinColumn(name = "reporting_id"),
+            name="ticket_message",
+            joinColumns = @JoinColumn(name = "ticket_id"),
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
-    @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "reportingNotification", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ticketNotification", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserNotification> userNotifications = new ArrayList<>();
+//
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Task> tasks = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> tasks = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "reporting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attachment> attachments = new ArrayList<>();
 
-    public enum ReportingStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
-    public enum ReportingType {MESSAGE, PHONE, MEETING, OTHER}
+    public enum TicketStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
+    public enum TicketType {MESSAGE, PHONE, MEETING, OTHER}
 }

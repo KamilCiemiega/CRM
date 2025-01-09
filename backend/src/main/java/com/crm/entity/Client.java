@@ -1,6 +1,5 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,14 +39,9 @@ public class Client {
 
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
-    @JsonBackReference
     private Company company;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reporting> reportings = new ArrayList<>();
-
     @JsonIgnore
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MessageParticipant> messageParticipants = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();
 }

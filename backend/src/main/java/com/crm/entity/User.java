@@ -43,25 +43,23 @@ public class User {
     @JoinColumn(name="role_id")
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<MessageFolder> messageFolders = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<MessageFolder> messageFolders;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Reporting> reportings = new ArrayList<>();
-
-    @OneToOne(mappedBy = "userTaskCreator", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Task taskCreator;
-
-    @OneToOne(mappedBy = "userTaskWorker", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Task taskWorker;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<UserNotification> userNotification = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<MessageParticipant> messageParticipants = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private  List<UserNotification> userNotifications = new ArrayList<>();
+
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Task> taskWorkers = new ArrayList<>();
+//
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Task> taskCreas = new ArrayList<>();
 }

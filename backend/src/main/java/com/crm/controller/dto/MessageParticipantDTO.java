@@ -15,8 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MessageParticipantDTO {
     private Integer id;
-    private MessageParticipant.ParticipantType type;
-    private ClientDTO client;
-    private UserDetailsDTO user;
-    private List<MessageRoleDTO> messageRole;
+    private Integer userId;
+    private Integer clientId;
+    private String type;
 }

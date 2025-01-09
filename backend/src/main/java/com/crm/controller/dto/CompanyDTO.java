@@ -22,6 +22,5 @@ public class CompanyDTO {
     private String phoneNumber;
     private String address;
     private Timestamp createdAt;
-    @JsonIgnore
     private List<ClientDTO> clients = new ArrayList<>();
 }

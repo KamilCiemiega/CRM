@@ -1,6 +1,5 @@
 package com.crm.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Attachment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -30,12 +30,12 @@ public class Attachment {
     private Message message;
 
     @ManyToOne
-    @JoinColumn(name="reporting_id")
-    private Reporting reporting;
+    @JoinColumn(name="ticket_id")
+    private Ticket ticket;
+//
+//    @ManyToOne
+//    @JoinColumn(name="task_id")
+//    private Task task;
 
-    @ManyToOne
-    @JoinColumn(name="task_id")
-    private Task task;
-
-    public enum Type {MESSAGE, REPORTING, TASK}
+    public enum Type {MESSAGE, TICKET, TASK}
 }

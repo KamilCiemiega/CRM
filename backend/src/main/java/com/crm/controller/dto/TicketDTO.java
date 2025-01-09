@@ -1,13 +1,13 @@
 package com.crm.controller.dto;
 
-import com.crm.entity.Reporting;
-import com.crm.entity.User;
+import com.crm.entity.Ticket;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,20 +15,23 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportingDTO {
+public class TicketDTO {
+    private Integer id;
     @NotNull
     private String topic;
     @NotNull
-    private Reporting.ReportingStatus status;
+    private String status;
     @NotNull
-    private Reporting.ReportingType type;
+    private String type;
     private String description;
+    private Timestamp created_at;
+    private Timestamp updated_at;
     @NotNull
-    private ClientDTO client;
+    private Integer clientId;
     @NotNull
-    private UserDTO user;
-    private List<UserNotificationDTO> userNotifications = new ArrayList<>();
-    private List<MessageDTO> messages = new ArrayList<>();
-    private List<TaskDetailsDTO> tasks = new ArrayList<>();
+    private Integer userId;
     private List<AttachmentDTO> attachments = new ArrayList<>();
+    private List<MessageDTO> messages = new ArrayList<>();
+    private List<UserNotificationDTO> userNotifications = new ArrayList<>();
+//    private List<TaskDetailsDTO> tasks = new ArrayList<>();
 }
