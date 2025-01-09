@@ -65,22 +65,12 @@ public class Task {
     private List<UserNotification> userNotifications = new ArrayList<>();
 
     @ManyToOne
-<<<<<<< HEAD
-    @JoinColumn(name = "reporting_id")
-    private Reporting reporting;
-=======
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
->>>>>>> 9421af8 (mostly working on TicketService save method)
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Attachment> attachments = new ArrayList<>();
 
-
     public enum TaskStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 9421af8 (mostly working on TicketService save method)

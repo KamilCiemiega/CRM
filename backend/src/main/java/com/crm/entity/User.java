@@ -43,29 +43,6 @@ public class User {
     @JoinColumn(name="role_id")
     private Role role;
 
-<<<<<<< HEAD
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<MessageFolder> messageFolders = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Reporting> reportings = new ArrayList<>();
-
-    @OneToOne(mappedBy = "userTaskCreator", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Task taskCreator;
-
-    @OneToOne(mappedBy = "userTaskWorker", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Task taskWorker;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<UserNotification> userNotification = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<MessageParticipant> messageParticipants = new ArrayList<>();
-=======
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<MessageFolder> messageFolders;
@@ -85,6 +62,4 @@ public class User {
 //    @JsonIgnore
 //    @OneToMany(mappedBy = "", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Task> taskCreas = new ArrayList<>();
-
->>>>>>> 9421af8 (mostly working on TicketService save method)
 }

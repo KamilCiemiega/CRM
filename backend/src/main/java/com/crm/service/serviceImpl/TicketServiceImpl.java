@@ -1,11 +1,9 @@
 package com.crm.service.serviceImpl;
 
-import com.crm.controller.TicketController;
 import com.crm.dao.*;
 import com.crm.entity.*;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.TicketService;
-import jakarta.persistence.Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -2,6 +2,9 @@ package com.crm.controller.dto;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,4 +15,6 @@ public class UserDTO {
     private String lastName;
     private String email;
     private RoleDTO roleDTO;
+    private List<TicketDTO> tickets = new ArrayList<>();
+    private List<UserNotificationDTO> userNotifications = new ArrayList<>();
 }

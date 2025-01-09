@@ -1,9 +1,5 @@
 package com.crm.entity;
 
-<<<<<<< HEAD
-import com.fasterxml.jackson.annotation.JsonBackReference;
-=======
->>>>>>> 9421af8 (mostly working on TicketService save method)
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -43,20 +39,9 @@ public class Client {
 
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
-    @JsonBackReference
     private Company company;
 
-<<<<<<< HEAD
-    @JsonIgnore
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reporting> reportings = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MessageParticipant> messageParticipants = new ArrayList<>();
-=======
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Ticket> tickets = new ArrayList<>();
->>>>>>> 9421af8 (mostly working on TicketService save method)
 }

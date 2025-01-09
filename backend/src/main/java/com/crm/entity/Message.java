@@ -54,14 +54,8 @@ public class Message {
     @Column(name = "is_unlinked")
     private boolean isUnlinked;
 
-<<<<<<< HEAD
-    @JsonIgnore
-    @ManyToMany(mappedBy = "messages")
-    private List<Reporting> reportings = new ArrayList<>();
-=======
     @ManyToMany(mappedBy = "messages")
     private List<Ticket> tickets = new ArrayList<>();
->>>>>>> 9421af8 (mostly working on TicketService save method)
 
     @PrePersist
     @PreUpdate
