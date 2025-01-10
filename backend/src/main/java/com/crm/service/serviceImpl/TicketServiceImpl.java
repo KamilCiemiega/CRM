@@ -3,16 +3,19 @@ package com.crm.service.serviceImpl;
 import com.crm.dao.*;
 import com.crm.entity.*;
 import com.crm.exception.NoSuchEntityException;
+import com.crm.service.EntityFinder;
 import com.crm.service.TicketService;
+import jakarta.persistence.Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
-public class TicketServiceImpl implements TicketService {
+public class TicketServiceImpl implements TicketService, EntityFinder {
 
     private final TicketRepository ticketRepository;
     private final MessageRepository messageRepository;
@@ -33,32 +36,6 @@ public class TicketServiceImpl implements TicketService {
         this.taskRepository = taskRepository;
     }
 
-    private <T> T findEntity(JpaRepository<T, Integer> repository, int entityId, String entityName){
-        return repository.findById(entityId)
-                .orElseThrow(() -> new NoSuchEntityException(entityName + " not found for ID: " + entityId));
-    }
-
-    private <T> List<T> findEntities(List<T> entities, JpaRepository<T, Integer> repository, String entityName) {
-        List<T> foundEntities = new ArrayList<>();
-        for (T entity : entities) {
-            Integer id = extractId(entity);
-            T foundEntity = findEntity(repository, id, entityName);
-            foundEntities.add(foundEntity);
-        }
-        return foundEntities;
-    }
-
-    private Integer extractId(Object entity) {
-        if (entity instanceof Message) {
-            return ((Message) entity).getId();
-        } else if (entity instanceof UserNotification) {
-            return ((UserNotification) entity).getId();
-        } else if (entity instanceof Attachment) {
-            return ((Attachment) entity).getId();
-        }
-        throw new IllegalArgumentException("Unknown entity type");
-    }
-
     @Override
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
@@ -67,12 +44,12 @@ public class TicketServiceImpl implements TicketService {
     @Transactional
     @Override
     public Ticket save(Ticket ticket) {
-        if(ticketRepository.existsByTopic(ticket.getTopic())){
+        if (ticketRepository.existsByTopic(ticket.getTopic())) {
             throw new IllegalArgumentException("Topic must be unique. Value already exists: " + ticket.getTopic());
         }
 
         if (!ticket.getMessages().isEmpty()) {
-           List<Message> messages = findEntities(ticket.getMessages(), messageRepository, "Message");
+            List<Message> messages = findEntities(ticket.getMessages(), messageRepository, "Message");
             ticket.setMessages(messages);
         }
 
@@ -88,19 +65,16 @@ public class TicketServiceImpl implements TicketService {
                     .forEach(notification -> notification.setTicketNotification(ticket));
         }
 
-//        if (!ticket.getTasks().isEmpty()){
-//           List<Task> taskList = ticket.getTasks().stream()
-//                    .peek(task -> {
-//                       User taskCreator = findEntity(userRepository,task.getUserTaskCreator().getId(), "Task creator");
-//                       task.setUserTaskCreator(taskCreator);
-//                       User taskWorker = findEntity(userRepository,task.getUserTaskWorker().getId(), "Task worker");
-//                       task.setUserTaskWorker(taskWorker);
-//                       task.setTicket(ticket);
-//                    })
-//                    .toList();
-//           ticket.getTasks().clear();
-//           ticket.setTasks(taskList);
-//        }
+        if (!ticket.getTasks().isEmpty()) {
+            ticket.getTasks().stream()
+                    .peek(task -> {
+                      User userTaskWorker = findEntity(userRepository,task.getUserTaskWorker().getId(), "Working user on task");
+                      User userTaskCreator = findEntity(userRepository,task.getUserTaskWorker().getId(), "Task creator user");
+                      task.setUserTaskCreator(userTaskCreator);
+                      task.setUserTaskWorker(userTaskWorker);
+                    })
+                    .forEach(task -> task.setTicket(ticket));
+        }
 
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");
         ticket.setClient(existingClient);
@@ -113,8 +87,42 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public Ticket updateTicket(int ticketId, Ticket ticket) {
-        return null;
+    public Ticket updateTicket(Integer ticketId, Ticket updatedTicket) {
+        Ticket existingTicket = findEntity(ticketRepository, ticketId, "Ticket");
+
+        existingTicket.setTopic(updatedTicket.getTopic());
+        existingTicket.setStatus(updatedTicket.getStatus());
+        existingTicket.setType(updatedTicket.getType());
+        existingTicket.setDescription(updatedTicket.getDescription());
+
+        if (updatedTicket.getClient() != null) {
+            Client client = findEntity(clientRepository, updatedTicket.getClient().getId(), "Client");
+            existingTicket.setClient(client);
+        }
+        if (updatedTicket.getUser() != null) {
+            User user = findEntity(userRepository, updatedTicket.getUser().getId(), "User");
+            existingTicket.setUser(user);
+        }
+
+        existingTicket.setMessages(findEntities(updatedTicket.getMessages(), messageRepository, "Message"));
+
+        existingTicket.setTasks(updatedTicket.getTasks().stream()
+                .peek(task -> task.setTicket(existingTicket))
+                .toList());
+
+        existingTicket.setUserNotifications(updatedTicket.getUserNotifications().stream()
+                .peek(notification -> {
+                    User user = findEntity(userRepository, notification.getUser().getId(), "User");
+                    notification.setUser(user);
+                    notification.setTicketNotification(existingTicket);
+                })
+                .toList());
+
+        existingTicket.setAttachments(updatedTicket.getAttachments().stream()
+                .peek(attachment -> attachment.setTicket(existingTicket))
+                .toList());
+
+        return ticketRepository.save(existingTicket);
     }
 
 }

@@ -1,11 +1,19 @@
 package com.crm.controller.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskDTO {
     private Integer id;
     @NotNull
@@ -16,9 +24,9 @@ public class TaskDTO {
     private Timestamp created_at;
     private Timestamp updated_at;
     @NotNull
-    private Integer taskCreatorId;
+    private UserDTO userTaskCreator;
     @NotNull
-    private Integer taskWorkerId;
+    private UserDTO userTaskWorker;
     private TaskDTO parentTask;
     private Integer ticketId;
     private List<TaskDTO> subTasks = new ArrayList<>();

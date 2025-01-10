@@ -33,5 +33,4 @@ public class UserNotification {
     @JoinColumn(name = "user_id")
     private User user;
     public enum NotificationType {TASK, TICKET}
-
 }

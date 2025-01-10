@@ -15,8 +15,8 @@ public class UserDTO {
     private String lastName;
     private String email;
     private RoleDTO roleDTO;
-    private Integer workingTaskId;
-    private Integer createdTaskId;
+    private TaskDTO workingTask;
+    private TaskDTO createdTask;
     private List<TicketDTO> tickets = new ArrayList<>();
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
 }
