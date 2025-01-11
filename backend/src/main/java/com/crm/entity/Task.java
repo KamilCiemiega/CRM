@@ -44,8 +44,8 @@ public class Task {
     @Column(name="updated_at")
     private Timestamp updated_at;
 
-    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "task_creator_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "task_creator_id")
     private User userTaskCreator;
 
     @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})

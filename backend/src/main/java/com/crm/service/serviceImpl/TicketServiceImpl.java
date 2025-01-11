@@ -4,8 +4,10 @@ import com.crm.dao.*;
 import com.crm.entity.*;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.EntityFinder;
+import com.crm.service.TaskService;
 import com.crm.service.TicketService;
 import jakarta.persistence.Entity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +26,11 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
     private final UserNotificationRepository userNotificationRepository;
     private final AttachmentRepository attachmentRepository;
     private final TaskRepository taskRepository;
+    private final TaskService taskService;
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TicketServiceImpl.class);
 
-    public TicketServiceImpl(TicketRepository ticketRepository, MessageRepository messageRepository, ClientRepository clientRepository, UserRepository userRepository, UserNotificationRepository userNotificationRepository, AttachmentRepository attachmentRepository, TaskRepository taskRepository) {
+    @Autowired
+    public TicketServiceImpl(TicketRepository ticketRepository, MessageRepository messageRepository, ClientRepository clientRepository, UserRepository userRepository, UserNotificationRepository userNotificationRepository, AttachmentRepository attachmentRepository, TaskRepository taskRepository, TaskService taskService) {
         this.ticketRepository = ticketRepository;
         this.messageRepository = messageRepository;
         this.clientRepository = clientRepository;
@@ -34,6 +38,7 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         this.userNotificationRepository = userNotificationRepository;
         this.attachmentRepository = attachmentRepository;
         this.taskRepository = taskRepository;
+        this.taskService = taskService;
     }
 
     @Override
@@ -56,6 +61,7 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         if (!ticket.getAttachments().isEmpty()) {
             ticket.getAttachments().forEach(attachment -> attachment.setTicket(ticket));
         }
+
         if (!ticket.getUserNotifications().isEmpty()) {
             ticket.getUserNotifications().stream()
                     .peek(notification -> {
@@ -64,16 +70,14 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
                     })
                     .forEach(notification -> notification.setTicketNotification(ticket));
         }
-
         if (!ticket.getTasks().isEmpty()) {
-            ticket.getTasks().stream()
-                    .peek(task -> {
-                      User userTaskWorker = findEntity(userRepository,task.getUserTaskWorker().getId(), "Working user on task");
-                      User userTaskCreator = findEntity(userRepository,task.getUserTaskWorker().getId(), "Task creator user");
-                      task.setUserTaskCreator(userTaskCreator);
-                      task.setUserTaskWorker(userTaskWorker);
+            List<Task> processedTasks = ticket.getTasks().stream()
+                    .map(task -> {
+                        task.setTicket(ticket);
+                        return taskService.save(task);
                     })
-                    .forEach(task -> task.setTicket(ticket));
+                    .toList();
+            ticket.setTasks(processedTasks);
         }
 
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");

@@ -24,9 +24,9 @@ public class TaskDTO {
     private Timestamp created_at;
     private Timestamp updated_at;
     @NotNull
-    private UserDTO userTaskCreator;
+    private SimpleUserDTO userTaskCreator;
     @NotNull
-    private UserDTO userTaskWorker;
+    private SimpleUserDTO userTaskWorker;
     private TaskDTO parentTask;
     private Integer ticketId;
     private List<TaskDTO> subTasks = new ArrayList<>();
