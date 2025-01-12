@@ -70,15 +70,6 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
                     })
                     .forEach(notification -> notification.setTicketNotification(ticket));
         }
-        if (!ticket.getTasks().isEmpty()) {
-            List<Task> processedTasks = ticket.getTasks().stream()
-                    .map(task -> {
-                        task.setTicket(ticket);
-                        return taskService.save(task);
-                    })
-                    .toList();
-            ticket.setTasks(processedTasks);
-        }
 
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");
         ticket.setClient(existingClient);

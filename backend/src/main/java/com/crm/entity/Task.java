@@ -48,9 +48,9 @@ public class Task {
     @JoinColumn(name = "task_creator_id")
     private User userTaskCreator;
 
-    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "task_worker_id", referencedColumnName = "id")
-    private User userTaskWorker;
+    @ManyToOne
+    @JoinColumn(name = "assigned_user_id")
+    private User assignedUserTask;
 
     @ManyToOne
     @JoinColumn(name = "parent_task_id")
@@ -72,5 +72,5 @@ public class Task {
     @JsonIgnore
     private List<Attachment> attachments = new ArrayList<>();
 
-    public enum TaskStatus {PENDING, IN_PROGRESS, COMPLETED, CANCELED}
+    public enum TaskStatus {HOLD,CREATED, IN_PROGRESS, COMPLETED, CANCELED}
 }

@@ -1,7 +1,7 @@
 package com.crm.controller;
 
-import com.crm.controller.dto.MessageDTO;
-import com.crm.controller.dto.MessageFolderDTO;
+import com.crm.controller.dto.message.MessageDTO;
+import com.crm.controller.dto.message.MessageFolderDTO;
 import com.crm.entity.Message;
 import com.crm.entity.MessageFolder;
 import com.crm.service.MessageFolderService;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/message-folders")

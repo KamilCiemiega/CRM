@@ -1,9 +1,8 @@
 package com.crm.controller;
 
 import com.crm.controller.dto.ClientDTO;
-import com.crm.controller.dto.MessageParticipantDTO;
-import com.crm.controller.dto.MessageRoleDTO;
-import com.crm.controller.dto.UserDTO;
+import com.crm.controller.dto.message.MessageParticipantDTO;
+import com.crm.controller.dto.user.UserDTO;
 import com.crm.entity.Client;
 import com.crm.entity.MessageParticipant;
 import com.crm.entity.User;

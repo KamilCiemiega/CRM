@@ -1,29 +1,22 @@
 package com.crm.controller;
 
-import com.crm.controller.dto.NewUserDTO;
-import com.crm.controller.dto.UserDTO;
+import com.crm.controller.dto.user.NewUserDTO;
+import com.crm.controller.dto.user.UserDTO;
 import com.crm.entity.User;
-import com.crm.service.PasswordResetTokenService;
 import com.crm.service.UserService;
 import com.crm.utils.PasswordRequestUtil;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")

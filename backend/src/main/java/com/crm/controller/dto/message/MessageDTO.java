@@ -1,5 +1,6 @@
-package com.crm.controller.dto;
+package com.crm.controller.dto.message;
 
+import com.crm.controller.dto.AttachmentDTO;
 import com.crm.entity.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

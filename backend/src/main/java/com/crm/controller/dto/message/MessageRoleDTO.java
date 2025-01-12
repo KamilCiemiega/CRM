@@ -1,9 +1,7 @@
-package com.crm.controller.dto;
+package com.crm.controller.dto.message;
 
 
 import com.crm.entity.MessageRole;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -32,7 +32,6 @@ public class TicketController {
         List<TicketDTO> listOfTicketDTOs = listOfTickets.stream()
                 .map(ticket -> modelMapper.map(ticket, TicketDTO.class))
                 .toList();
-        logger.debug(listOfTicketDTOs.toString());
 
         return ok(listOfTicketDTOs);
     }
@@ -48,6 +47,7 @@ public class TicketController {
     @PostMapping("/{ticket-id}")
     public ResponseEntity<TicketDTO> updateTicket(@PathVariable("ticket-id") int ticketId, @RequestBody TicketDTO ticketDTO){
         Ticket updatedTicket = ticketService.updateTicket(ticketId, modelMapper.map(ticketDTO, Ticket.class));
+
         return ok(modelMapper.map(updatedTicket, TicketDTO.class));
     }
 }

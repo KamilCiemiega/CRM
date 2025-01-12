@@ -2,6 +2,10 @@ package com.crm.service;
 
 import com.crm.entity.Task;
 
+import java.util.List;
+
 public interface TaskService {
-    Task save(Task task);
+    Task saveTask(Task task);
+    Task saveSubtask(Task subTask);
+    List<Task> getAllTasks();
 }

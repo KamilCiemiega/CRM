@@ -1,7 +1,5 @@
 package com.crm.service.serviceImpl;
 
-import com.crm.controller.dto.NewUserDTO;
-import com.crm.controller.dto.UserDTO;
 import com.crm.dao.RoleRepository;
 import com.crm.dao.UserRepository;
 import com.crm.entity.Role;
@@ -12,7 +10,6 @@ import com.crm.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,6 @@
 package com.crm.controller;
 
-import com.crm.controller.dto.MessageDTO;
-import com.crm.controller.dto.MessageRoleDTO;
+import com.crm.controller.dto.message.MessageRoleDTO;
 import com.crm.entity.MessageRole;
 import com.crm.service.MessageRoleService;
 import org.modelmapper.ModelMapper;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/roles")

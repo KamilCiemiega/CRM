@@ -1,4 +1,4 @@
-package com.crm.controller.dto;
+package com.crm.controller.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

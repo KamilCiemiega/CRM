@@ -55,9 +55,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private  List<UserNotification> userNotifications = new ArrayList<>();
 
-
-    @OneToOne(mappedBy = "userTaskWorker", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Task workingTask;
+    @JsonIgnore
+    @OneToMany(mappedBy = "assignedUserTask", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> assignedTasks = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "userTaskCreator", cascade = CascadeType.ALL, orphanRemoval = true)

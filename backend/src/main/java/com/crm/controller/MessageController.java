@@ -2,7 +2,7 @@ package com.crm.controller;
 
 import com.crm.entity.Message;
 import com.crm.enums.MessageSortType;
-import com.crm.controller.dto.MessageDTO;
+import com.crm.controller.dto.message.MessageDTO;
 import com.crm.service.MessageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

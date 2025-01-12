@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 public class TaskServiceImpl implements TaskService, EntityFinder {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TaskServiceImpl.class);
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository) {
@@ -30,19 +31,20 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
         }
     }
 
-    private void processTask(Task task, Task parentTask) {
+    @Override
+    public List<Task> getAllTasks() {
+     return taskRepository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public Task saveTask(Task task) {
         if (taskRepository.existsByTopic(task.getTopic())) {
             throw new IllegalArgumentException("Topic must be unique. Value already exists: " + task.getTopic());
         }
 
-        if (parentTask != null) {
-            task.setParentTask(parentTask);
-        }
-
-        User userTaskWorker = findEntity(userRepository, task.getUserTaskWorker().getId(), "Working user on task");
-        User userTaskCreator = findEntity(userRepository, task.getUserTaskCreator().getId(), "Created task user");
-        task.setUserTaskWorker(userTaskWorker);
-        task.setUserTaskCreator(userTaskCreator);
+        task.getUserTaskCreator().getCreatedTasks().add(task);
+        task.getAssignedUserTask().getAssignedTasks().add(task);
 
         processList(task.getUserNotifications(), notification -> {
             User user = findEntity(userRepository, notification.getUser().getId(), "User");
@@ -50,13 +52,13 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
             notification.setTaskNotification(task);
         });
         processList(task.getAttachments(), attachment -> attachment.setTask(task));
-        processList(task.getSubTasks(), subTask -> processTask(subTask, task));
-    }
 
-    @Transactional
-    @Override
-    public Task save(Task task) {
-        processTask(task, task.getParentTask());
         return taskRepository.save(task);
     }
+
+    @Override
+    public Task saveSubtask(Task subTask) {
+        return null;
+    }
+
 }
