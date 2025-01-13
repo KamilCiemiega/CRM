@@ -47,7 +47,7 @@ public class TicketController {
     @PostMapping("/{ticket-id}")
     public ResponseEntity<TicketDTO> updateTicket(@PathVariable("ticket-id") int ticketId, @RequestBody TicketDTO ticketDTO){
         Ticket updatedTicket = ticketService.updateTicket(ticketId, modelMapper.map(ticketDTO, Ticket.class));
-
+        logger.debug("te", updatedTicket);
         return ok(modelMapper.map(updatedTicket, TicketDTO.class));
     }
 }

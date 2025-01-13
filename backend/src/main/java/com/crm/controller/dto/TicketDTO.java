@@ -1,7 +1,7 @@
 package com.crm.controller.dto;
 
-import com.crm.controller.dto.message.MessageDTO;
 import com.crm.controller.dto.message.SimpleMessageDTO;
+import com.crm.controller.dto.task.TaskDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -73,9 +73,11 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
 
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");
         ticket.setClient(existingClient);
+        existingClient.getTickets().add(ticket);
 
         User existingUser = findEntity(userRepository, ticket.getUser().getId(), "User");
         ticket.setUser(existingUser);
+        existingUser.getTickets().add(ticket);
 
         return ticketRepository.save(ticket);
     }
@@ -85,7 +87,9 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
     public Ticket updateTicket(Integer ticketId, Ticket updatedTicket) {
         Ticket existingTicket = findEntity(ticketRepository, ticketId, "Ticket");
 
-        existingTicket.setTopic(updatedTicket.getTopic());
+        if (!existingTicket.getTopic().equals(updatedTicket.getTopic())){
+            existingTicket.setTopic(updatedTicket.getTopic());
+        }
         existingTicket.setStatus(updatedTicket.getStatus());
         existingTicket.setType(updatedTicket.getType());
         existingTicket.setDescription(updatedTicket.getDescription());
@@ -99,12 +103,14 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
             existingTicket.setUser(user);
         }
 
+        existingTicket.getMessages().clear();
         existingTicket.setMessages(findEntities(updatedTicket.getMessages(), messageRepository, "Message"));
 
-        existingTicket.setTasks(updatedTicket.getTasks().stream()
-                .peek(task -> task.setTicket(existingTicket))
-                .toList());
+//        existingTicket.setTasks(updatedTicket.getTasks().stream()
+//                .peek(task -> task.setTicket(existingTicket))
+//                .toList());
 
+        existingTicket.getUserNotifications().clear();
         existingTicket.setUserNotifications(updatedTicket.getUserNotifications().stream()
                 .peek(notification -> {
                     User user = findEntity(userRepository, notification.getUser().getId(), "User");
@@ -113,11 +119,14 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
                 })
                 .toList());
 
+        existingTicket.getAttachments().clear();
         existingTicket.setAttachments(updatedTicket.getAttachments().stream()
                 .peek(attachment -> attachment.setTicket(existingTicket))
                 .toList());
 
-        return ticketRepository.save(existingTicket);
+        Ticket ticketS = ticketRepository.save(existingTicket);
+
+        return ticketS;
     }
 
 }

@@ -8,4 +8,5 @@ public interface TaskService {
     Task saveTask(Task task);
     Task saveSubtask(Task subTask);
     List<Task> getAllTasks();
+    Task updateTask(int taskId, Task task);
 }

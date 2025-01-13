@@ -1,9 +1,8 @@
 package com.crm.controller;
 
-import com.crm.controller.dto.TaskDTO;
+import com.crm.controller.dto.task.TaskDTO;
 import com.crm.dao.UserRepository;
 import com.crm.entity.Task;
-import com.crm.entity.User;
 import com.crm.service.EntityFinder;
 import com.crm.service.TaskService;
 import org.modelmapper.ModelMapper;
@@ -44,5 +43,21 @@ public class TaskController  implements EntityFinder {
         Task savedTask = taskService.saveTask(mappedTask);
 
         return ok(modelMapper.map(savedTask, TaskDTO.class));
+    }
+
+    @PostMapping("/subTask")
+    public ResponseEntity<TaskDTO> saveSubTask(@RequestBody TaskDTO taskDTO) {
+        Task mappedSubTask = modelMapper.map(taskDTO, Task.class);
+        logger.debug("task", mappedSubTask);
+        Task savedSubTask = taskService.saveSubtask(mappedSubTask);
+
+        return ok(modelMapper.map(savedSubTask, TaskDTO.class));
+    }
+
+    @PostMapping("/{task-id}")
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable("task-id") int taskId, @RequestBody TaskDTO taskDTO){
+        Task updatedTask = taskService.updateTask(taskId, modelMapper.map(taskDTO, Task.class));
+
+        return ok(modelMapper.map(updatedTask, TaskDTO.class));
     }
 }

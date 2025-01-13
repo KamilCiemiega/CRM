@@ -1,6 +1,7 @@
-package com.crm.controller.dto;
+package com.crm.controller.dto.task;
 
-import com.crm.controller.dto.user.UserWithIdDTO;
+import com.crm.controller.dto.AttachmentDTO;
+import com.crm.controller.dto.UserNotificationDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,10 +26,10 @@ public class TaskDTO {
     private Timestamp created_at;
     private Timestamp updated_at;
     @NotNull
-    private UserWithIdDTO userTaskCreator;
+    private Integer userTaskCreatorId;
     @NotNull
-    private UserWithIdDTO assignedUserTask;
-    private TaskDTO parentTask;
+    private Integer assignedUserTaskId;
+    private SimpleTaskDTO parentTask;
     private Integer ticketId;
     private List<TaskDTO> subTasks = new ArrayList<>();
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();

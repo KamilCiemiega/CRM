@@ -67,7 +67,7 @@ public class Ticket {
     private List<UserNotification> userNotifications = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
     @JsonIgnore

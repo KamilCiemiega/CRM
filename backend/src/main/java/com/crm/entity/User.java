@@ -17,11 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
-    public User(Integer userId){
-        this.id = userId;
-    }
-
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
