@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserWithIdDTO {
+public class SimpleUserDTO {
     private Integer id;
 }

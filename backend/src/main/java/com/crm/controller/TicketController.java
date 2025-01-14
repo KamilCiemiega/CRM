@@ -1,6 +1,7 @@
 package com.crm.controller;
 
-import com.crm.controller.dto.TicketDTO;
+import com.crm.controller.dto.ticket.SimpleTicketDTO;
+import com.crm.controller.dto.ticket.TicketDTO;
 import com.crm.entity.Ticket;
 import com.crm.service.TicketService;
 import org.modelmapper.ModelMapper;
@@ -46,8 +47,15 @@ public class TicketController {
 
     @PostMapping("/{ticket-id}")
     public ResponseEntity<TicketDTO> updateTicket(@PathVariable("ticket-id") int ticketId, @RequestBody TicketDTO ticketDTO){
-        Ticket updatedTicket = ticketService.updateTicket(ticketId, modelMapper.map(ticketDTO, Ticket.class));
-        logger.debug("te", updatedTicket);
+        Ticket ticket = modelMapper.map(ticketDTO, Ticket.class);
+        Ticket updatedTicket = ticketService.updateTicket(ticketId, ticket);
         return ok(modelMapper.map(updatedTicket, TicketDTO.class));
     }
+
+    @DeleteMapping("/{ticked-id}")
+    public ResponseEntity<SimpleTicketDTO> deleteTicket(@PathVariable("ticked-id") int tickedId){
+        Ticket deletedTicket = ticketService.deleteTicket(tickedId);
+        return ok(modelMapper.map(deletedTicket, SimpleTicketDTO.class));
+    }
+
 }

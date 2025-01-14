@@ -2,7 +2,7 @@ package com.crm.controller.dto.user;
 
 import com.crm.controller.dto.RoleDTO;
 import com.crm.controller.dto.task.TaskDTO;
-import com.crm.controller.dto.TicketDTO;
+import com.crm.controller.dto.ticket.TicketDTO;
 import com.crm.controller.dto.UserNotificationDTO;
 import lombok.*;
 

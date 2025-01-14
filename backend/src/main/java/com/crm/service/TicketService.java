@@ -7,4 +7,5 @@ public interface TicketService {
     List<Ticket> getAllTickets();
     Ticket save(Ticket ticket);
     Ticket updateTicket(Integer ticketId, Ticket ticket);
+    Ticket deleteTicket(Integer tickedId);
 }

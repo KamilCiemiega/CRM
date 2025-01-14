@@ -77,6 +77,7 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
     @Override
     public Task saveTask(Task task) {
         Ticket ticket = findEntity(ticketRepository, task.getTicket().getId(), "Ticket");
+
         return processAndSaveTask(task, null, ticket);
     }
 
@@ -89,8 +90,30 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
 
     @Transactional
     @Override
-    public Task updateTask(int taskId, Task task) {
-        return null;
+    public Task updateTask(int taskId, Task updatedTask) {
+        Task exisitingTask = findEntity(taskRepository, taskId, "Task");
+
+        if (!exisitingTask.getTopic().equals(updatedTask.getTopic())) {
+            exisitingTask.setTopic(updatedTask.getTopic());
+        }
+
+        exisitingTask.setStatus(updatedTask.getStatus());
+        exisitingTask.setDescription(updatedTask.getDescription());
+
+        if (!exisitingTask.getUserTaskCreator().getId().equals(updatedTask.getUserTaskCreator().getId())){
+            User userTaskCreator = findEntity(userRepository, updatedTask.getUserTaskCreator().getId(), "User task creator");
+            exisitingTask.setUserTaskCreator(userTaskCreator);
+        }
+        if (!exisitingTask.getAssignedUserTask().getId().equals(updatedTask.getAssignedUserTask().getId())){
+            User assignedUser = findEntity(userRepository, updatedTask.getAssignedUserTask().getId(), "Assigned user");
+            exisitingTask.setAssignedUserTask(assignedUser);
+        }
+        if (updatedTask.getTicket().getId() != null){
+            Ticket findedTicket = findEntity(ticketRepository, updatedTask.getTicket().getId(), "Ticket");
+            exisitingTask.setTicket(findedTicket);
+        }
+
+        return taskRepository.save(exisitingTask);
     }
 
 }

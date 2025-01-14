@@ -1,6 +1,8 @@
 package com.crm.configuration;
 
+import com.crm.controller.dto.AttachmentDTO;
 import com.crm.dao.UserRepository;
+import com.crm.entity.Attachment;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -29,7 +31,8 @@ public class ModelMapperConfig {
         };
         modelMapper.addConverter(enumToStringConverter);
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-
+        modelMapper.typeMap(AttachmentDTO.class, Attachment.class)
+                .addMappings(mapper -> mapper.skip(Attachment::setTicket));
         return modelMapper;
     }
 

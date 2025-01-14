@@ -1,7 +1,6 @@
 package com.crm.controller.dto;
 
-import com.crm.entity.Company;
-import com.crm.entity.User;
+import com.crm.controller.dto.ticket.TicketDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

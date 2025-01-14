@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService, EntityFinder {
@@ -57,11 +58,9 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
             List<Message> messages = findEntities(ticket.getMessages(), messageRepository, "Message");
             ticket.setMessages(messages);
         }
-
         if (!ticket.getAttachments().isEmpty()) {
             ticket.getAttachments().forEach(attachment -> attachment.setTicket(ticket));
         }
-
         if (!ticket.getUserNotifications().isEmpty()) {
             ticket.getUserNotifications().stream()
                     .peek(notification -> {
@@ -87,46 +86,84 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
     public Ticket updateTicket(Integer ticketId, Ticket updatedTicket) {
         Ticket existingTicket = findEntity(ticketRepository, ticketId, "Ticket");
 
-        if (!existingTicket.getTopic().equals(updatedTicket.getTopic())){
+        if (!existingTicket.getTopic().equals(updatedTicket.getTopic())) {
             existingTicket.setTopic(updatedTicket.getTopic());
         }
         existingTicket.setStatus(updatedTicket.getStatus());
         existingTicket.setType(updatedTicket.getType());
         existingTicket.setDescription(updatedTicket.getDescription());
 
-        if (updatedTicket.getClient() != null) {
+        if (!existingTicket.getClient().getId().equals(updatedTicket.getClient().getId())) {
             Client client = findEntity(clientRepository, updatedTicket.getClient().getId(), "Client");
             existingTicket.setClient(client);
         }
-        if (updatedTicket.getUser() != null) {
+        if (!existingTicket.getUser().getId().equals(updatedTicket.getUser().getId())) {
             User user = findEntity(userRepository, updatedTicket.getUser().getId(), "User");
             existingTicket.setUser(user);
         }
 
-        existingTicket.getMessages().clear();
         existingTicket.setMessages(findEntities(updatedTicket.getMessages(), messageRepository, "Message"));
 
-//        existingTicket.setTasks(updatedTicket.getTasks().stream()
-//                .peek(task -> task.setTicket(existingTicket))
-//                .toList());
+        existingTicket.getTasks().clear();
+        existingTicket.getTasks().addAll(processTasks(updatedTicket.getTasks(), existingTicket));
 
         existingTicket.getUserNotifications().clear();
-        existingTicket.setUserNotifications(updatedTicket.getUserNotifications().stream()
-                .peek(notification -> {
-                    User user = findEntity(userRepository, notification.getUser().getId(), "User");
-                    notification.setUser(user);
-                    notification.setTicketNotification(existingTicket);
-                })
-                .toList());
+        existingTicket.getUserNotifications().addAll(processUserNotifications(updatedTicket.getUserNotifications(), existingTicket));
 
         existingTicket.getAttachments().clear();
-        existingTicket.setAttachments(updatedTicket.getAttachments().stream()
-                .peek(attachment -> attachment.setTicket(existingTicket))
-                .toList());
+        existingTicket.getAttachments().addAll(processAttachments(updatedTicket.getAttachments(), existingTicket));
 
-        Ticket ticketS = ticketRepository.save(existingTicket);
-
-        return ticketS;
+        return ticketRepository.save(existingTicket);
     }
 
+    @Override
+    public Ticket deleteTicket(Integer tickedId) {
+        Ticket foundetTicket = findEntity(ticketRepository, tickedId, "Ticket");
+        logger.info("asd", foundetTicket);
+        ticketRepository.delete(foundetTicket);
+
+        return foundetTicket;
+    }
+
+    private List<Task> processTasks(List<Task> tasks, Ticket ticket) {
+        return tasks.stream()
+                .map(task -> {
+                    Task managedTask = findEntity(taskRepository, task.getId(), "Task");
+                    managedTask.setTicket(ticket);
+                    return managedTask;
+                })
+                .toList();
+    }
+
+    private List<UserNotification> processUserNotifications(List<UserNotification> notifications, Ticket ticket) {
+        return notifications.stream()
+                .map(notification -> {
+                    if (notification.getId() != null) {
+                        UserNotification managedNotification = findEntity(userNotificationRepository, notification.getId(), "Notification");
+                        managedNotification.setTicketNotification(ticket);
+                        return managedNotification;
+                    } else {
+                        User managedUser = findEntity(userRepository, notification.getUser().getId(), "User");
+                        notification.setUser(managedUser);
+                        notification.setTicketNotification(ticket);
+                        return notification;
+                    }
+                })
+                .toList();
+    }
+
+    private List<Attachment> processAttachments(List<Attachment> attachments, Ticket ticket) {
+        return attachments.stream()
+                .map(attachment -> {
+                    if (attachment.getId() != null) {
+                        Attachment managedAttachment = findEntity(attachmentRepository, attachment.getId(), "Attachment");
+                        managedAttachment.setTicket(ticket);
+                        return managedAttachment;
+                    } else {
+                        attachment.setTicket(ticket);
+                        return attachment;
+                    }
+                })
+                .toList();
+    }
 }

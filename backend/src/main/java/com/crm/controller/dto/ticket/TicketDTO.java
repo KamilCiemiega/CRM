@@ -1,7 +1,9 @@
-package com.crm.controller.dto;
+package com.crm.controller.dto.ticket;
 
+import com.crm.controller.dto.AttachmentDTO;
+import com.crm.controller.dto.UserNotificationDTO;
 import com.crm.controller.dto.message.SimpleMessageDTO;
-import com.crm.controller.dto.task.TaskDTO;
+import com.crm.controller.dto.task.SimpleTaskDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,5 +36,5 @@ public class TicketDTO {
     private List<AttachmentDTO> attachments = new ArrayList<>();
     private List<SimpleMessageDTO> messages = new ArrayList<>();
     private List<UserNotificationDTO> userNotifications = new ArrayList<>();
-    private List<TaskDTO> tasks = new ArrayList<>();
+    private List<SimpleTaskDTO> tasks = new ArrayList<>();
 }
