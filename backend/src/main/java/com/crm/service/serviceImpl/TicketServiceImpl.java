@@ -6,6 +6,7 @@ import com.crm.exception.NoSuchEntityException;
 import com.crm.service.EntityFinder;
 import com.crm.service.TaskService;
 import com.crm.service.TicketService;
+import com.crm.utils.EntityProcessorHelper;
 import jakarta.persistence.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -55,20 +57,33 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         }
 
         if (!ticket.getMessages().isEmpty()) {
-            List<Message> messages = findEntities(ticket.getMessages(), messageRepository, "Message");
+            List<Integer> messageIds = ticket.getMessages().stream()
+                    .map(Message::getId)
+                    .toList();
+            List<Message> messages = messageRepository.findAllByIds(messageIds);
             ticket.setMessages(messages);
         }
+
         if (!ticket.getAttachments().isEmpty()) {
             ticket.getAttachments().forEach(attachment -> attachment.setTicket(ticket));
         }
         if (!ticket.getUserNotifications().isEmpty()) {
-            ticket.getUserNotifications().stream()
-                    .peek(notification -> {
-                        User user = findEntity(userRepository, notification.getUser().getId(), "User");
-                        notification.setUser(user);
-                    })
-                    .forEach(notification -> notification.setTicketNotification(ticket));
+            List<Integer> userIds = ticket.getUserNotifications().stream()
+                    .map(notification -> notification.getUser().getId())
+                    .distinct()
+                    .toList();
+            List<User> users = userRepository.findAllByIds(userIds);
+
+            Map<Integer, User> userMap = users.stream()
+                    .collect(Collectors.toMap(User::getId, user -> user));
+
+            ticket.getUserNotifications().forEach(notification -> {
+                User user = userMap.get(notification.getUser().getId());
+                notification.setUser(user);
+                notification.setTicketNotification(ticket);
+            });
         }
+
 
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");
         ticket.setClient(existingClient);
@@ -116,10 +131,10 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         return ticketRepository.save(existingTicket);
     }
 
+    @Transactional
     @Override
     public Ticket deleteTicket(Integer tickedId) {
         Ticket foundetTicket = findEntity(ticketRepository, tickedId, "Ticket");
-        logger.info("asd", foundetTicket);
         ticketRepository.delete(foundetTicket);
 
         return foundetTicket;
@@ -136,34 +151,21 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
     }
 
     private List<UserNotification> processUserNotifications(List<UserNotification> notifications, Ticket ticket) {
-        return notifications.stream()
-                .map(notification -> {
-                    if (notification.getId() != null) {
-                        UserNotification managedNotification = findEntity(userNotificationRepository, notification.getId(), "Notification");
-                        managedNotification.setTicketNotification(ticket);
-                        return managedNotification;
-                    } else {
-                        User managedUser = findEntity(userRepository, notification.getUser().getId(), "User");
-                        notification.setUser(managedUser);
-                        notification.setTicketNotification(ticket);
-                        return notification;
-                    }
-                })
-                .toList();
+        return new EntityProcessorHelper().processUserNotifications(
+                notifications,
+                ticket,
+                userNotificationRepository,
+                userRepository,
+                UserNotification::setTicketNotification
+        );
     }
 
     private List<Attachment> processAttachments(List<Attachment> attachments, Ticket ticket) {
-        return attachments.stream()
-                .map(attachment -> {
-                    if (attachment.getId() != null) {
-                        Attachment managedAttachment = findEntity(attachmentRepository, attachment.getId(), "Attachment");
-                        managedAttachment.setTicket(ticket);
-                        return managedAttachment;
-                    } else {
-                        attachment.setTicket(ticket);
-                        return attachment;
-                    }
-                })
-                .toList();
+        return  new EntityProcessorHelper().processAttachments(
+                attachments,
+                ticket,
+                attachmentRepository,
+                Attachment::setTicket
+        );
     }
 }

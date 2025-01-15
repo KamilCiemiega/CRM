@@ -1,5 +1,6 @@
 package com.crm.controller;
 
+import com.crm.controller.dto.task.SimpleTaskDTO;
 import com.crm.controller.dto.task.TaskDTO;
 import com.crm.dao.UserRepository;
 import com.crm.entity.Task;
@@ -59,5 +60,11 @@ public class TaskController  implements EntityFinder {
         Task updatedTask = taskService.updateTask(taskId, modelMapper.map(taskDTO, Task.class));
 
         return ok(modelMapper.map(updatedTask, TaskDTO.class));
+    }
+
+    @DeleteMapping("/{task-id}")
+    public ResponseEntity<SimpleTaskDTO> deleteTask(@PathVariable("task-id") int taskId){
+        Task deletedTask = taskService.deleteTask(taskId);
+        return ok(modelMapper.map(deletedTask, SimpleTaskDTO.class));
     }
 }
