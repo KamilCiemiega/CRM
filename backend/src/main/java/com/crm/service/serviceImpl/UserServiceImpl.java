@@ -11,7 +11,6 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +23,12 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final PasswordResetTokenService passwordResetTokenService;
     private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, PasswordResetTokenService passwordResetTokenService, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordResetTokenService passwordResetTokenService, RoleRepository roleRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.passwordResetTokenService = passwordResetTokenService;
         this.roleRepository = roleRepository;
     }
@@ -53,9 +50,7 @@ public class UserServiceImpl implements UserService {
 
         user.setRole(role);
 
-        String plainPassword = user.getPassword();
-        String encodedPassword = passwordEncoder.encode(plainPassword);
-        user.setPassword(encodedPassword);
+        user.setPassword(user.getPassword());
 
         return userRepository.save(user);
     }
@@ -68,8 +63,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoSuchEntityException("User not found with id: " + userId));
 
         if (userToUpdate.getPassword() != null && !userToUpdate.getPassword().isEmpty()) {
-            String encodedPassword = passwordEncoder.encode(userToUpdate.getPassword());
-            existingUser.setPassword(encodedPassword);
+            existingUser.setPassword(userToUpdate.getPassword());
         }
 
         existingUser.setFirstName(userToUpdate.getFirstName());
@@ -85,8 +79,8 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new NoSuchEntityException("Can't find user with email " + user.getEmail()));
 
-        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            throw new NoSuchEntityException("Can't find user with password " + user.getPassword());
+        if (!user.getPassword().equals(existingUser.getPassword())) {
+            throw new NoSuchEntityException("Invalid password");
         }
 
         HttpSession session = request.getSession();
@@ -97,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(User user, String newPassword) {
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(newPassword);
         userRepository.save(user);
     }
 
@@ -106,7 +100,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
+            if (password.equals(user.getPassword())) {
                 return Optional.of(user);
             }
         }

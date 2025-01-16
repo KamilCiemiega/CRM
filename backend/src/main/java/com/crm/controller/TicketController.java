@@ -51,11 +51,4 @@ public class TicketController {
         Ticket updatedTicket = ticketService.updateTicket(ticketId, ticket);
         return ok(modelMapper.map(updatedTicket, TicketDTO.class));
     }
-
-    @DeleteMapping("/{ticked-id}")
-    public ResponseEntity<SimpleTicketDTO> deleteTicket(@PathVariable("ticked-id") int tickedId){
-        Ticket deletedTicket = ticketService.deleteTicket(tickedId);
-        return ok(modelMapper.map(deletedTicket, SimpleTicketDTO.class));
-    }
-
 }

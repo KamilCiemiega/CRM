@@ -1,22 +1,19 @@
 package com.crm.dao;
 
-import com.crm.entity.Message;
-import com.crm.entity.MessageFolder;
-import org.junit.jupiter.api.AfterEach;
+import com.crm.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Sort;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.util.List;
+
 
 @DataJpaTest
 class MessageRepositoryTest {
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MessageRepositoryTest.class);
 
     @Autowired
     private MessageRepository underTest;
@@ -25,51 +22,48 @@ class MessageRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        MessageFolder messageFolder = new MessageFolder();
-        messageFolder.setName("INBOX");
-        messageFolder.setFolderType(MessageFolder.FolderType.SYSTEM);
-        messageFolderRepository.save(messageFolder);
+            MessageFolder messageFolder = new MessageFolder();
+            messageFolder.setName("testName");
+            messageFolder.setFolderType(MessageFolder.FolderType.SYSTEM);
+            MessageFolder savedMessageFolder = messageFolderRepository.save(messageFolder);
 
-        Message message = new Message();
-        String dateString = "2024-02-11T10:00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(dateString, formatter);
-
-        message.setSubject("Test subject");
-        message.setBody("Test body");
-        message.setSentDate(Timestamp.valueOf(localDateTime));
-        message.getMessageFolders().add(messageFolder);
-        messageFolder.getMessages().add(message);
-
-        messageFolderRepository.save(messageFolder);
-        underTest.save(message);
-    }
-
-
-    @AfterEach
-    void tearDown() {
-        underTest.deleteAll();
-        messageFolderRepository.deleteAll();
+            Message message = new Message();
+            message.setSubject("Test subject");
+            message.setBody("Test body");
+            message.getMessageFolders().add(savedMessageFolder);
+            Message savedMessage = underTest.save(message);
+            savedMessageFolder.getMessages().add(savedMessage);
+           logger.info("savedMessage: {}", savedMessage);
     }
 
     @Test
     void findMessagesByFolderId() {
-        //given
+        // given
         Integer folderId = messageFolderRepository.findAll().get(0).getId();
         Sort sort = Sort.by("size");
 
-        // Log current database state
-        List<Message> allMessages = underTest.findAll();
-        List<MessageFolder> allFolders = messageFolderRepository.findAll();
-        System.out.println("All Messages: " + allMessages);
-        System.out.println("All Folders: " + allFolders);
+        // when
+        List<Message> messages = underTest.findMessagesByFolderId(folderId, sort);
 
-        //when
-        List<Message> expectedMessages = underTest.findMessagesByFolderId(folderId, sort);
+        // then
+        assertThat(messages).isNotNull();
+        assertThat(messages.size()).isEqualTo(1);
+        assertThat(messages.get(0).getSubject()).isEqualTo("Test subject");
+    }
 
-        //then
-       assertThat(expectedMessages).isNotNull();
-       assertThat(expectedMessages.stream().anyMatch(m -> m.getSubject().equals("Test subject")))
-                .isTrue();
+    @Test
+    void findAllByIds() {
+        // given
+        List<Integer> messageIds = underTest.findAll().stream()
+                .map(Message::getId)
+                .toList();
+        logger.info("Client IDs: {}", messageIds);
+
+        // when
+        List<Message> messages = underTest.findAllByIds(messageIds);
+
+        // then
+        assertThat(messages).isNotNull();
+        assertThat(messages.size()).isEqualTo(1);
     }
 }

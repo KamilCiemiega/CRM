@@ -35,7 +35,7 @@ public class MessageFolder {
     @JsonIgnore
     private List<MessageFolder> subFolders = new ArrayList<>();
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "message_location",
             joinColumns = @JoinColumn(name = "folder_id"),

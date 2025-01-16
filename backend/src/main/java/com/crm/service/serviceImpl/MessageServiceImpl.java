@@ -140,11 +140,6 @@ public class MessageServiceImpl implements MessageService {
        return messageRepository.findById(messageId)
                 .orElseThrow(() -> new NoSuchEntityException("Can't find message with id " + messageId));
     }
-    @Transactional
-    @Override
-    public List<Message> findMessagesByClientIds(List<Integer> clientIds) {
-        return messageRepository.findMessagesByClientIds(clientIds);
-    }
 
     @Transactional
     @Override
