@@ -39,8 +39,8 @@ public class User {
     private Role role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private List<MessageFolder> messageFolders;
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    private List<MessageFolder> messageFolders = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -35,15 +35,18 @@ public class MessageServiceImpl implements MessageService {
         this.messageRoleRepository = messageRoleRepository;
     }
 
+    @Override
+    public List<Message> findAllMessage() {
+        return messageRepository.findAll();
+    }
+
     @Transactional
     @Override
     public Message save(Message message) {
-        if (!message.getAttachments().isEmpty()) {
             List<Attachment> attachments = message.getAttachments().stream()
                     .peek(attachment -> attachment.setMessage(message))
                     .toList();
             message.setAttachments(attachments);
-        }
 
         List<MessageFolder> messageFolders = message.getMessageFolders().stream()
                 .map(folder -> {
@@ -58,7 +61,6 @@ public class MessageServiceImpl implements MessageService {
         List<MessageRole> messageRoles = message.getMessageRoles().stream()
                 .peek(role -> {
                     role.setMessage(message);
-                    role.setStatus(role.getStatus());
 
                     if(role.getParticipant() != null) {
                         MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
@@ -71,14 +73,6 @@ public class MessageServiceImpl implements MessageService {
 
         return messageRepository.save(message);
     }
-
-    private void updateRoleAssociations(MessageRole role, Message existingMessage) {
-        MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
-                .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
-        role.setParticipant(participant);
-        role.setMessage(existingMessage);
-    }
-
 
     @Transactional
     @Override
@@ -131,11 +125,6 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    public List<Message> findAllMessage() {
-       return messageRepository.findAll();
-    }
-
-    @Override
     public Message getMessageById(int messageId) {
        return messageRepository.findById(messageId)
                 .orElseThrow(() -> new NoSuchEntityException("Can't find message with id " + messageId));
@@ -165,5 +154,12 @@ public class MessageServiceImpl implements MessageService {
         };
 
         return messageRepository.findMessagesByFolderId(folderId, sort);
+    }
+
+    private void updateRoleAssociations(MessageRole role, Message existingMessage) {
+        MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
+                .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
+        role.setParticipant(participant);
+        role.setMessage(existingMessage);
     }
 }
