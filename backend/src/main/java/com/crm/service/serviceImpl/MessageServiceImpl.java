@@ -43,7 +43,7 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     @Override
     public Message save(Message message) {
-            List<Attachment> attachments = message.getAttachments().stream()
+        List<Attachment> attachments = message.getAttachments().stream()
                     .peek(attachment -> attachment.setMessage(message))
                     .toList();
             message.setAttachments(attachments);
@@ -64,7 +64,7 @@ public class MessageServiceImpl implements MessageService {
 
                     if(role.getParticipant() != null) {
                         MessageParticipant participant = messageParticipantRepository.findById(role.getParticipant().getId())
-                                .orElseThrow(() -> new NoSuchEntityException("Participant not found"));
+                                .orElseThrow(() -> new NoSuchEntityException("Participant not found for ID: " + role.getParticipant().getId()));
                         role.setParticipant(participant);
                     }
                 })
@@ -90,6 +90,7 @@ public class MessageServiceImpl implements MessageService {
                 Attachment managedAttachment = attachmentRepository.findById(attachment.getId())
                         .orElseThrow(() -> new NoSuchEntityException("Attachment not found for ID: " + attachment.getId()));
                 managedAttachment.setFilePath(attachment.getFilePath());
+                managedAttachment.setType(attachment.getType());
                 existingMessage.getAttachments().add(managedAttachment);
             } else {
                 attachment.setMessage(existingMessage);
@@ -123,7 +124,6 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.save(existingMessage);
     }
 
-
     @Override
     public Message getMessageById(int messageId) {
        return messageRepository.findById(messageId)
@@ -137,7 +137,6 @@ public class MessageServiceImpl implements MessageService {
                 .orElseThrow(() -> new NoSuchEntityException("Message not found for ID: " + messageId));
 
         existingMessage.getMessageFolders().forEach(folder -> folder.getMessages().remove(existingMessage));
-
         messageRepository.delete(existingMessage);
 
         return existingMessage;
