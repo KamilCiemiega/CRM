@@ -7,7 +7,6 @@ import com.crm.service.MessageRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -46,6 +45,7 @@ public class MessageRoleServiceImpl implements MessageRoleService {
                  .orElseThrow(() -> new NoSuchEntityException("messageRole not found for ID: " + roleId));
     }
 
+    @Transactional
     @Override
     public MessageRole deleteRole(int roleId) {
         MessageRole existingRole = roleRepository.findById(roleId)

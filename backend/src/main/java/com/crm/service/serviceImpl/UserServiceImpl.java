@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoSuchEntityException("Role not found for ID: " + user.getRole().getId()));
 
         user.setRole(role);
-
         user.setPassword(user.getPassword());
 
         return userRepository.save(user);

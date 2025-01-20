@@ -11,10 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -86,6 +83,9 @@ public class MessageServiceImpl implements MessageService {
 
         existingMessage.getAttachments().clear();
         message.getAttachments().forEach(attachment -> {
+            if (attachment.getType() != Attachment.Type.MESSAGE) {
+                throw new IllegalArgumentException("Invalid attachment type. Only MESSAGE type is supported.");
+            }
             if (attachment.getId() != null) {
                 Attachment managedAttachment = attachmentRepository.findById(attachment.getId())
                         .orElseThrow(() -> new NoSuchEntityException("Attachment not found for ID: " + attachment.getId()));

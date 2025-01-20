@@ -69,6 +69,20 @@ MessageFolderServiceImpl implements MessageFolderService {
 
     @Override
     @Transactional
+    public MessageFolder deleteFolder(int folderId) {
+        return messageFolderRepository.findById(folderId)
+                .filter(folder -> folder.getFolderType() != MessageFolder.FolderType.SYSTEM)
+                .map(folder -> {
+                    messageFolderRepository.deleteById(folderId);
+                    return folder;
+                })
+                .orElseThrow(() -> new DeleteDefaultFolderException(
+                        "Cannot delete the default folder or folder not found for ID: " + folderId
+                ));
+    }
+
+    @Transactional
+    @Override
     public MessageFolder updateMessageFolder(int folderId, MessageFolder messageFolder) {
         MessageFolder existingFolder = messageFolderRepository.findById(folderId)
                 .orElseThrow(() -> new NoSuchEntityException("Folder not found for ID: " + folderId));
@@ -94,19 +108,7 @@ MessageFolderServiceImpl implements MessageFolderService {
         return messageFolderRepository.save(existingFolder);
     }
 
-    @Override
     @Transactional
-    public MessageFolder deleteFolder(int folderId) {
-        return messageFolderRepository.findById(folderId)
-                .filter(folder -> !folder.getFolderType().equals("system"))
-                .map(folder -> {
-                    messageFolderRepository.deleteById(folderId);
-                    return folder;
-                })
-                .orElseThrow(() -> new DeleteDefaultFolderException(
-                        "Cannot delete the default folder or folder not found for ID: " + folderId
-                ));
-    }
     @Override
     public Message deleteMessageFromFolder(int folderId, int messageId) {
         MessageFolder folder = messageFolderRepository.findById(folderId)
