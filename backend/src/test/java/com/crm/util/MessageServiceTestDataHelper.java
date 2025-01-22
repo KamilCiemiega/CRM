@@ -38,7 +38,6 @@ public class MessageServiceTestDataHelper {
 
     public static Message createMessage(MessageFolder folder, MessageParticipant participant, List<MessageRole> roles, Attachment attachment) {
         Message message = new Message();
-        message.setId(1);
         message.setSubject("Test message");
         message.setBody("Test body for new message");
         message.setStatus(Message.Status.NEW);

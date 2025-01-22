@@ -11,12 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DeleteMessageRoleTests {
+public class SaveMessageRoleTest {
     @Mock
     private MessageRoleRepository messageRoleRepository;
 
@@ -29,20 +27,19 @@ public class DeleteMessageRoleTests {
     }
 
     @Test
-    void shouldDeleteMessageRoleSuccessfully() {
+    void shouldSaveMessageRoleSuccessfully() {
         // given
-        int roleId = 1;
         MessageRole role = new MessageRole();
-        role.setId(roleId);
+        role.setId(1);
+        role.setStatus(MessageRole.RoleStatus.TO);
 
-        when(messageRoleRepository.findById(roleId)).thenReturn(Optional.of(role));
+        when(messageRoleRepository.save(role)).thenReturn(role);
 
         // when
-        MessageRole deletedRole = underTest.deleteRole(roleId);
+        MessageRole savedRole = underTest.save(role);
 
         // then
-        verify(messageRoleRepository, times(1)).findById(roleId);
-        verify(messageRoleRepository, times(1)).delete(role);
-        assertThat(deletedRole).isEqualTo(role);
+        verify(messageRoleRepository, times(1)).save(role);
+        assertThat(savedRole).isEqualTo(role);
     }
 }

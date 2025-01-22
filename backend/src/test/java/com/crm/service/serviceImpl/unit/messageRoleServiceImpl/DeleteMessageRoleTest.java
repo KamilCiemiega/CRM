@@ -14,10 +14,9 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class FindMessageRoleByIdTests {
+public class DeleteMessageRoleTest {
     @Mock
     private MessageRoleRepository messageRoleRepository;
 
@@ -30,7 +29,7 @@ public class FindMessageRoleByIdTests {
     }
 
     @Test
-    void shouldFindMessageRoleById() {
+    void shouldDeleteMessageRoleSuccessfully() {
         // given
         int roleId = 1;
         MessageRole role = new MessageRole();
@@ -39,10 +38,11 @@ public class FindMessageRoleByIdTests {
         when(messageRoleRepository.findById(roleId)).thenReturn(Optional.of(role));
 
         // when
-        MessageRole foundRole = underTest.findById(roleId);
+        MessageRole deletedRole = underTest.deleteRole(roleId);
 
         // then
         verify(messageRoleRepository, times(1)).findById(roleId);
-        assertThat(foundRole).isEqualTo(role);
+        verify(messageRoleRepository, times(1)).delete(role);
+        assertThat(deletedRole).isEqualTo(role);
     }
 }

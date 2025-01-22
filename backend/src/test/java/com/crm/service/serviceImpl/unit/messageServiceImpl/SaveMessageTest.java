@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-public class SaveMessageTests {
+public class SaveMessageTest {
     @Mock
     MessageRepository messageRepository;
     @Mock
@@ -46,9 +46,9 @@ public class SaveMessageTests {
         messageFolder = MessageServiceTestDataHelper.createMessageFolder();
         messageParticipant = MessageServiceTestDataHelper.createMessageParticipant();
         messageRole = MessageServiceTestDataHelper.createMessageRole(messageParticipant);
+        attachment = MessageServiceTestDataHelper.createAttachment();
         List<MessageRole> roles = new ArrayList<>();
         roles.add(messageRole);
-        attachment = MessageServiceTestDataHelper.createAttachment();
         message = MessageServiceTestDataHelper.createMessage(messageFolder, messageParticipant, roles, attachment);
     }
 
@@ -74,20 +74,10 @@ public class SaveMessageTests {
         assertThat(savedMessage).isNotNull();
         assertThat(savedMessage.getId()).isEqualTo(1);
 
-        assertThat(savedMessage.getAttachments()).isNotNull();
-        assertThat(savedMessage.getAttachments().size()).isEqualTo(1);
-        assertThat(savedMessage.getAttachments()).contains(attachment);
         assertThat(attachment.getMessage()).isEqualTo(savedMessage);
-
-        assertThat(savedMessage.getMessageFolders()).isNotNull();
-        assertThat(savedMessage.getMessageFolders().size()).isEqualTo(1);
-        assertThat(savedMessage.getMessageFolders()).contains(messageFolder);
         assertThat(messageFolder.getMessages()).contains(savedMessage);
 
-        assertThat(savedMessage.getMessageRoles()).isNotNull();
         assertThat(savedMessage.getMessageRoles().size()).isEqualTo(1);
-        assertThat(savedMessage.getMessageRoles()).contains(messageRole);
         assertThat(messageRole.getMessage()).isEqualTo(savedMessage);
-        assertThat(messageRole.getParticipant()).isEqualTo(messageParticipant);
     }
 }

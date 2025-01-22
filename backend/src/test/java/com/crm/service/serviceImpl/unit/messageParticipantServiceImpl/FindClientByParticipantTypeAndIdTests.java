@@ -9,10 +9,13 @@ import org.mockito.MockitoAnnotations;
 import com.crm.entity.MessageParticipant;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class FindMessageParticipantByUserOrClientIdTests {
+public class FindClientByParticipantTypeAndIdTests {
     @Mock
     private MessageParticipantRepository messageParticipantRepository;
 
@@ -23,24 +26,6 @@ public class FindMessageParticipantByUserOrClientIdTests {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
-
-    @Test
-    void shouldFindUserByParticipantTypeAndId() {
-        // given
-        int userId = 1;
-        MessageParticipant participant = new MessageParticipant();
-        participant.setType(MessageParticipant.ParticipantType.USER);
-
-        when(messageParticipantRepository.findByUserId(userId)).thenReturn(participant);
-
-        // when
-        MessageParticipant result = underTest.findUserOrClientById(MessageParticipant.ParticipantType.USER, userId, null);
-
-        // then
-        verify(messageParticipantRepository, times(1)).findByUserId(userId);
-        assertThat(result).isEqualTo(participant);
-    }
-
 
     @Test
     void shouldFindClientByParticipantTypeAndId() {
@@ -57,5 +42,23 @@ public class FindMessageParticipantByUserOrClientIdTests {
         // then
         verify(messageParticipantRepository, times(1)).findByClientId(clientId);
         assertThat(result).isEqualTo(participant);
+    }
+
+
+    @Test
+    void shouldThrowExceptionForInvalidParticipantType() {
+        // given
+        int participantId = 1;
+
+        MessageParticipant participant = new MessageParticipant();
+        participant.setId(participantId);
+        participant.setType(null); // Invalid type
+
+        when(messageParticipantRepository.findById(participantId)).thenReturn(Optional.of(participant));
+
+        // when & then
+        assertThatThrownBy(() -> underTest.findUserOrClientByParticipantId(participantId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid participant type");
     }
 }

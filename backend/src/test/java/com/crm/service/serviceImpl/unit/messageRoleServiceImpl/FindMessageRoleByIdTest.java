@@ -13,10 +13,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class SaveMessageRoleTests {
+public class FindMessageRoleByIdTest {
     @Mock
     private MessageRoleRepository messageRoleRepository;
 
@@ -29,19 +30,19 @@ public class SaveMessageRoleTests {
     }
 
     @Test
-    void shouldSaveMessageRoleSuccessfully() {
+    void shouldFindMessageRoleById() {
         // given
+        int roleId = 1;
         MessageRole role = new MessageRole();
-        role.setId(1);
-        role.setStatus(MessageRole.RoleStatus.TO);
+        role.setId(roleId);
 
-        when(messageRoleRepository.save(role)).thenReturn(role);
+        when(messageRoleRepository.findById(roleId)).thenReturn(Optional.of(role));
 
         // when
-        MessageRole savedRole = underTest.save(role);
+        MessageRole foundRole = underTest.findById(roleId);
 
         // then
-        verify(messageRoleRepository, times(1)).save(role);
-        assertThat(savedRole).isEqualTo(role);
+        verify(messageRoleRepository, times(1)).findById(roleId);
+        assertThat(foundRole).isEqualTo(role);
     }
 }

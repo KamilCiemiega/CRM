@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class UpdateMessageRoleTests {
+public class UpdateMessageRoleTest {
     @Mock
     private MessageRoleRepository messageRoleRepository;
 

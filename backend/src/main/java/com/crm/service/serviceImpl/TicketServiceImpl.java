@@ -67,6 +67,7 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         if (!ticket.getAttachments().isEmpty()) {
             ticket.getAttachments().forEach(attachment -> attachment.setTicket(ticket));
         }
+
         if (!ticket.getUserNotifications().isEmpty()) {
             List<Integer> userIds = ticket.getUserNotifications().stream()
                     .map(notification -> notification.getUser().getId())
