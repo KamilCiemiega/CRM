@@ -1,6 +1,6 @@
 package com.crm.controller.dto.ticket;
 
-import com.crm.controller.dto.AttachmentDTO;
+import com.crm.controller.dto.attachment.AttachmentDTO;
 import com.crm.controller.dto.UserNotificationDTO;
 import com.crm.controller.dto.message.SimpleMessageDTO;
 import com.crm.controller.dto.task.SimpleTaskDTO;

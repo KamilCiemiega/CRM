@@ -1,4 +1,4 @@
-package com.crm.controller.dto;
+package com.crm.controller.dto.attachment;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttachmentDTO {
-    private Integer id;
     @NotNull
     private String type;
     @NotNull

@@ -1,9 +1,8 @@
 package com.crm.configuration;
 
-import com.crm.controller.dto.AttachmentDTO;
+import com.crm.controller.dto.attachment.AttachmentDTO;
 import com.crm.controller.dto.task.SimpleTaskDTO;
 import com.crm.controller.dto.task.TaskDTO;
-import com.crm.dao.UserRepository;
 import com.crm.entity.Attachment;
 import com.crm.entity.Task;
 import org.modelmapper.Converter;
@@ -11,9 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Configuration

@@ -13,11 +13,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TicketServiceImpl implements TicketService, EntityFinder {
@@ -69,27 +67,40 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         }
 
         if (!ticket.getUserNotifications().isEmpty()) {
-            List<Integer> userIds = ticket.getUserNotifications().stream()
+            List<UserNotification> userNotifications = ticket.getUserNotifications();
+            List<Integer> userIds = userNotifications.stream()
                     .map(notification -> notification.getUser().getId())
                     .distinct()
                     .toList();
-            List<User> users = userRepository.findAllByIds(userIds);
 
-            Map<Integer, User> userMap = users.stream()
+            List<User> existingUsers = userRepository.findAllByIds(userIds);
+            Set<Integer> existingUserIds = existingUsers.stream()
+                    .map(User::getId)
+                    .collect(Collectors.toSet());
+
+            userNotifications.removeIf(notification -> !existingUserIds.contains(notification.getUser().getId()));
+            Map<Integer, User> userMap = existingUsers.stream()
                     .collect(Collectors.toMap(User::getId, user -> user));
 
             ticket.getUserNotifications().forEach(notification -> {
                 User user = userMap.get(notification.getUser().getId());
-                notification.setUser(user);
-                notification.setTicketNotification(ticket);
+                if (user != null){
+                    notification.setUser(user);
+                    notification.setTicketNotification(ticket);
+                }
             });
         }
 
-
+        if (ticket.getClient() == null || ticket.getClient().getId() == null) {
+            throw new IllegalArgumentException("Ticket must have a valid client.");
+        }
         Client existingClient = findEntity(clientRepository, ticket.getClient().getId(), "Client");
         ticket.setClient(existingClient);
         existingClient.getTickets().add(ticket);
 
+        if (ticket.getUser() == null || ticket.getUser().getId() == null) {
+            throw new IllegalArgumentException("Ticket must have a valid user.");
+        }
         User existingUser = findEntity(userRepository, ticket.getUser().getId(), "User");
         ticket.setUser(existingUser);
         existingUser.getTickets().add(ticket);

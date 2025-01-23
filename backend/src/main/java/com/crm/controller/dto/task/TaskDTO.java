@@ -1,6 +1,6 @@
 package com.crm.controller.dto.task;
 
-import com.crm.controller.dto.AttachmentDTO;
+import com.crm.controller.dto.attachment.AttachmentDTO;
 import com.crm.controller.dto.UserNotificationDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
