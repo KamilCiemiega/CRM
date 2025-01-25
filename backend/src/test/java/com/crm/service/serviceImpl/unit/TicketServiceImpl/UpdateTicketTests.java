@@ -37,49 +37,22 @@ public class UpdateTicketTests {
     private TicketServiceImpl underTest;
 
     Ticket ticket;
-    Message existingMessage;
-    Message nonExistingMessage;
-    Attachment attachment;
-    User existingUserInUserNotification;
-    User nonExistingUserInUserNotification;
-    User ticketUser;
-    Client ticketClient;
-    UserNotification userNotificationWithExistingUser;
-    UserNotification userNotificationWithNonExistingUser;
+    Ticket updatedTicket;
 
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
 
-        //messages
-        existingMessage = TicketServiceTestDataHelper.existingMessage();
-        nonExistingMessage = TicketServiceTestDataHelper.nonExistingMessage();
-        //attachment
-        attachment = TicketServiceTestDataHelper.attachment();
-        //users
-        existingUserInUserNotification = TicketServiceTestDataHelper.existingUserInUserNotification();
-        nonExistingUserInUserNotification = TicketServiceTestDataHelper.nonExistingUserInUserNotification();
-        ticketUser = TicketServiceTestDataHelper.assignedUserToTicket();
-        ticketClient = TicketServiceTestDataHelper.assignedClientToTicket();
-        //userNotification
-        userNotificationWithExistingUser = TicketServiceTestDataHelper.userNotificationWithExistingUser(existingUserInUserNotification);
-        userNotificationWithNonExistingUser = TicketServiceTestDataHelper.userNotificationWithNonExistingUser(nonExistingUserInUserNotification);
-        List<UserNotification> userNotificationList = new ArrayList<>();
-        userNotificationList.add(userNotificationWithExistingUser);
-        userNotificationList.add(userNotificationWithNonExistingUser);
+        updatedTicket.setTopic("New topic");
+        updatedTicket.setStatus(Ticket.TicketStatus.COMPLETED);
+        updatedTicket.setType(Ticket.TicketType.MEETING);
+        updatedTicket.setDescription("New description");
 
-        ticket = TicketServiceTestDataHelper.createdTicket(
-                List.of(existingMessage, nonExistingMessage),
-                userNotificationList,
-                attachment,
-                ticketClient,
-                ticketUser);
     }
 
     @Test
     void shouldUpdateTicket(){
         //given
-        ticket.setId(1);
 
         when(ticketRepository.findById(1)).thenReturn(Optional.of(ticket));
         //when

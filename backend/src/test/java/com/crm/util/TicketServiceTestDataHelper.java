@@ -2,6 +2,7 @@ package com.crm.util;
 
 import com.crm.entity.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TicketServiceTestDataHelper {
@@ -71,12 +72,47 @@ public class TicketServiceTestDataHelper {
         return user;
     }
 
+    public static class TicketTestSetup {
+        public Message existingMessage;
+        public Message nonExistingMessage;
+        public Attachment attachment;
+        public User ticketUser;
+        public Client ticketClient;
+        public User existingUserInUserNotification;
+        public User nonExistingUserInUserNotification;
+        public UserNotification userNotificationWithExistingUser;
+        public UserNotification userNotificationWithNonExistingUser;
+
+        public Ticket ticket;
+    }
+
+    public static TicketTestSetup prepareDefaultTicketTestSetup() {
+        TicketTestSetup setup = new TicketTestSetup();
+
+        setup.existingMessage = existingMessage();
+        setup.nonExistingMessage = nonExistingMessage();
+        setup.attachment = attachment();
+        setup.ticketUser = assignedUserToTicket();
+        setup.ticketClient = assignedClientToTicket();
+        setup.existingUserInUserNotification = existingUserInUserNotification();
+        setup.nonExistingUserInUserNotification = nonExistingUserInUserNotification();
+        setup.userNotificationWithExistingUser = userNotificationWithExistingUser(setup.existingUserInUserNotification);
+        setup.userNotificationWithNonExistingUser = userNotificationWithNonExistingUser(setup.nonExistingUserInUserNotification);
+
+        List<UserNotification> userNotificationList = new ArrayList<>();
+        userNotificationList.add(setup.userNotificationWithExistingUser);
+        userNotificationList.add(setup.userNotificationWithNonExistingUser);
+
+        setup.ticket = createdTicket(
+                List.of(setup.existingMessage, setup.nonExistingMessage),
+                userNotificationList
+        );
+        return setup;
+    }
+
     public static Ticket createdTicket(
             List<Message> messages,
-            List<UserNotification> userNotifications,
-            Attachment attachment,
-            Client ticketClient,
-            User ticketUser)
+            List<UserNotification> userNotifications)
     {
         Ticket ticket = new Ticket();
         ticket.setTopic("Topic");
@@ -85,9 +121,9 @@ public class TicketServiceTestDataHelper {
         ticket.setDescription("Test description");
         ticket.setMessages(messages);
         ticket.setUserNotifications(userNotifications);
-        ticket.getAttachments().add(attachment);
-        ticket.setClient(ticketClient);
-        ticket.setUser(ticketUser);
+        ticket.getAttachments().add(attachment());
+        ticket.setClient(assignedClientToTicket());
+        ticket.setUser(assignedUserToTicket());
 
         return ticket;
     }

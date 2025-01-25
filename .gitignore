@@ -1,3 +1,4 @@
 backend/logs/
 backend/logs/*.log
 backend/logs/*.log.*
+backend/target/jacoco.exec

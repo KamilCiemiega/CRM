@@ -37,50 +37,21 @@ public class SaveTicketTests {
     private TicketServiceImpl underTest;
 
     Ticket ticket;
-    Message existingMessage;
-    Message nonExistingMessage;
-    Attachment attachment;
-    User existingUserInUserNotification;
-    User nonExistingUserInUserNotification;
-    User ticketUser;
-    Client ticketClient;
-    UserNotification userNotificationWithExistingUser;
-    UserNotification userNotificationWithNonExistingUser;
+    TicketServiceTestDataHelper.TicketTestSetup setup;
 
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
 
-        //messages
-        existingMessage = TicketServiceTestDataHelper.existingMessage();
-        nonExistingMessage = TicketServiceTestDataHelper.nonExistingMessage();
-        //attachment
-        attachment = TicketServiceTestDataHelper.attachment();
-        //users
-        existingUserInUserNotification = TicketServiceTestDataHelper.existingUserInUserNotification();
-        nonExistingUserInUserNotification = TicketServiceTestDataHelper.nonExistingUserInUserNotification();
-        ticketUser = TicketServiceTestDataHelper.assignedUserToTicket();
-        ticketClient = TicketServiceTestDataHelper.assignedClientToTicket();
-        //userNotification
-        userNotificationWithExistingUser = TicketServiceTestDataHelper.userNotificationWithExistingUser(existingUserInUserNotification);
-        userNotificationWithNonExistingUser = TicketServiceTestDataHelper.userNotificationWithNonExistingUser(nonExistingUserInUserNotification);
-        List<UserNotification> userNotificationList = new ArrayList<>();
-        userNotificationList.add(userNotificationWithExistingUser);
-        userNotificationList.add(userNotificationWithNonExistingUser);
-
-        ticket = TicketServiceTestDataHelper.createdTicket(
-                List.of(existingMessage, nonExistingMessage),
-                userNotificationList,
-                attachment,
-                ticketClient,
-                ticketUser);
+        setup = TicketServiceTestDataHelper.prepareDefaultTicketTestSetup();
+        ticket = setup.ticket;
     }
 
     private void mockRepositories() {
-        when(messageRepository.findAllByIds(List.of(1, 2))).thenReturn(List.of(existingMessage));
-        when(userRepository.findAllByIds(List.of(1, 5))).thenReturn(List.of(existingUserInUserNotification));
-        when(clientRepository.findById(1)).thenReturn(Optional.of(ticketClient));
-        when(userRepository.findById(1)).thenReturn(Optional.of(ticketUser));
+        when(messageRepository.findAllByIds(List.of(1, 2))).thenReturn(List.of(setup.existingMessage));
+        when(userRepository.findAllByIds(List.of(1, 5))).thenReturn(List.of(setup.existingUserInUserNotification));
+        when(clientRepository.findById(1)).thenReturn(Optional.of(setup.ticketClient));
+        when(userRepository.findById(1)).thenReturn(Optional.of(setup.ticketUser));
     }
 
     private void verifyRepositoryInteractions() {
@@ -94,15 +65,15 @@ public class SaveTicketTests {
     private void verifyUserNotification(Ticket savedTicket){
         UserNotification userNotificationReference = savedTicket.getUserNotifications().get(0);
         assertThat(savedTicket.getUserNotifications()).hasSize(1);
-        assertThat(userNotificationReference.getUser()).isEqualTo(existingUserInUserNotification);
+        assertThat(userNotificationReference.getUser()).isEqualTo(setup.existingUserInUserNotification);
         assertThat(userNotificationReference.getTicketNotification()).isEqualTo(savedTicket);
     }
 
     private void verifyUserAndClient(Ticket savedTicket){
-        assertThat(ticketClient.getTickets()).hasSize(1);
-        assertThat(ticketClient.getTickets().get(0)).isEqualTo(savedTicket);
-        assertThat(ticketUser.getTickets()).hasSize(1);
-        assertThat(ticketUser.getTickets().get(0)).isEqualTo(savedTicket);
+        assertThat(setup.ticketClient.getTickets()).hasSize(1);
+        assertThat(setup.ticketClient.getTickets().get(0)).isEqualTo(savedTicket);
+        assertThat(setup.ticketUser.getTickets()).hasSize(1);
+        assertThat(setup.ticketUser.getTickets().get(0)).isEqualTo(savedTicket);
     }
 
     @Test
@@ -118,6 +89,7 @@ public class SaveTicketTests {
         //when
         Ticket savedTicket = underTest.save(ticket);
 
+
         // then
         verifyRepositoryInteractions();
 
@@ -125,7 +97,7 @@ public class SaveTicketTests {
         assertThat(savedTicket.getMessages()).hasSize(1);
         assertThat(savedTicket.getMessages().get(0).getId()).isEqualTo(1);
         //attachments check
-        assertThat(attachment.getTicket()).isEqualTo(savedTicket);
+        assertThat(savedTicket.getAttachments().get(0).getTicket()).isEqualTo(savedTicket);
         //userNotifications check
         verifyUserNotification(savedTicket);
         //User & Client check
