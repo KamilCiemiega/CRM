@@ -21,16 +21,23 @@ public class TicketServiceTestDataHelper {
         return client;
     }
 
+    public static User existingUser(){
+        User user = new User();
+        user.setId(2);
+
+        return user;
+    }
+
+    public static  Client existingClient(){
+        Client client = new Client();
+        client.setId(2);
+
+        return client;
+    }
+
     public static Message existingMessage(){
         Message message = new Message();
         message.setId(1);
-
-        return message;
-    }
-
-    public static Message nonExistingMessage(){
-        Message message = new Message();
-        message.setId(2);
 
         return message;
     }
@@ -50,38 +57,15 @@ public class TicketServiceTestDataHelper {
         return userNotification;
     }
 
-    public static User existingUserInUserNotification(){
-        User user = new User();
-        user.setId(1);
-
-        return user;
-    }
-
-    public static UserNotification userNotificationWithNonExistingUser(User noUser){
-        UserNotification userNotification = new UserNotification();
-        userNotification.setId(2);
-        userNotification.setUser(noUser);
-
-        return userNotification;
-    }
-
-    public static User nonExistingUserInUserNotification(){
-        User user = new User();
-        user.setId(5);
-
-        return user;
-    }
 
     public static class TicketTestSetup {
         public Message existingMessage;
-        public Message nonExistingMessage;
         public Attachment attachment;
         public User ticketUser;
+        public User existingUser;
         public Client ticketClient;
-        public User existingUserInUserNotification;
-        public User nonExistingUserInUserNotification;
+        public Client existingClient;
         public UserNotification userNotificationWithExistingUser;
-        public UserNotification userNotificationWithNonExistingUser;
 
         public Ticket ticket;
     }
@@ -90,27 +74,25 @@ public class TicketServiceTestDataHelper {
         TicketTestSetup setup = new TicketTestSetup();
 
         setup.existingMessage = existingMessage();
-        setup.nonExistingMessage = nonExistingMessage();
         setup.attachment = attachment();
         setup.ticketUser = assignedUserToTicket();
+        setup.existingUser = existingUser();
         setup.ticketClient = assignedClientToTicket();
-        setup.existingUserInUserNotification = existingUserInUserNotification();
-        setup.nonExistingUserInUserNotification = nonExistingUserInUserNotification();
-        setup.userNotificationWithExistingUser = userNotificationWithExistingUser(setup.existingUserInUserNotification);
-        setup.userNotificationWithNonExistingUser = userNotificationWithNonExistingUser(setup.nonExistingUserInUserNotification);
+        setup.existingClient = existingClient();
+        setup.userNotificationWithExistingUser = userNotificationWithExistingUser(
+                setup.existingUser);
 
         List<UserNotification> userNotificationList = new ArrayList<>();
         userNotificationList.add(setup.userNotificationWithExistingUser);
-        userNotificationList.add(setup.userNotificationWithNonExistingUser);
 
-        setup.ticket = createdTicket(
-                List.of(setup.existingMessage, setup.nonExistingMessage),
+        setup.ticket = createTicket(
+                List.of(setup.existingMessage),
                 userNotificationList
         );
         return setup;
     }
 
-    public static Ticket createdTicket(
+    public static Ticket createTicket(
             List<Message> messages,
             List<UserNotification> userNotifications)
     {

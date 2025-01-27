@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.crm.entity.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,32 +47,18 @@ public class SaveTicketTests {
     }
 
     private void mockRepositories() {
-        when(messageRepository.findAllByIds(List.of(1, 2))).thenReturn(List.of(setup.existingMessage));
-        when(userRepository.findAllByIds(List.of(1, 5))).thenReturn(List.of(setup.existingUserInUserNotification));
+        when(messageRepository.findAllByIds(List.of(1))).thenReturn(List.of(setup.existingMessage));
+        when(userRepository.findAllByIds(List.of(2))).thenReturn(List.of(setup.existingUser));
         when(clientRepository.findById(1)).thenReturn(Optional.of(setup.ticketClient));
         when(userRepository.findById(1)).thenReturn(Optional.of(setup.ticketUser));
     }
 
     private void verifyRepositoryInteractions() {
-        verify(messageRepository, times(1)).findAllByIds(List.of(1, 2));
-        verify(userRepository, times(1)).findAllByIds(List.of(1, 5));
+        verify(messageRepository, times(1)).findAllByIds(List.of(1));
+        verify(userRepository, times(1)).findAllByIds(List.of(2));
         verify(userRepository, times(1)).findById(1);
         verify(clientRepository, times(1)).findById(1);
         verify(ticketRepository, times(1)).save(any(Ticket.class));
-    }
-
-    private void verifyUserNotification(Ticket savedTicket){
-        UserNotification userNotificationReference = savedTicket.getUserNotifications().get(0);
-        assertThat(savedTicket.getUserNotifications()).hasSize(1);
-        assertThat(userNotificationReference.getUser()).isEqualTo(setup.existingUserInUserNotification);
-        assertThat(userNotificationReference.getTicketNotification()).isEqualTo(savedTicket);
-    }
-
-    private void verifyUserAndClient(Ticket savedTicket){
-        assertThat(setup.ticketClient.getTickets()).hasSize(1);
-        assertThat(setup.ticketClient.getTickets().get(0)).isEqualTo(savedTicket);
-        assertThat(setup.ticketUser.getTickets()).hasSize(1);
-        assertThat(setup.ticketUser.getTickets().get(0)).isEqualTo(savedTicket);
     }
 
     @Test
@@ -89,7 +74,6 @@ public class SaveTicketTests {
         //when
         Ticket savedTicket = underTest.save(ticket);
 
-
         // then
         verifyRepositoryInteractions();
 
@@ -99,17 +83,17 @@ public class SaveTicketTests {
         //attachments check
         assertThat(savedTicket.getAttachments().get(0).getTicket()).isEqualTo(savedTicket);
         //userNotifications check
-        verifyUserNotification(savedTicket);
+        UserNotification userNotificationReference = savedTicket.getUserNotifications().get(0);
+        assertThat(userNotificationReference.getUser()).isEqualTo(setup.existingUser);
+        assertThat(userNotificationReference.getTicketNotification()).isEqualTo(savedTicket);
         //User & Client check
-        verifyUserAndClient(savedTicket);
+        assertThat(setup.ticketClient.getTickets().get(0)).isEqualTo(savedTicket);
+        assertThat(setup.ticketUser.getTickets().get(0)).isEqualTo(savedTicket);
     }
 
     @Test
     void shouldTrowIllegalArgumentException_whenTopicIsNotUnique(){
         //given
-        Ticket ticket = new Ticket();
-        ticket.setId(1);
-        ticket.setTopic("Topic");
         //when
         when(ticketRepository.existsByTopic(ticket.getTopic())).thenReturn(true);
 
@@ -124,43 +108,61 @@ public class SaveTicketTests {
     @Test
     void shouldThrowExceptionWhenClientNotFound() {
         // given
-        Ticket ticket = new Ticket();
-        Client client = new Client();
-        client.setId(1);
+        Client nonExistingClient = new Client();
+        nonExistingClient.setId(3);
 
-        ticket.setClient(client);
+        ticket.setClient(nonExistingClient);
 
-        when(clientRepository.findById(1)).thenReturn(Optional.empty());
+        when(clientRepository.findById(3)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> underTest.save(ticket))
                 .isInstanceOf(NoSuchEntityException.class)
-                .hasMessageContaining("Client not found for ID: 1");
+                .hasMessageContaining("Client not found for ID: 3");
 
-        verify(clientRepository, times(1)).findById(1);
+        verify(clientRepository, times(1)).findById(3);
     }
 
     @Test
     void shouldThrowExceptionWhenUserNotFound() {
         // given
-        Ticket ticket = new Ticket();
+        User nonExistingUser = new User();
+        nonExistingUser.setId(3);
 
-        User user = new User();
-        user.setId(1);
-        Client client = new Client();
-        client.setId(1);
+        ticket.setUser(nonExistingUser);
 
-        ticket.setUser(user);
-        ticket.setClient(client);
-
-        when(clientRepository.findById(1)).thenReturn(Optional.of(client));
-        when(userRepository.findById(1)).thenReturn(Optional.empty());
+        when(clientRepository.findById(1)).thenReturn(Optional.of(setup.ticketClient));
+        when(userRepository.findById(3)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> underTest.save(ticket))
                 .isInstanceOf(NoSuchEntityException.class)
-                .hasMessageContaining("User not found for ID: 1");
+                .hasMessageContaining("User not found for ID: 3");
 
-        verify(userRepository, times(1)).findById(1);
+        verify(userRepository, times(1)).findById(3);
     }
+
+    @Test
+    void shouldFilterOutUserNotificationWithNonExistingUser() {
+        // given
+        User nonExistingUser = new User();
+        nonExistingUser.setId(3);
+        UserNotification userNotificationWithNonExistingUser = new UserNotification();
+        userNotificationWithNonExistingUser.setUser(nonExistingUser);
+
+        ticket.getUserNotifications().add(userNotificationWithNonExistingUser);
+
+        when(clientRepository.findById(1)).thenReturn(Optional.of(setup.ticketClient));
+        when(userRepository.findById(1)).thenReturn(Optional.of(setup.ticketUser));
+        when(userRepository.findAllByIds(List.of(2,3))).thenReturn(List.of(setup.existingUser));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        Ticket savedTicket = underTest.save(ticket);
+
+        // then
+        assertThat(savedTicket.getUserNotifications()).hasSize(1);
+        assertThat(savedTicket.getUserNotifications().get(0).getUser()).isEqualTo(setup.existingUser);
+    }
+
 }

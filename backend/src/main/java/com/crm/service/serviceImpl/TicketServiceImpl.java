@@ -27,11 +27,16 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
     private final UserNotificationRepository userNotificationRepository;
     private final AttachmentRepository attachmentRepository;
     private final TaskRepository taskRepository;
-    private final TaskService taskService;
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TicketServiceImpl.class);
 
     @Autowired
-    public TicketServiceImpl(TicketRepository ticketRepository, MessageRepository messageRepository, ClientRepository clientRepository, UserRepository userRepository, UserNotificationRepository userNotificationRepository, AttachmentRepository attachmentRepository, TaskRepository taskRepository, TaskService taskService) {
+    public TicketServiceImpl(TicketRepository ticketRepository,
+                             MessageRepository messageRepository,
+                             ClientRepository clientRepository,
+                             UserRepository userRepository,
+                             UserNotificationRepository userNotificationRepository,
+                             AttachmentRepository attachmentRepository,
+                             TaskRepository taskRepository) {
         this.ticketRepository = ticketRepository;
         this.messageRepository = messageRepository;
         this.clientRepository = clientRepository;
@@ -39,7 +44,6 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         this.userNotificationRepository = userNotificationRepository;
         this.attachmentRepository = attachmentRepository;
         this.taskRepository = taskRepository;
-        this.taskService = taskService;
     }
 
     @Override
@@ -111,6 +115,8 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
     @Transactional
     @Override
     public Ticket updateTicket(Integer ticketId, Ticket updatedTicket) {
+        EntityProcessorHelper entityProcessorHelper = new EntityProcessorHelper();
+
         Ticket existingTicket = findEntity(ticketRepository, ticketId, "Ticket");
 
         if (!existingTicket.getTopic().equals(updatedTicket.getTopic())) {
@@ -135,11 +141,20 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         existingTicket.getTasks().addAll(processTasks(updatedTicket.getTasks(), existingTicket));
 
         existingTicket.getUserNotifications().clear();
-        existingTicket.getUserNotifications().addAll(processUserNotifications(updatedTicket.getUserNotifications(), existingTicket));
-
+        existingTicket.getUserNotifications().addAll(entityProcessorHelper.processUserNotifications(
+                updatedTicket.getUserNotifications(),
+                existingTicket,
+                userNotificationRepository,
+                userRepository,
+                UserNotification::setTicketNotification
+        ));
         existingTicket.getAttachments().clear();
-        existingTicket.getAttachments().addAll(processAttachments(updatedTicket.getAttachments(), existingTicket));
-
+        existingTicket.getAttachments().addAll(entityProcessorHelper.processAttachments(
+                updatedTicket.getAttachments(),
+                existingTicket,
+                attachmentRepository,
+                Attachment::setTicket
+        ));
         return ticketRepository.save(existingTicket);
     }
 
@@ -152,32 +167,19 @@ public class TicketServiceImpl implements TicketService, EntityFinder {
         return foundetTicket;
     }
 
-    private List<Task> processTasks(List<Task> tasks, Ticket ticket) {
+    public List<Task> processTasks(List<Task> tasks, Ticket ticket) {
         return tasks.stream()
                 .map(task -> {
-                    Task managedTask = findEntity(taskRepository, task.getId(), "Task");
-                    managedTask.setTicket(ticket);
-                    return managedTask;
+                    try {
+                        Task managedTask = findEntity(taskRepository, task.getId(), "Task");
+                        managedTask.setTicket(ticket);
+                        return managedTask;
+                    }catch (NoSuchEntityException e){
+                        logger.info(e.getMessage());
+                        return null;
+                    }
                 })
+                .filter(Objects::nonNull)
                 .toList();
-    }
-
-    private List<UserNotification> processUserNotifications(List<UserNotification> notifications, Ticket ticket) {
-        return new EntityProcessorHelper().processUserNotifications(
-                notifications,
-                ticket,
-                userNotificationRepository,
-                userRepository,
-                UserNotification::setTicketNotification
-        );
-    }
-
-    private List<Attachment> processAttachments(List<Attachment> attachments, Ticket ticket) {
-        return  new EntityProcessorHelper().processAttachments(
-                attachments,
-                ticket,
-                attachmentRepository,
-                Attachment::setTicket
-        );
     }
 }
