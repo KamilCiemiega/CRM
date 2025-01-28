@@ -1,4 +1,4 @@
-package com.crm.service.serviceImpl.unit.TicketServiceImpl;
+package com.crm.service.serviceImpl.unit.ticketServiceImpl;
 
 import com.crm.dao.TicketRepository;
 import com.crm.service.serviceImpl.TicketServiceImpl;
@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.crm.entity.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;

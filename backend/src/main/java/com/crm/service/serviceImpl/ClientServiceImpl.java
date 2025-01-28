@@ -23,15 +23,16 @@ public class ClientServiceImpl implements ClientService {
     private final CompanyRepository companyRepository;
     private final MessageRepository messageRepository;
     private final MessageParticipantRepository messageParticipantRepository;
-    private final MessageRoleRepository messageRoleRepository;
 
     @Autowired
-    public ClientServiceImpl(ClientRepository clientRepository, CompanyRepository companyRepository, MessageRepository messageRepository, MessageParticipantRepository messageParticipantRepository, MessageRoleRepository messageRoleRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository,
+                             CompanyRepository companyRepository,
+                             MessageRepository messageRepository,
+                             MessageParticipantRepository messageParticipantRepository) {
         this.clientRepository = clientRepository;
         this.companyRepository = companyRepository;
         this.messageRepository = messageRepository;
         this.messageParticipantRepository = messageParticipantRepository;
-        this.messageRoleRepository = messageRoleRepository;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.crm.service.serviceImpl.unit.TicketServiceImpl;
+package com.crm.service.serviceImpl.unit.ticketServiceImpl;
 
 import com.crm.dao.*;
 import com.crm.service.serviceImpl.TicketServiceImpl;

@@ -5,7 +5,6 @@ import com.crm.dao.CompanyRepository;
 import com.crm.entity.Client;
 import com.crm.entity.Company;
 import com.crm.exception.NoSuchEntityException;
-import com.crm.service.ClientService;
 import com.crm.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
