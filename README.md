@@ -1,5 +1,4 @@
 ## 🚀 Technologies
----
 
 # Frontend
 
