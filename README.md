@@ -1,4 +1,5 @@
-##🚀Technologies
+🚀##Technologies
+---
 
 #Frontend
 
@@ -21,12 +22,12 @@
 
 * JUnit 5
 
-##🎯Features
+🎯##Features
 
 🔐 **Authentication & Security**
-	•	✅ User Registration – Allows new users to create accounts.
-	•	✅ User Login – Authentication system with role-based access control.
-	•	✅ Password Reset – Users can recover access to their accounts if they forget their password.
+ • ✅ User Registration – Allows new users to create accounts.
+ • ✅ User Login – Authentication system with role-based access control.
+ • ✅ Password Reset – Users can recover access to their accounts if they forget their password.
 
 📩 **Messaging System**
 	•	✅ Send & Receive Messages
