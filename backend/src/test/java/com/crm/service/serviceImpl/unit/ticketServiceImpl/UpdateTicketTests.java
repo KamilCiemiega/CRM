@@ -2,8 +2,9 @@ package com.crm.service.serviceImpl.unit.ticketServiceImpl;
 
 import com.crm.dao.*;
 import com.crm.service.serviceImpl.TicketServiceImpl;
-import com.crm.util.TicketServiceTestDataHelper;
+import com.crm.service.serviceImpl.util.TicketServiceTestDataHelper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -155,4 +156,53 @@ public class UpdateTicketTests {
         verify(taskRepository, times(2)).findById(anyInt());
         assertThat(savedTicket.getTasks()).hasSize(1);
     }
+
+    @Nested
+    class ProcessTasks {
+        Ticket ticket;
+
+        @BeforeEach
+        void setUp(){
+            Ticket ticket = new Ticket();
+            ticket.setId(1);
+        }
+
+        @Nested
+        class PositiveTests {
+
+            @Test
+            void shouldProcessTasksCorrectly() {
+                //given
+                //when
+                when(taskRepository.findById(1)).thenReturn(Optional.of(task));
+                List<Task> tasks = underTest.processTasks(List.of(task), ticket);
+
+                //then
+                verify(taskRepository, times(1)).findById(1);
+                assertThat(tasks).isNotNull();
+                assertThat(task.getTicket()).isEqualTo(ticket);
+            }
+        }
+
+        @Nested
+        class NegativeTests {
+
+            @Test
+            void shouldOmitNotExistingEntityAndAddRestOfEntities(){
+                //given
+                Task nonExistingTask = new Task();
+                nonExistingTask.setId(2);
+
+                //when
+                when(taskRepository.findById(1)).thenReturn(Optional.of(task));
+                when(taskRepository.findById(2)).thenReturn(Optional.empty());
+                List<Task> tasks = underTest.processTasks(List.of(task, nonExistingTask), ticket);
+
+                //then
+                verify(taskRepository, times(2)).findById(anyInt());
+                assertThat(tasks).hasSize(1);
+            }
+        }
+    }
+
 }

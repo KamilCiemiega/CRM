@@ -3,7 +3,7 @@ package com.crm.service.serviceImpl.unit.messageServiceImpl;
 import com.crm.dao.*;
 import com.crm.entity.*;
 import com.crm.service.serviceImpl.MessageServiceImpl;
-import com.crm.util.MessageServiceTestDataHelper;
+import com.crm.service.serviceImpl.util.MessageServiceTestDataHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

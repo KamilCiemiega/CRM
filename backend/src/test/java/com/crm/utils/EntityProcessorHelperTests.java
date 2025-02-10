@@ -1,16 +1,9 @@
-package com.crm.service.unit;
+package com.crm.utils;
 
 
-import com.crm.dao.AttachmentRepository;
-import com.crm.dao.TaskRepository;
-import com.crm.dao.TicketRepository;
-import com.crm.dao.UserNotificationRepository;
-import com.crm.entity.Attachment;
-import com.crm.entity.Task;
-import com.crm.entity.Ticket;
+import com.crm.dao.*;
+import com.crm.entity.*;
 import com.crm.exception.NoSuchEntityException;
-import com.crm.service.EntityFinder;
-import com.crm.utils.EntityProcessorHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,6 +28,8 @@ public class EntityProcessorHelperTests {
     @Mock
     AttachmentRepository attachmentRepository;
     @Mock
+    UserRepository userRepository;
+    @Mock
     UserNotificationRepository userNotificationRepository;
 
     @InjectMocks
@@ -56,7 +51,7 @@ public class EntityProcessorHelperTests {
     }
 
     @Nested
-    class FinEntityTests {
+    class FindEntityTests {
 
         @Test
         void shouldReturnCorrectEntity(){
@@ -72,15 +67,15 @@ public class EntityProcessorHelperTests {
         }
 
         @Test
-        void shouldTrowExceptionWhenEntityNotFound(){
+        void shouldTrowExceptionWhenEntityNotFound() {
             //given
             when(ticketRepository.findById(1)).thenReturn(Optional.empty());
 
             //when & then
-            verify(ticketRepository, times(1)).findById(1);
             assertThatThrownBy(() -> underTest.findEntity(ticketRepository, 1, entityName))
                     .isInstanceOf(NoSuchEntityException.class)
                     .hasMessageContaining("Ticket not found for ID: 1");
+            verify(ticketRepository, times(1)).findById(1);
         }
     }
 
@@ -238,16 +233,130 @@ public class EntityProcessorHelperTests {
     }
 
     @Nested
-    class processUserNotificationTests {
+    class ProcessUserNotificationTests {
+        User user;
+        UserNotification notificationWithId;
+        UserNotification notificationWithoutId;
+        UserNotification nonExistingNotification;
+        List<UserNotification> notificationList = new ArrayList<>();
 
-        @Nested
-        class PositiveTest {
+        @BeforeEach
+        void setUp(){
+            user = new User();
+            user.setId(1);
 
+            notificationWithId = new UserNotification();
+            notificationWithId.setId(1);
+            notificationWithId.setUser(user);
+
+            notificationWithoutId = new UserNotification();
+            notificationWithoutId.setUser(user);
+
+            nonExistingNotification = new UserNotification();
+            nonExistingNotification.setId(2);
+            nonExistingNotification.setUser(user);
+
+            notificationList.addAll(List.of(notificationWithId, notificationWithoutId));
         }
 
         @Nested
-        class NegativeTest {
+        class PositiveTests {
 
+            @Test
+            void processUserNotifications() {
+                // given
+                when(userNotificationRepository.findById(1)).thenReturn(Optional.of(notificationWithId));
+                when(userRepository.findById(1)).thenReturn(Optional.of(user));
+
+                // when
+                List<UserNotification> notifications = underTest.processUserNotifications(
+                        notificationList,
+                        ticket1,
+                        userNotificationRepository,
+                        userRepository,
+                        UserNotification::setTicketNotification
+                );
+
+                // then
+                verify(userNotificationRepository, times(1)).findById(1);
+                verify(userRepository, times(1)).findById(1);
+
+                assertThat(notifications).hasSize(2);
+                assertThat(notificationWithId.getTicketNotification()).isEqualTo(ticket1);
+                assertThat(notificationWithoutId.getTicketNotification()).isEqualTo(ticket1);
+            }
+        }
+
+        @Nested
+        class NegativeTests {
+
+            @Test
+            void shouldReturnEmptyListWhenInputListIsEmpty() {
+                // given
+                List<UserNotification> emptyNotificationList = new ArrayList<>();
+
+                // when
+                List<UserNotification> notifications = underTest.processUserNotifications(
+                        emptyNotificationList,
+                        ticket1,
+                        userNotificationRepository,
+                        userRepository,
+                        UserNotification::setTicketNotification
+                );
+
+                // then
+                assertThat(notifications).isEmpty();
+            }
+
+            @Test
+            void shouldOmitNotExistingEntityAndAddRestOfEntities() {
+                // given
+                notificationList.add(nonExistingNotification);
+
+                when(userNotificationRepository.findById(1)).thenReturn(Optional.of(notificationWithId));
+                when(userNotificationRepository.findById(2)).thenReturn(Optional.empty());
+                when(userRepository.findById(1)).thenReturn(Optional.of(user));
+
+                // when
+                List<UserNotification> notifications = underTest.processUserNotifications(
+                        notificationList,
+                        ticket1,
+                        userNotificationRepository,
+                        userRepository,
+                        UserNotification::setTicketNotification
+                );
+
+                // then
+                verify(userNotificationRepository, times(2)).findById(anyInt());
+                assertThat(notifications).hasSize(2);
+                assertThat(notificationWithId.getTicketNotification()).isEqualTo(ticket1);
+                assertThat(notificationWithoutId.getTicketNotification()).isEqualTo(ticket1);
+            }
+
+            @Test
+            void shouldNotProcessNotificationWithNonExistingUser() {
+                // given
+                notificationWithoutId.setUser(new User());
+                notificationWithoutId.getUser().setId(99);
+
+                when(userNotificationRepository.findById(1)).thenReturn(Optional.of(notificationWithId));
+                when(userRepository.findById(1)).thenReturn(Optional.of(user));
+                when(userRepository.findById(99)).thenReturn(Optional.empty());
+
+                // when
+                List<UserNotification> notifications = underTest.processUserNotifications(
+                        notificationList,
+                        ticket1,
+                        userNotificationRepository,
+                        userRepository,
+                        UserNotification::setTicketNotification
+                );
+
+                // then
+                verify(userRepository, times(1)).findById(99);
+                assertThat(notifications).hasSize(1);
+                assertThat(notifications.get(0)).isEqualTo(notificationWithId);
+            }
         }
     }
 }

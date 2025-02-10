@@ -53,6 +53,8 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
     @Transactional
     @Override
     public Task updateTask(int taskId, Task updatedTask) {
+        EntityProcessorHelper entityProcessorHelper = new EntityProcessorHelper();
+
         Task exisitingTask = findEntity(taskRepository, taskId, "Task");
 
         if (!exisitingTask.getTopic().equals(updatedTask.getTopic())) {
@@ -74,10 +76,21 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
                 .ifPresent(ticketId -> exisitingTask.setTicket(findEntity(ticketRepository, ticketId, "Ticket")));
 
         exisitingTask.getUserNotifications().clear();
-        exisitingTask.getUserNotifications().addAll(processUserNotifications(updatedTask.getUserNotifications(), exisitingTask));
+        exisitingTask.getUserNotifications().addAll(entityProcessorHelper.processUserNotifications(
+                updatedTask.getUserNotifications(),
+                exisitingTask,
+                userNotificationRepository,
+                userRepository,
+                UserNotification::setTaskNotification
+        ));
 
         exisitingTask.getAttachments().clear();
-        exisitingTask.getAttachments().addAll(processAttachments(updatedTask.getAttachments(), exisitingTask));
+        exisitingTask.getAttachments().addAll(entityProcessorHelper.processAttachments(
+                updatedTask.getAttachments(),
+                exisitingTask,
+                attachmentRepository,
+                Attachment::setTask
+        ));
 
         return taskRepository.save(exisitingTask);
     }
@@ -99,6 +112,9 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
     private Task processAndSaveTask(Task task, Task parentTask, Ticket ticket) {
         if (taskRepository.existsByTopic(task.getTopic())) {
             throw new IllegalArgumentException("Topic must be unique. Value already exists: " + task.getTopic());
+        }
+        if (task.getUserTaskCreator() == null || task.getUserTaskCreator().getId() == null) {
+            throw new IllegalArgumentException("Task must have a valid user creator.");
         }
 
         User taskCreator = findEntity(userRepository, task.getUserTaskCreator().getId(), "User who created task");
@@ -125,24 +141,5 @@ public class TaskServiceImpl implements TaskService, EntityFinder {
         processList(task.getAttachments(), attachment -> attachment.setTask(task));
 
         return taskRepository.save(task);
-    }
-
-    private List<UserNotification> processUserNotifications(List<UserNotification> notifications, Task task) {
-        return new EntityProcessorHelper().processUserNotifications(
-                notifications,
-                task,
-                userNotificationRepository,
-                userRepository,
-                UserNotification::setTaskNotification
-        );
-    }
-
-    private List<Attachment> processAttachments(List<Attachment> attachments, Task task) {
-        return  new EntityProcessorHelper().processAttachments(
-                attachments,
-                task,
-                attachmentRepository,
-                Attachment::setTask
-        );
     }
 }

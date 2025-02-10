@@ -6,7 +6,7 @@ import com.crm.dao.TicketRepository;
 import com.crm.dao.UserRepository;
 import com.crm.exception.NoSuchEntityException;
 import com.crm.service.serviceImpl.TicketServiceImpl;
-import com.crm.util.TicketServiceTestDataHelper;
+import com.crm.service.serviceImpl.util.TicketServiceTestDataHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
