@@ -51,12 +51,12 @@
  * Status tracking for each ticket (e.g., Open, In Progress, Resolved).
 
  📌 **Task Management**
-	*	✅ Create, assign, and track tasks
-	* Define status (OPEN, IN_PROGRESS, COMPLETED)
-	* Link tasks to tickets and projects
-	*	Support for subtasks and dependencies
-	*	Attach files and add comments
-	*	Automatic notifications and deadline reminders  
+ * ✅ Create, assign, and track tasks
+ * Define status (OPEN, IN_PROGRESS, COMPLETED)
+ * Link tasks to tickets and projects
+ * Support for subtasks and dependencies
+ * Attach files and add comments
+ * Automatic notifications and deadline reminders  
 
 ## 📊 Database visualization
 
