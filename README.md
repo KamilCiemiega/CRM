@@ -50,6 +50,14 @@
  * Tickets can be assigned to specific users or teams.
  * Status tracking for each ticket (e.g., Open, In Progress, Resolved).
 
+ 📌 **Task Management**
+	*	✅ Create, assign, and track tasks
+	* Define status (OPEN, IN_PROGRESS, COMPLETED)
+	* Link tasks to tickets and projects
+	*	Support for subtasks and dependencies
+	*	Attach files and add comments
+	*	Automatic notifications and deadline reminders  
+
 ## 📊 Database visualization
 
 ![dbvis](https://github.com/user-attachments/assets/f2374339-b80d-4ec0-bb67-317eae92269e)
